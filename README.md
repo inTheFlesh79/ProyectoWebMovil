@@ -139,7 +139,7 @@ El proyecto tiene un enfoque dirigido principalmente a estudiantes de enseñanza
 
 ---
 ## Arquitectura de la Información 
-[Diagrama](https://github.com/Nataruk/Proyecto-Ingenier-a-Web-y-Movil/blob/main/otros/Diagramas/Diagrama%20de%20Flujo%20-%20ProfeRanking.png)
+[Diagrama](https://github.com/inTheFlesh79/ProyectoWebMovil/tree/main/otros/Diagramas/Diagrama%20de%20Flujo%20-%20ProfeRanking.png)
 
 ## Patrones UX
 
@@ -181,7 +181,7 @@ Se consideraron algunas medidas de accesibilidad, sin embargo, se contempla la i
 ---
 
 ## Prototipo de diseño 
-[Diseño de Mockups](https://github.com/Nataruk/Proyecto-Ingenier-a-Web-y-Movil/tree/main/otros/mockups)
+[Diseño de Mockups](https://github.com/inTheFlesh79/ProyectoWebMovil/tree/main/otros/mockups)
 
 ---
 ## Liberías usadas con Angular
