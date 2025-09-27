@@ -1,0 +1,19 @@
+.responsive-square-card {
+  width: 100%;
+  max-width: 950px;
+  aspect-ratio: 1 / 1;
+  max-height: 350px;
+  margin: auto;
+}
+
+.card-content-left {
+  display: flex;
+  align-items: center;     // centers vertically
+  justify-content: flex-start; // pushes to the left
+  height: 100%;            // make sure it spans full card height
+}
+
+.big-icon {
+  font-size: clamp(68px, 16vw, 28px); // resizes with viewport but capped
+}
+

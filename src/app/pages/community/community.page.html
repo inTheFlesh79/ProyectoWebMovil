@@ -1,0 +1,41 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-grid>
+      <ion-row>
+        <ion-col class="ion-text-center">
+          <ion-button fill="clear" color="light" [routerLink]="['/home']">
+            Inicio
+          </ion-button>
+        </ion-col>
+        <ion-col class="ion-text-center">
+          <ion-button fill="clear" color="light" [routerLink]="['/community']">
+            Comunidad
+          </ion-button>
+        </ion-col>
+        <ion-col class="ion-text-center">
+          <ion-button fill="clear" color="light" [routerLink]="['/login']">
+            Perfil
+          </ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding" color="tertiary">
+  <div class="search-button-container">
+    <ion-searchbar placeholder="Buscar publicación..." show-clear-button="focus" color="light">
+    </ion-searchbar>
+    <ion-button fill="solid" color="primary" class="create-button">
+      <ion-icon slot="start" name="pencil"></ion-icon>
+      Crear Publicación
+    </ion-button>
+  </div>
+
+  <ion-card class="responsive-square-card" color="light">
+    <ion-card-content class="ion-text-center ion-align-items-center" style="display: flex; justify-content: center; height: 100%;">
+      No hay publicaciones disponibles por el momento.
+    </ion-card-content>
+  </ion-card>
+</ion-content>
+

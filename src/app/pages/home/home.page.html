@@ -1,0 +1,78 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-grid>
+      <ion-row>
+        <ion-col class="ion-text-center">
+          <ion-button fill="clear" color="light" [routerLink]="['/home']">Inicio</ion-button>
+        </ion-col>
+        <ion-col class="ion-text-center">
+          <ion-button fill="clear" color="light" [routerLink]="['/community']">Comunidad</ion-button>
+        </ion-col>
+        <ion-col class="ion-text-center">
+          <ion-button fill="clear" color="light" [routerLink]="['/login']">Perfil</ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content color="tertiary">
+  <div class="page-container">
+    <div class="top-half">
+      <div class="search-container">
+        <ion-searchbar placeholder="Buscar..." color="light"></ion-searchbar>
+        <ion-button color="primary">
+          <ion-icon name="search-outline" slot="start"></ion-icon>
+          <ion-label>Buscar</ion-label>
+        </ion-button>
+      </div>
+    </div>
+
+    <div class="bottom-half">
+      <ion-title class="page-title" color="primary">Somos ProfeRanking</ion-title>
+
+      <ion-grid class="about-grid">
+        <ion-row class="about-subtitles-row">
+          <ion-col size="4" class="ion-text-center">
+            <ion-text color="primary" class="column-subtitle">Quiénes Somos</ion-text>
+          </ion-col>
+
+          <ion-col size="4" class="ion-text-center">
+            <ion-text color="primary" class="column-subtitle">Nuestra Misión</ion-text>
+          </ion-col>
+
+          <ion-col size="4" class="ion-text-center">
+            <ion-text color="primary" class="column-subtitle">Íntegrate a la Comunidad</ion-text>
+          </ion-col>
+        </ion-row>
+
+        <ion-row class="about-texts-row">
+          <ion-col size="4" class="ion-text-center column-text">
+            <ion-text color="dark" class="column-paragraph">
+              ProfeRanking es una aplicación web en donde encontrarás información acerca de diferentes
+              profesores y las instituciones en donde enseñan. Aquí conocerás acerca de su metodología
+              de enseñanza, el trato que tienen con sus estudiantes, y la dificultad de sus asignaturas.
+            </ion-text>
+          </ion-col>
+
+          <ion-col size="4" class="ion-text-center column-text">
+            <ion-text color="dark" class="column-paragraph">
+              Esta aplicación fue hecha por estudiantes, para los estudiantes. La información dentro de
+              esta página viene de primera fuente por parte de los estudiantes y sus experiencias con
+              los profesores que calificaron. En ProfeRanking creemos en ayudar a los estudiantes a tomar
+              decisiones informadas.
+            </ion-text>
+          </ion-col>
+
+          <ion-col size="4" class="ion-text-center column-text">
+            <ion-text color="dark" class="column-paragraph">
+              ProfeRanking no es sólo una aplicación para consultar el estilo de enseñanza de un profesor.
+              Aquí hacemos comunidad. Únete a una comunidad de estudiantes en donde podrás conocer anécdotas
+              y compartir las tuyas.
+            </ion-text>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </div>
+  </div>
+</ion-content>

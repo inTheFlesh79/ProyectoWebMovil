@@ -1,0 +1,7 @@
+{
+  "name": "CATPproject",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}

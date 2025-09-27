@@ -1,0 +1,57 @@
+.responsive-square-card {
+  width: 90%;
+  max-width: 800px;
+  margin: auto;
+  padding: 1rem;
+  height: auto;
+  max-height: none; 
+}
+
+.icon-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 0.5rem;
+}
+.big-icon {
+  font-size: clamp(4rem, 8vw, 6rem);
+}
+
+ion-card-title {
+  text-align: center;
+  font-size: clamp(1.8rem, 3vw, 2.2rem);
+  font-weight: 200;
+  margin-bottom: 1rem;
+}
+
+ion-grid {
+  width: 100%;
+}
+
+ion-row {
+  margin-bottom: 16px;
+}
+
+ion-col {
+  display: flex;
+  flex-direction: column;
+}
+
+ion-item ion-label {
+  font-size: clamp(1.2rem, 2vw, 1.5rem);
+  font-weight: 500;
+  margin-bottom: 0.5rem; 
+}
+
+ion-item {
+  --padding-start: 0.5rem;
+  --inner-padding-end: 0.5rem;
+}
+
+ion-button.primary {
+  font-size: 1.2rem;      
+  padding: 0.8rem 1.5rem;  
+  max-width: 250px;       
+  width: 100%;             
+  display: block;          
+  margin: 20px auto 0 auto;  
+}
