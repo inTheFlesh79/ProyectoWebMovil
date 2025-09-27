@@ -157,7 +157,26 @@ El proyecto tiene un enfoque dirigido principalmente a estudiantes de enseñanza
 
 - Patrón de lectura F: La existencia de la barra superior y que la barra de búsqueda se posicione en la mitad superior del inicio evidencian la consideración de este patrón para la creación de pantallas.
 
-- Tab Bar / Bottom Navigation: Aunque se especifica que se utiliza una barra superior, esta se relaciona directamente con estos patrones de navegación que permiten acceder rápido a contenidos clave.
+- Tab Bar / Bottom Navigation: si bien no se utiliza ninguno de estos patrones de diseño, existe una relación directa con estos, ya que la intención de la barra superior es que el usuario pueda acceder a contenidos claves del sitio.
+
+## Accesibilidad
+Se consideraron algunas medidas de accesibilidad, sin embargo, se contempla la implementación de nuevas medidas a futuro con el objetivo de que cualquier persona, independiente de si presenta algún tipo de discapacidad física, cognitiva o sensorial, pueda navegar a través del sitio sin problemas. 
+
+- Contraste de colores: los textos presentan un color que contrasta con el fondo, con el objetivo de que los usuarios puedan leer fácilmente.
+
+- Encabezados organizados: se utiliza una jerarquía para títulos y subtítulos en página, con el objetivo de organizar de mejor manera la información para los usuarios.
+
+- Botones grandes y separados: se utilizan botones que son fáciles de identificar para el usuario, con un color en específico.
+
+- Lenguaje claro y simple: se utiliza un lenguaje fácil de entender para ayudar a las personas con dificultades cognitivas.
+
+- Texto alternativo en imágenes: las imágenes presentarán descripciones en texto para que el lector de pantalla pueda reconocerlas.
+
+- Diseño responsivo: el sitio se adaptará a distintos tamaños de pantalla, como celulares, computadores o tablets.
+
+- Indicadores visuales: el sitio presentará mensajes de error con íconos y textos para que puedan ser reconocidos por el lector de pantalla.
+
+- Modo oscuro: los usuarios podrán elegir entre un modo oscuro y claro.
 
 ---
 
