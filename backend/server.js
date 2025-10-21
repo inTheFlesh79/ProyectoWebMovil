@@ -1,9 +1,11 @@
 const express = require('express');
 const app = express();
 const port = 3000;
+const cors = require('cors')
 
 // Middleware para parsear JSON
 app.use(express.json());
+app.use(cors());
 
 // Importar rutas
 const userRoutes = require('./routes/userRoutes');
@@ -14,6 +16,7 @@ const eduteaRoutes = require('./routes/eduteaRoutes');
 const teacherRatingRoutes = require('./routes/teacherRatingRoutes');
 const commentRoutes = require('./routes/commentRoutes');
 const reviewRoutes = require('./routes/reviewRoutes');
+const searchRoutes = require('./routes/searchRoutes');
 
 // Rutas
 app.use('/api/users', userRoutes);
@@ -24,6 +27,7 @@ app.use('/api/edutea', eduteaRoutes);
 app.use('/api/teacherRating', teacherRatingRoutes);
 app.use('/api/comments', commentRoutes);
 app.use('/api/reviews', reviewRoutes);
+app.use('/api/search', searchRoutes);
 
 // Ruta raíz opcional
 app.get('/', (req, res) => {

@@ -1,19 +1,191 @@
-.responsive-square-card {
-  width: 100%;
-  max-width: 950px;
-  aspect-ratio: 1 / 1;
-  max-height: 350px;
-  margin: auto;
+/* PERFIL DEL PROFESOR */
+.profile-card {
+  max-width: 700px;
+  margin: 16px auto;
+  border-radius: 12px;
+  padding: 16px;
 }
 
-.card-content-left {
+.profile-container {
   display: flex;
-  align-items: center;     // centers vertically
-  justify-content: flex-start; // pushes to the left
-  height: 100%;            // make sure it spans full card height
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
 }
 
-.big-icon {
-  font-size: clamp(68px, 16vw, 28px); // resizes with viewport but capped
+.profile-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
 }
+
+.profile-photo {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--ion-color-primary);
+}
+
+.profile-info h2 {
+  margin: 0;
+  font-weight: bold;
+}
+
+.profile-info .institution {
+  font-size: 0.9rem;
+  color: var(--ion-color-medium);
+  margin-top: 4px;
+}
+
+.teacher-content {
+  margin-top: 16px;
+  font-size: 1rem;
+  color: var(--ion-color-medium);
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* BARRAS DE CALIFICACIÓN */
+.rating-card {
+  max-width: 700px;
+  margin: 16px auto;
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.rating-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.rating-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.rating-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.rating-title {
+  font-size: 0.9rem;
+  font-weight: bold;
+}
+
+.rating-value {
+  font-size: 0.85rem;
+  color: var(--ion-color-medium);
+}
+
+.rating-bar {
+  width: 100%;
+  height: 16px;
+  background-color: #e0e0e0;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.rating-fill {
+  height: 100%;
+  border-radius: 8px 0 0 8px;
+}
+
+.blue { background-color: #3e6bb3; }
+.yellow { background-color: #ffc409; }
+.green { background-color: #2dd55b; }
+
+/* COMENTARIOS */
+.comments-card {
+  max-width: 700px;
+  margin: 16px auto;
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.comments-title {
+  font-weight: bold;
+  font-size: 1.1rem;
+  margin-bottom: 16px;
+}
+
+.comment-item {
+  background-color: #f6f8fc;
+  border-radius: 10px;
+  padding: 12px;
+  margin-bottom: 12px;
+}
+
+.comment-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  gap: 8px;
+}
+
+.comment-rating {
+  font-weight: bold;
+  color: var(--ion-color-primary);
+  min-width: 30px;
+}
+
+.comment-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 8px;
+}
+
+.comment-user-right {
+  display: flex;
+  align-items: center;
+  gap: 8px; /* espacio entre la info y la foto */
+}
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+  text-align: right;
+}
+
+.student-name {
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+
+.comment-date {
+  font-size: 0.8rem;
+  color: var(--ion-color-medium);
+}
+
+.comment-content {
+  font-size: 0.9rem;
+  margin-bottom: 8px;
+}
+
+.comment-footer {
+  display: flex;
+  gap: 16px;
+}
+
+.comment-footer ion-button {
+  --padding-start: 4px;
+  --padding-end: 4px;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+}
+
+.comment-footer ion-icon {
+  margin-right: 4px;
+  vertical-align: middle;
+}
+
+
 

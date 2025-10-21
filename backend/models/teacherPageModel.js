@@ -71,7 +71,18 @@ const TeacherPage = {
   remove: async (id) => {
     const { rows } = await pool.query('DELETE FROM TeacherPage WHERE teacherPageId = $1 RETURNING *', [id]);
     return rows[0];
+  },
+
+  searchByName: async (term) => {
+    const query = `
+      SELECT * FROM TeacherPage
+      WHERE LOWER(name) LIKE $1
+      ORDER BY name ASC;
+    `;
+    const { rows } = await pool.query(query, [`%${term}%`]);
+    return rows;
   }
+
 };
 
 module.exports = TeacherPage;

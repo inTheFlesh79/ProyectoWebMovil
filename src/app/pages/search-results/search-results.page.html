@@ -1,0 +1,53 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-grid>
+      <ion-row>
+        <ion-col class="ion-text-center">
+          <ion-button fill="clear" color="light" [routerLink]="['/home']">Inicio</ion-button>
+        </ion-col>
+        <ion-col class="ion-text-center">
+          <ion-button fill="clear" color="light" [routerLink]="['/community']">Comunidad</ion-button>
+        </ion-col>
+        <ion-col class="ion-text-center">
+          <ion-button fill="clear" color="light" [routerLink]="['/login']">Perfil</ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content color="tertiary">
+  <div class="results-container">
+    <ion-title class="results-title" color="primary">Resultados de búsqueda</ion-title>
+
+    <ng-container *ngIf="results && (results.institutions.length || results.teachers.length); else noResults">
+
+      <!-- Instituciones -->
+      <ion-card *ngFor="let item of results.institutions">
+        <ion-card-header>
+          <ion-card-subtitle color="medium">Institución</ion-card-subtitle>
+          <ion-card-title color="primary">{{ item.eduname }}</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <p>{{ item.address }}</p>
+        </ion-card-content>
+      </ion-card>
+
+      <!-- Profesores -->
+      <ion-card *ngFor="let item of results.teachers">
+        <ion-card-header>
+          <ion-card-subtitle color="medium">Profesor</ion-card-subtitle>
+          <ion-card-title color="secondary">{{ item.name }}</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <p>{{ item.content }}</p>
+        </ion-card-content>
+      </ion-card>
+
+    </ng-container>
+
+    <ng-template #noResults>
+      <ion-text color="medium" class="no-results-text">No se encontraron resultados.</ion-text>
+    </ng-template>
+  </div>
+</ion-content>

@@ -53,7 +53,18 @@ const EducationalInstitution = {
   remove: async (id) => {
     const { rows } = await pool.query('DELETE FROM EducationalInstitution WHERE eduId = $1 RETURNING *', [id]);
     return rows[0];
+  },
+
+  searchByName: async (term) => {
+    const query = `
+      SELECT * FROM EducationalInstitution
+      WHERE LOWER(eduname) LIKE $1
+      ORDER BY eduname ASC;
+    `;
+    const { rows } = await pool.query(query, [`%${term}%`]);
+    return rows;
   }
+
 };
 
 module.exports = EducationalInstitution;

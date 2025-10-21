@@ -24,18 +24,39 @@
 
 <ion-content class="ion-padding" color="tertiary">
   <div class="search-button-container">
-    <ion-searchbar placeholder="Buscar publicación..." show-clear-button="focus" color="light">
+    <ion-searchbar
+      placeholder="Buscar publicación..."
+      show-clear-button="focus"
+      [(ngModel)]="searchTerm"
+      (ionInput)="buscarPublicaciones()">
     </ion-searchbar>
+
     <ion-button fill="solid" color="primary" class="create-button">
       <ion-icon slot="start" name="pencil"></ion-icon>
       Crear Publicación
     </ion-button>
   </div>
 
-  <ion-card class="responsive-square-card" color="light">
+  <!-- 🔽 Mostrar publicaciones -->
+  <ion-card *ngIf="filteredPosts.length > 0">
+    <ion-list>
+      <ion-item *ngFor="let post of filteredPosts">
+        <ion-label>
+          <h2>{{ post.title }}</h2>
+          <p>{{ post.content }}</p>
+          <small>👍 {{ post.likes }} | 👎 {{ post.dislikes }}</small>
+        </ion-label>
+      </ion-item>
+    </ion-list>
+  </ion-card>
+
+  <!-- 🔽 Mensaje si no hay resultados -->
+  <ion-card *ngIf="filteredPosts.length === 0" class="responsive-square-card">
     <ion-card-content class="ion-text-center ion-align-items-center" style="display: flex; justify-content: center; height: 100%;">
       No hay publicaciones disponibles por el momento.
     </ion-card-content>
   </ion-card>
+
+
 </ion-content>
 

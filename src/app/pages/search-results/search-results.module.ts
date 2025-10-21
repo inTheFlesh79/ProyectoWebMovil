@@ -4,20 +4,17 @@ import { FormsModule } from '@angular/forms';
 
 import { IonicModule } from '@ionic/angular';
 
-import { HomePageRoutingModule } from './home-routing.module';
+import { SearchResultsPageRoutingModule } from './search-results-routing.module';
 
-import { HomePage } from './home.page';
-
-import { HttpClientModule } from '@angular/common/http';
+import { SearchResultsPage } from './search-results.page';
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
-    HomePageRoutingModule,
-    HttpClientModule
+    SearchResultsPageRoutingModule
   ],
-  declarations: [HomePage],
+  declarations: [SearchResultsPage]
 })
-export class HomePageModule {}
+export class SearchResultsPageModule {}

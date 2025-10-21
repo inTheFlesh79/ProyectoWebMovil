@@ -1,0 +1,27 @@
+.results-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem;
+}
+
+.results-title {
+  text-align: center;
+  font-size: 1.8rem;
+  margin-bottom: 1rem;
+  font-weight: bold;
+}
+
+ion-card {
+  width: 80%;
+  max-width: 500px;
+  margin: 0.5rem 0;
+  text-align: center;
+  background-color: var(--ion-color-light);
+}
+
+.no-results-text {
+  text-align: center;
+  margin-top: 2rem;
+  font-size: 1.2rem;
+}

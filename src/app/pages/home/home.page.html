@@ -20,11 +20,16 @@
   <div class="page-container">
     <div class="top-half">
       <div class="search-container">
-        <ion-searchbar placeholder="Buscar..." color="light"></ion-searchbar>
-        <ion-button color="primary">
+        <ion-searchbar
+          [(ngModel)]="searchQuery"
+          placeholder="Buscar..."
+          color="light"
+        ></ion-searchbar>
+        <ion-button color="primary" (click)="onSearch()">
           <ion-icon name="search-outline" slot="start"></ion-icon>
           <ion-label>Buscar</ion-label>
         </ion-button>
+
       </div>
     </div>
 
