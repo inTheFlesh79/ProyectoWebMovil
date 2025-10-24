@@ -11,6 +11,8 @@ export class CommunityPage implements OnInit {
   posts: any[] = [];
   filteredPosts: any[] = [];
   searchTerm: string = '';
+  votes: Record<number, 'like'|'dislike'|null> = {};
+  voting: Record<number, boolean> = {}; // para evitar doble click rápido
 
   constructor(private postService: PostService) {}
 
@@ -22,13 +24,14 @@ export class CommunityPage implements OnInit {
     this.postService.getPosts().subscribe({
       next: (data) => {
         this.posts = data;
-        this.filteredPosts = [...data]; // copia directa, asegura render
-        console.log('Publicaciones cargadas:', this.filteredPosts);
+        this.filteredPosts = [...data];
+        // Inicializamos estado local
+        for (const p of this.posts) {
+          this.votes[p.postid] = this.votes[p.postid] ?? null;
+          this.voting[p.postid] = false;
+        }
       },
-      error: (err) => {
-        console.error('Error al obtener publicaciones:', err);
-        this.filteredPosts = []; // evita que quede null
-      }
+      error: (err) => console.error(err)
     });
   }
 
@@ -45,5 +48,88 @@ export class CommunityPage implements OnInit {
         post.title.toLowerCase().includes(term)
       );
     }
+  }
+
+  onLike(post: any) {
+    if (this.voting[post.postid]) return;
+    this.voting[post.postid] = true;
+
+    const prev = this.votes[post.postid]; // null | 'like' | 'dislike'
+    let action: 'like'|'switch-like';
+
+    if (prev === 'like') {
+      // Ya tiene like: no hacemos nada (o podrías implementar "quitar like")
+      this.voting[post.postid] = false;
+      return;
+    } else if (prev === 'dislike') {
+      // Cambia de dislike -> like
+      action = 'switch-like';
+      post.dislikes = Math.max(0, post.dislikes - 1);
+      post.likes += 1;
+    } else {
+      // Sin voto previo
+      action = 'like';
+      post.likes += 1;
+    }
+
+    const rollback = () => {
+      // revertimos los cambios locales
+      if (action === 'like') post.likes = Math.max(0, post.likes - 1);
+      if (action === 'switch-like') { post.likes = Math.max(0, post.likes - 1); post.dislikes += 1; }
+      this.voting[post.postid] = false;
+    };
+
+    this.postService.votePost(post.postid, action).subscribe({
+      next: (updated) => {
+        // sincroniza con DB por si hay desfase
+        post.likes = updated.likes;
+        post.dislikes = updated.dislikes;
+        this.votes[post.postid] = 'like';
+        this.voting[post.postid] = false;
+      },
+      error: (err) => {
+        console.error('Error votando like:', err);
+        rollback();
+      }
+    });
+  }
+
+  onDislike(post: any) {
+    if (this.voting[post.postid]) return;
+    this.voting[post.postid] = true;
+
+    const prev = this.votes[post.postid];
+    let action: 'dislike'|'switch-dislike';
+
+    if (prev === 'dislike') {
+      this.voting[post.postid] = false;
+      return;
+    } else if (prev === 'like') {
+      action = 'switch-dislike';
+      post.likes = Math.max(0, post.likes - 1);
+      post.dislikes += 1;
+    } else {
+      action = 'dislike';
+      post.dislikes += 1;
+    }
+
+    const rollback = () => {
+      if (action === 'dislike') post.dislikes = Math.max(0, post.dislikes - 1);
+      if (action === 'switch-dislike') { post.dislikes = Math.max(0, post.dislikes - 1); post.likes += 1; }
+      this.voting[post.postid] = false;
+    };
+
+    this.postService.votePost(post.postid, action).subscribe({
+      next: (updated) => {
+        post.likes = updated.likes;
+        post.dislikes = updated.dislikes;
+        this.votes[post.postid] = 'dislike';
+        this.voting[post.postid] = false;
+      },
+      error: (err) => {
+        console.error('Error votando dislike:', err);
+        rollback();
+      }
+    });
   }
 }

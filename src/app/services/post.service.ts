@@ -13,4 +13,9 @@ export class PostService {
   getPosts(): Observable<any[]> {
     return this.http.get<any[]>(this.apiUrl);
   }
+
+  votePost(id: number, type: 'like'|'dislike'|'switch-like'|'switch-dislike') {
+    return this.http.patch<any>(`${this.apiUrl}/${id}/vote`, { type });
+  }
+
 }

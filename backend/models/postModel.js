@@ -1,4 +1,4 @@
-const pool = require('../db');
+const pool = require('../config/db');
 
 const Post = {
   // Crear un nuevo post
@@ -105,7 +105,28 @@ const Post = {
       console.error('Error eliminando post:', err);
       throw err;
     }
-  }
+  },
+
+  vote: async (id, type) => {
+    let query = '';
+    switch (type) {
+      case 'like':
+        query = `UPDATE Post SET likes = likes + 1 WHERE postId = $1 RETURNING *;`;
+        break;
+      case 'dislike':
+        query = `UPDATE Post SET dislikes = dislikes + 1 WHERE postId = $1 RETURNING *;`;
+        break;
+      case 'switch-like':
+        query = `UPDATE Post SET likes = likes + 1, dislikes = GREATEST(dislikes - 1, 0) WHERE postId = $1 RETURNING *;`;
+        break;
+      case 'switch-dislike':
+        query = `UPDATE Post SET dislikes = dislikes + 1, likes = GREATEST(likes - 1, 0) WHERE postId = $1 RETURNING *;`;
+        break;
+    }
+    const { rows } = await pool.query(query, [id]);
+    return rows[0];
+  },
+
 };
 
 module.exports = Post;

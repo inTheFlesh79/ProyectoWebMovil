@@ -44,7 +44,21 @@
         <ion-label>
           <h2>{{ post.title }}</h2>
           <p>{{ post.content }}</p>
-          <small>👍 {{ post.likes }} | 👎 {{ post.dislikes }}</small>
+          <div class="vote-row">
+            <ion-button fill="clear" size="small"
+                        [disabled]="voting[post.postid]"
+                        (click)="onLike(post)">
+              <ion-icon name="thumbs-up-outline"></ion-icon>
+              <span>{{ post.likes }}</span>
+            </ion-button>
+
+            <ion-button fill="clear" size="small"
+                        [disabled]="voting[post.postid]"
+                        (click)="onDislike(post)">
+              <ion-icon name="thumbs-down-outline"></ion-icon>
+              <span>{{ post.dislikes }}</span>
+            </ion-button>
+          </div>
         </ion-label>
       </ion-item>
     </ion-list>
