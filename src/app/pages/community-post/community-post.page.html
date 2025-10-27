@@ -1,0 +1,76 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-grid>
+      <ion-row>
+        <ion-col class="ion-text-center">
+          <ion-button fill="clear" color="light" [routerLink]="['/home']">Inicio</ion-button>
+        </ion-col>
+        <ion-col class="ion-text-center">
+          <ion-button fill="clear" color="light" [routerLink]="['/community']">Comunidad</ion-button>
+        </ion-col>
+        <ion-col class="ion-text-center">
+          <ion-button fill="clear" color="light" [routerLink]="['/login']">Perfil</ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content color="tertiary" class="ion-padding" *ngIf="post; else loading">
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>{{ post.title }}</ion-card-title>
+      <ion-card-subtitle>por {{ post.username || 'Usuario desconocido' }}</ion-card-subtitle>
+    </ion-card-header>
+
+    <ion-card-content>
+      <p>{{ post.content }}</p>
+
+      <div class="vote-row">
+        <ion-button fill="clear" size="small" (click)="onLike(post)" [disabled]="voting[post.postid]">
+          <ion-icon name="thumbs-up-outline"></ion-icon>
+          <span>{{ post.likes }}</span>
+        </ion-button>
+
+        <ion-button fill="clear" size="small" (click)="onDislike(post)" [disabled]="voting[post.postid]">
+          <ion-icon name="thumbs-down-outline"></ion-icon>
+          <span>{{ post.dislikes }}</span>
+        </ion-button>
+      </div>
+
+      <ion-item lines="none" class="write-box">
+        <ion-input
+          placeholder="Escribe un comentario..."
+          [(ngModel)]="newComment"
+          clear-input>
+        </ion-input>
+
+        <ion-button fill="clear" color="primary" (click)="sendComment()" [disabled]="!newComment.trim()">
+          <ion-icon slot="icon-only" name="send-outline"></ion-icon>
+        </ion-button>
+      </ion-item>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card *ngIf="comments.length > 0" class="comments-card">
+    <ion-card-header>
+      <ion-card-title>Comentarios</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-list>
+        <ion-item *ngFor="let c of comments">
+          <ion-label>
+            <h3>{{ c.username || 'Anónimo' }}</h3>
+            <p>{{ c.content }}</p>
+          </ion-label>
+        </ion-item>
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
+</ion-content>
+
+<ng-template #loading>
+  <ion-content>
+    <ion-spinner name="crescent" class="ion-text-center"></ion-spinner>
+  </ion-content>
+</ng-template>

@@ -31,7 +31,7 @@
       (ionInput)="buscarPublicaciones()">
     </ion-searchbar>
 
-    <ion-button fill="solid" color="primary" class="create-button">
+    <ion-button fill="solid" color="primary" class="create-button" [routerLink]="['/create-post']">
       <ion-icon slot="start" name="pencil"></ion-icon>
       Crear Publicación
     </ion-button>
@@ -40,10 +40,18 @@
   <!-- 🔽 Mostrar publicaciones -->
   <ion-card *ngIf="filteredPosts.length > 0">
     <ion-list>
-      <ion-item *ngFor="let post of filteredPosts">
+      <ion-item *ngFor="let post of filteredPosts" lines="none">
+
+        <!-- 🧾 Contenido de la publicación -->
         <ion-label>
-          <h2>{{ post.title }}</h2>
+          <h2 class="post-title"
+              [routerLink]="['/community-post', post.postid]"
+              style="cursor:pointer; text-decoration: underline;">
+            {{ post.title }}
+          </h2>
+
           <p>{{ post.content }}</p>
+
           <div class="vote-row">
             <ion-button fill="clear" size="small"
                         [disabled]="voting[post.postid]"
@@ -60,17 +68,28 @@
             </ion-button>
           </div>
         </ion-label>
+
+        <!-- 👤 Nombre + foto del usuario al lado derecho -->
+        <div slot="end" class="author">
+          <div class="author-name">{{ post.username || 'Usuario desconocido' }}</div>
+          <ion-avatar class="author-avatar">
+            <img *ngIf="post.profilepicture; else defaultPic"
+                [src]="'data:image/jpeg;base64,' + post.profilepicture" />
+            <ng-template #defaultPic>
+              <img src="assets/default-profile.png" />
+            </ng-template>
+          </ion-avatar>
+        </div>
+
       </ion-item>
     </ion-list>
   </ion-card>
 
   <!-- 🔽 Mensaje si no hay resultados -->
   <ion-card *ngIf="filteredPosts.length === 0" class="responsive-square-card">
-    <ion-card-content class="ion-text-center ion-align-items-center" style="display: flex; justify-content: center; height: 100%;">
+    <ion-card-content class="ion-text-center ion-align-items-center"
+                      style="display: flex; justify-content: center; height: 100%;">
       No hay publicaciones disponibles por el momento.
     </ion-card-content>
   </ion-card>
-
-
 </ion-content>
-

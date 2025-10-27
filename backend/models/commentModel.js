@@ -136,6 +136,22 @@ const Comment = {
       console.error('Error obteniendo comentarios por teacherPageId:', err);
       throw err;
     }
+  },
+
+  findByPostId: async (postId) => {
+    try {
+      const { rows } = await pool.query(`
+        SELECT c.*, u.username, u.profilepicture
+        FROM Comment c
+        JOIN Users u ON c.userid = u.userid
+        WHERE c.postId = $1
+        ORDER BY c.date ASC
+      `, [postId]);
+      return rows;
+    } catch (err) {
+      console.error('Error obteniendo comentarios por postId:', err);
+      throw err;
+    }
   }
 };
 

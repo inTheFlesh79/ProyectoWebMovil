@@ -23,11 +23,14 @@ const postController = {
 
   getPostById: async (req, res) => {
     try {
-      const post = await Post.getById(req.params.id);
-      if (!post) return res.status(404).json({ error: 'Post no encontrado' });
+      const id = req.params.id;
+      const post = await Post.getById(id);
+      if (!post) {
+        return res.status(404).json({ error: 'Post no encontrado' });
+      }
       res.json(post);
     } catch (err) {
-      console.error(err);
+      console.error('Error obteniendo post:', err);
       res.status(500).json({ error: 'Error obteniendo post' });
     }
   },

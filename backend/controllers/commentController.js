@@ -81,6 +81,17 @@ const commentController = {
       console.error('getCommentsByTeacher error:', err);
       return res.status(500).json({ error: 'Error obteniendo comentarios por teacher' });
     }
+  },
+
+  getCommentsByPostId: async (req, res) => {
+    try {
+      const postId = req.params.postId;
+      const comments = await Comment.findByPostId(postId);
+      return res.json(comments);
+    } catch (err) {
+      console.error('getCommentsByPostId error:', err);
+      return res.status(500).json({ error: 'Error obteniendo comentarios por post' });
+    }
   }
 };
 

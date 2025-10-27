@@ -31,6 +31,22 @@ const routes: Routes = [
     path: 'search-results',
     loadChildren: () => import('./pages/search-results/search-results.module').then( m => m.SearchResultsPageModule)
   },
+    {
+    path: 'create-post',
+    loadChildren: () => import('./pages/create-post/create-post.module').then( m => m.CreatePostPageModule)
+  },
+  {
+    path: 'community-post',
+    loadChildren: () => import('./pages/community-post/community-post.module').then(m => m.CommunityPostPageModule)
+  },
+  {
+    path: 'educational-institution',
+    loadChildren: () => import('./pages/educational-institution/educational-institution.module').then(m => m.EducationalInstitutionPageModule)
+  },
+  {
+    path: 'user-profile',
+    loadChildren: () => import('./pages/user-profile/user-profile.module').then(m => m.UserProfilePageModule)
+  },
 ];
 
 @NgModule({

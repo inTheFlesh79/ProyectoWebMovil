@@ -1,0 +1,79 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-grid>
+      <ion-row>
+        <ion-col class="ion-text-center">
+          <ion-button fill="clear" color="light" [routerLink]="['/home']">Inicio</ion-button>
+        </ion-col>
+        <ion-col class="ion-text-center">
+          <ion-button fill="clear" color="light" [routerLink]="['/community']">Comunidad</ion-button>
+        </ion-col>
+        <ion-col class="ion-text-center">
+          <ion-button fill="clear" color="light" [routerLink]="['/login']">Perfil</ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content color="light">
+  <div class="page-container">
+
+    <!-- TARJETA PERFIL USUARIO -->
+    <ion-card color="light" class="profile-card">
+      <ion-card-content>
+        <div class="profile-container-vertical">
+          <img [src]="user.photo" alt="Foto usuario" class="profile-photo" />
+          <h2>{{ user.name }}</h2>
+          <p class="user-role">{{ getRoleText(user.role) }}</p>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- TARJETA HISTORIAL DE COMENTARIOS -->
+    <ion-card color="light" class="comments-card">
+      <ion-card-content>
+        <h3 class="card-title">Historial de comentarios</h3>
+        <div class="comment-item" *ngFor="let c of comments" (click)="goToPost(c.postId)">
+          <p class="comment-content">{{ c.content }}</p>
+          <div class="comment-footer">
+            <span class="comment-date">{{ c.date }}</span>
+            <span class="comment-likes">👍 {{ c.likes }}</span>
+            <span class="comment-dislikes">👎 {{ c.dislikes }}</span>
+          </div>
+        </div>
+
+        <div class="pagination">
+          <ion-button> < </ion-button>
+          <ion-button>1</ion-button>
+          <ion-button>2</ion-button>
+          <ion-button> > </ion-button>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- TARJETA HISTORIAL DE OPINIONES -->
+    <ion-card color="light" class="comments-card">
+      <ion-card-content>
+        <h3 class="card-title">Historial de opiniones</h3>
+        <div class="comment-item" *ngFor="let o of opinions">
+          <p class="prof-name">{{ o.teacherName }}</p>
+          <p class="comment-content">{{ o.content }}</p>
+          <div class="comment-footer">
+            <span class="comment-date">{{ o.date }}</span>
+            <span class="comment-likes">👍 {{ o.likes }}</span>
+            <span class="comment-dislikes">👎 {{ o.dislikes }}</span>
+          </div>
+        </div>
+
+        <div class="pagination">
+          <ion-button> < </ion-button>
+          <ion-button>1</ion-button>
+          <ion-button>2</ion-button>
+          <ion-button> > </ion-button>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+  </div>
+</ion-content>

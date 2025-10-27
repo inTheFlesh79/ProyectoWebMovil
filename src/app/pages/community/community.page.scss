@@ -33,3 +33,36 @@
   justify-content: center;
   min-width: 100px;  
 }
+
+ion-item {
+  align-items: flex-start;
+  --padding-start: 10px;
+  --padding-end: 10px;
+}
+
+.vote-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 6px;
+  align-items: center;
+}
+
+.author {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+.author-name {
+  font-weight: 600;
+  font-size: 0.9rem;
+  line-height: 1;
+}
+
+.author-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+}
+

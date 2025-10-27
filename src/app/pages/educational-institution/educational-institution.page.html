@@ -1,0 +1,55 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-grid>
+      <ion-row>
+        <ion-col class="ion-text-center">
+          <ion-button fill="clear" color="light" [routerLink]="['/home']">Inicio</ion-button>
+        </ion-col>
+        <ion-col class="ion-text-center">
+          <ion-button fill="clear" color="light" [routerLink]="['/community']">Comunidad</ion-button>
+        </ion-col>
+        <ion-col class="ion-text-center">
+          <ion-button fill="clear" color="light" [routerLink]="['/login']">Perfil</ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content color="light">
+  <div class="page-container">
+    <!-- Tarjeta de la institución -->
+    <ion-card color="light" class="institution-card">
+      <ion-card-content>
+        <h2 class="institution-name">{{ institution.name }}</h2>
+        <p class="institution-address">{{ institution.address }}</p>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Lista de profesores -->
+    <ion-card color="light" class="comments-card">
+      <ion-card-content>
+        <h3 class="comments-title">Profesores de la institución</h3>
+
+        <div class="comment-item" *ngFor="let prof of professors">
+          <div class="comment-user-right">
+            <!-- Foto del profesor -->
+            <img [src]="prof.photo" alt="Foto profesor" class="student-photo" />
+
+            <!-- Nombre y descripción -->
+            <div class="user-info">
+              <span class="prof-name">{{ prof.name }}</span>
+              <p class="comment-content">{{ prof.description }}</p>
+            </div>
+
+            <!-- Botón de perfil -->
+            <ion-button class="profile-btn" color="secondary" fill="outline">
+              Perfil
+            </ion-button>
+          </div>
+        </div>
+
+      </ion-card-content>
+    </ion-card>
+  </div>
+</ion-content>

@@ -26,26 +26,26 @@ const Post = {
     }
   },
 
-  // Obtener todos los posts
-  getAll: async () => {
-    try {
-      const result = await pool.query('SELECT * FROM Post ORDER BY date DESC');
-      return result.rows;
-    } catch (err) {
-      console.error('Error obteniendo posts:', err);
-      throw err;
-    }
-  },
-
   // Obtener post por ID
   getById: async (id) => {
-    try {
-      const result = await pool.query('SELECT * FROM Post WHERE postId = $1', [id]);
-      return result.rows[0];
-    } catch (err) {
-      console.error('Error obteniendo post por ID:', err);
-      throw err;
-    }
+    const query = `
+      SELECT p.*, u.username, u.profilepicture
+      FROM post p
+      JOIN users u ON p.userid = u.userid
+      WHERE p.postid = $1
+    `;
+    const { rows } = await pool.query(query, [id]);
+    return rows[0];
+  },
+
+  getAll: async () => {
+    const { rows } = await pool.query(`
+      SELECT p.*, u.username, u.profilepicture
+      FROM post p
+      JOIN users u ON p.userid = u.userid
+      ORDER BY p.date DESC
+    `);
+    return rows;
   },
 
   // Actualizar todo el post (PUT)

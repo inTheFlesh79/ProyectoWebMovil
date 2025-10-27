@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { PostService } from '../../services/post.service';
 
 @Component({
@@ -14,7 +15,8 @@ export class CommunityPage implements OnInit {
   votes: Record<number, 'like'|'dislike'|null> = {};
   voting: Record<number, boolean> = {}; // para evitar doble click rápido
 
-  constructor(private postService: PostService) {}
+  constructor(private postService: PostService, private router: Router) {}
+  
 
   ngOnInit() {
     this.cargarPosts();
@@ -132,4 +134,9 @@ export class CommunityPage implements OnInit {
       }
     });
   }
+
+  openPost(postId: number) {
+    this.router.navigate(['/community-post', postId]);
+  }
+
 }

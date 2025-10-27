@@ -1,0 +1,200 @@
+/* ==============================================
+   CREATE POST PAGE STYLES (fixed for overflow + alignment)
+   ============================================== */
+
+/* 1) Page background is tertiary */
+:host {
+  ion-content {
+    --background: var(--ion-color-tertiary);
+    /* remove default internal scrolling on the top-level content */
+    overflow: hidden;
+    padding: 0; /* we control spacing in wrapper */
+  }
+}
+
+/* 2) Wrapper: exact remaining viewport height under the header.
+   This prevents the page from creating a vertical scrollbar when overlay fits. */
+.create-post-overlay-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  /* subtract header height so wrapper fits exactly */
+  height: calc(100vh - var(--ion-toolbar-height, 56px));
+  padding: 20px;            /* horizontal breathing room */
+  box-sizing: border-box;
+  overflow: hidden;        /* prevent wrapper from creating page scroll */
+}
+
+/* 3) Overlay (the card)
+   - It will scroll internally ONLY if its content exceeds max-height
+   - max-height uses the wrapper height so overlay never forces page scroll */
+.create-post-overlay {
+  width: min(95vw, 900px);
+  max-width: 1250px;
+  padding: 24px;
+  border-radius: 14px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  transition: background 0.2s ease, color 0.2s ease;
+
+  /* LIGHT MODE default: white card, black text */
+  background: #ffffff;
+  color: #000000;
+
+  /* Make overlay scroll internally if needed */
+  max-height: calc(100% - 40px); /* some vertical breathing */
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  box-sizing: border-box;
+  /* ensure consistent inner padding doesn't cause extra scrollbar */
+  margin: 0;
+}
+
+/* 4) Header */
+.overlay-header {
+  display: block;
+}
+.overlay-header h2 {
+  margin: 0;
+  text-align: center;
+  font-weight: 600;
+  font-size: 1.4rem;
+  color: inherit;
+}
+
+/* 5) Keep each field as a consistent block so label, input, counter align */
+.field-block {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* 6) Label styling (consistent color and spacing) */
+.field-item {
+  padding: 0;
+  margin: 0;
+  --background: transparent;
+  border: 0;
+}
+.field-label {
+  display: block;
+  font-size: 0.95rem;
+  color: inherit;
+}
+.field-sub {
+  margin-left: 6px;
+  color: var(--ion-color-medium);
+  font-size: 0.75rem;
+}
+
+/* 7) Input item (ion-item wrapping ion-input)
+   Make it visually consistent with textarea wrapper */
+.input-item {
+  --background: transparent;
+  border: 0;
+  padding: 0;
+  margin: 0;
+}
+
+/* 8) Make native input and textarea parts visually identical:
+   same padding, line-height, and placeholder alignment so they appear in the same column */
+.create-input::part(native),
+.create-textarea::part(native) {
+  padding: 12px 10px;
+  line-height: 1.35;
+  font-size: 0.95rem;
+  box-sizing: border-box;
+  color: inherit;
+}
+
+/* 9) create textarea wrapper to control max-height and consistent borders */
+.content-textarea-wrapper {
+  border-radius: 8px;
+  overflow: hidden;
+  background: transparent;
+  box-sizing: border-box;
+  /* let textarea grow, but constrain internal scroll */
+  max-height: 40vh;
+  border: 1px solid rgba(0,0,0,0.06);
+}
+
+/* Make the textarea fill wrapper, native part handles inner scrolling */
+.create-textarea {
+  width: 100%;
+  min-height: 120px;
+  max-height: none;
+  display: block;
+  box-sizing: border-box;
+  background: transparent;
+  border: 0;
+}
+
+/* 10) Placeholder color (consistent) */
+.create-input::part(native)::placeholder,
+.create-textarea::part(native)::placeholder {
+  color: var(--ion-color-medium);
+  opacity: 1;
+}
+
+/* 11) Character counter aligned same for both fields */
+.char-counter {
+  display: flex;
+  justify-content: flex-end;
+  color: var(--ion-color-medium);
+  font-size: 0.78rem;
+}
+
+/* 12) Actions at bottom */
+.overlay-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  padding-top: 8px;
+}
+
+/* Buttons: keep primary visually consistent */
+ion-button[color="primary"] {
+  --background: var(--ion-color-primary);
+  --color: var(--ion-color-primary-contrast);
+}
+
+/* ==========================
+   DARK MODE
+   ========================== */
+
+/* Using prefers-color-scheme ensures browser/system dark mode is respected.
+   We keep the PAGE BACKGROUND tertiary (unchanged) and switch CARD + elements. */
+
+@media (prefers-color-scheme: dark) {
+  .create-post-overlay {
+    background: #1e1e1e;
+    color: #ffffff;
+    border: 1px solid rgba(255,255,255,0.03);
+  }
+
+  .create-input::part(native),
+  .create-textarea::part(native) {
+    color: #ffffff;
+  }
+
+  .create-input::part(native)::placeholder,
+  .create-textarea::part(native)::placeholder {
+    color: rgba(255,255,255,0.55);
+  }
+
+  .field-sub {
+    color: rgba(255,255,255,0.55);
+  }
+
+  .content-textarea-wrapper {
+    border: 1px solid rgba(255,255,255,0.04);
+  }
+
+  ion-button[color="primary"] {
+    --background: var(--ion-color-primary-tint);
+    --color: var(--ion-color-primary-contrast);
+  }
+}
