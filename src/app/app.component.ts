@@ -1,4 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
+import { Router } from '@angular/router';
+import { AuthService } from './services/auth.service';
 
 @Component({
   selector: 'app-root',
@@ -7,5 +9,29 @@ import { Component } from '@angular/core';
   standalone: false,
 })
 export class AppComponent {
-  constructor() {}
+  private inactivityTimer: any;
+
+  constructor(
+    private router: Router,
+    private authService: AuthService
+  ) {
+    // Inicia el control al cargar la app
+    this.resetInactivityTimer();
+  }
+
+  // 🖱️ Detecta movimiento del mouse o pulsaciones de teclado
+  @HostListener('document:mousemove')
+  @HostListener('document:keydown')
+  resetInactivityTimer() {
+    clearTimeout(this.inactivityTimer);
+
+    // Configura el tiempo de inactividad (2 minutos)
+    this.inactivityTimer = setTimeout(() => {
+      if (this.authService.isLoggedIn()) {
+        console.log('⏳ Sesión cerrada por inactividad');
+        this.authService.clear();
+        this.router.navigate(['/login']);
+      }
+    }, 1 * 60 * 1000); // 2 minutos (en milisegundos)
+  }
 }

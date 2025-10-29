@@ -68,22 +68,6 @@ const postController = {
     }
   },
 
-  votePost: async (req, res) => {
-    try {
-      const id = req.params.id;
-      const { type } = req.body; // 'like' | 'dislike' | 'switch'
-      if (!['like', 'dislike', 'switch-like', 'switch-dislike'].includes(type)) {
-        return res.status(400).json({ error: 'type inválido' });
-      }
-      const updated = await Post.vote(id, type);
-      if (!updated) return res.status(404).json({ error: 'Post no encontrado' });
-      res.json(updated);
-    } catch (err) {
-      console.error('votePost error:', err);
-      res.status(500).json({ error: 'Error actualizando voto' });
-    }
-  }
-
 };
 
 module.exports = postController;

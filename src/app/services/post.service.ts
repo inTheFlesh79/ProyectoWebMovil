@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -8,6 +8,7 @@ import { Observable } from 'rxjs';
 export class PostService {
   private apiUrl = 'http://localhost:3000/api/posts';
   private commentUrl = 'http://localhost:3000/api/comments';
+  private voteUrl = 'http://localhost:3000/api/votes';
 
   constructor(private http: HttpClient) {}
 
@@ -21,11 +22,6 @@ export class PostService {
     return this.http.get<any>(`${this.apiUrl}/${id}`);
   }
 
-  // 🔹 Votar (único voto permitido)
-  votePost(id: number, type: 'like' | 'dislike' | 'switch-like' | 'switch-dislike'): Observable<any> {
-    return this.http.patch<any>(`${this.apiUrl}/${id}/vote`, { type });
-  }
-
   // 🔹 Obtener comentarios del post
   getCommentsByPostId(postId: number): Observable<any[]> {
     return this.http.get<any[]>(`${this.commentUrl}/post/${postId}`);
@@ -34,5 +30,12 @@ export class PostService {
   // 🔹 Crear un nuevo comentario
   createComment(comment: any): Observable<any> {
     return this.http.post<any>(this.commentUrl, comment);
+  }
+
+  vote(postid: number, vote_type: 'like' | 'dislike', token: string): Observable<any> {
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+    return this.http.post<any>(this.voteUrl, { postid, vote_type }, { headers });
   }
 }

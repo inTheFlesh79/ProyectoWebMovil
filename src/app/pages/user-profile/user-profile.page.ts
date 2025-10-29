@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UserService } from '../../services/user.service';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-user-profile',
@@ -17,6 +18,7 @@ export class UserProfilePage implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
+    private authService: AuthService,
     private userService: UserService
   ) {}
 
@@ -56,5 +58,17 @@ export class UserProfilePage implements OnInit {
 
   goToPost(postId: number) {
     this.router.navigate(['/community-post', postId]);
+  }
+  
+  goToProfile() {
+    const user = this.authService.getUser();
+
+    if (user && user.id) {
+      // ✅ Usuario logueado → ir a su perfil
+      this.router.navigate(['/user-profile', user.id]);
+    } else {
+      // 🚪 No logueado → ir a login
+      this.router.navigate(['/login']);
+    }
   }
 }

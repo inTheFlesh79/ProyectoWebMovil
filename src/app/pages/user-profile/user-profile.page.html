@@ -9,7 +9,9 @@
           <ion-button fill="clear" color="light" [routerLink]="['/community']">Comunidad</ion-button>
         </ion-col>
         <ion-col class="ion-text-center">
-          <ion-button fill="clear" color="light" [routerLink]="['/login']">Perfil</ion-button>
+          <ion-button fill="clear" color="light" (click)="goToProfile()">
+            Perfil
+          </ion-button>
         </ion-col>
       </ion-row>
     </ion-grid>

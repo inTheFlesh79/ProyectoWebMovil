@@ -27,12 +27,12 @@
       <p>{{ post.content }}</p>
 
       <div class="vote-row">
-        <ion-button fill="clear" size="small" (click)="onLike(post)" [disabled]="voting[post.postid]">
+        <ion-button fill="clear" size="small" (click)="onVote(post, 'like')" [disabled]="voting[post.postid]">
           <ion-icon name="thumbs-up-outline"></ion-icon>
           <span>{{ post.likes }}</span>
         </ion-button>
 
-        <ion-button fill="clear" size="small" (click)="onDislike(post)" [disabled]="voting[post.postid]">
+        <ion-button fill="clear" size="small" (click)="onVote(post, 'dislike')" [disabled]="voting[post.postid]">
           <ion-icon name="thumbs-down-outline"></ion-icon>
           <span>{{ post.dislikes }}</span>
         </ion-button>

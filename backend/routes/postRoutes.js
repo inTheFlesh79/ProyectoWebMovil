@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const pool = require('../config/db');
 const postController = require('../controllers/postController');
+const auth = require('../middleware/authMiddleware');
 
 // Rutas principales
 router.post('/', postController.createPost);
@@ -10,7 +11,6 @@ router.get('/:id', postController.getPostById);
 router.put('/:id', postController.updatePost);
 router.patch('/:id', postController.patchPost);
 router.delete('/:id', postController.deletePost);
-router.patch('/:id/vote', postController.votePost);
 
 // ✅ Ruta para obtener post por ID (detallado)
 router.get('/:id', async (req, res) => {

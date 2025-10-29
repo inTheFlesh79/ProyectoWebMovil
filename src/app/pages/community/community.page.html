@@ -13,7 +13,7 @@
           </ion-button>
         </ion-col>
         <ion-col class="ion-text-center">
-          <ion-button fill="clear" color="light" [routerLink]="['/login']">
+          <ion-button fill="clear" color="light" (click)="goToProfile()">
             Perfil
           </ion-button>
         </ion-col>
@@ -55,14 +55,14 @@
           <div class="vote-row">
             <ion-button fill="clear" size="small"
                         [disabled]="voting[post.postid]"
-                        (click)="onLike(post)">
+                        (click)="onVote(post, 'like')">
               <ion-icon name="thumbs-up-outline"></ion-icon>
               <span>{{ post.likes }}</span>
             </ion-button>
 
             <ion-button fill="clear" size="small"
                         [disabled]="voting[post.postid]"
-                        (click)="onDislike(post)">
+                        (click)="onVote(post, 'dislike')">
               <ion-icon name="thumbs-down-outline"></ion-icon>
               <span>{{ post.dislikes }}</span>
             </ion-button>

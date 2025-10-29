@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { PostService } from '../../services/post.service';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-community-post',
@@ -19,7 +20,8 @@ export class CommunityPostPage implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private postService: PostService
+    private postService: PostService,
+    private authService: AuthService
   ) {}
 
   ngOnInit() {
@@ -49,74 +51,23 @@ export class CommunityPostPage implements OnInit {
     });
   }
 
-  // 🔹 Like único
-  onLike(post: any) {
-    if (this.voting[post.postid]) return;
-    this.voting[post.postid] = true;
-
-    const currentVote = this.userVotes[post.postid];
-    let voteType: 'like' | 'switch-like';
-
-    if (currentVote === 'like') {
-      // Ya había dado like → lo quitamos
-      post.likes--;
-      this.userVotes[post.postid] = null;
-      this.voting[post.postid] = false;
+  onVote(post: any, voteType: 'like' | 'dislike') {
+    const token = this.authService.getToken();
+    if (!token) {
+      alert('Debes iniciar sesión para votar.');
       return;
     }
 
-    if (currentVote === 'dislike') {
-      voteType = 'switch-like';
-      post.dislikes--;
-      post.likes++;
-    } else {
-      voteType = 'like';
-      post.likes++;
-    }
-
-    this.postService.votePost(post.postid, voteType).subscribe({
-      next: () => {
-        this.userVotes[post.postid] = 'like';
-        this.voting[post.postid] = false;
-      },
-      error: (err) => {
-        console.error('Error al votar:', err);
-        this.voting[post.postid] = false;
-      }
-    });
-  }
-
-  // 🔹 Dislike único
-  onDislike(post: any) {
     if (this.voting[post.postid]) return;
     this.voting[post.postid] = true;
 
-    const currentVote = this.userVotes[post.postid];
-    let voteType: 'dislike' | 'switch-dislike';
-
-    if (currentVote === 'dislike') {
-      // Ya había dado dislike → lo quitamos
-      post.dislikes--;
-      this.userVotes[post.postid] = null;
-      this.voting[post.postid] = false;
-      return;
-    }
-
-    if (currentVote === 'like') {
-      voteType = 'switch-dislike';
-      post.likes--;
-      post.dislikes++;
-    } else {
-      voteType = 'dislike';
-      post.dislikes++;
-    }
-
-    this.postService.votePost(post.postid, voteType).subscribe({
-      next: () => {
-        this.userVotes[post.postid] = 'dislike';
+    this.postService.vote(post.postid, voteType, token).subscribe({
+      next: (res: any) => {
+        console.log('Voto registrado:', res);
+        this.loadPost(post.postid); // recarga likes/dislikes actualizados
         this.voting[post.postid] = false;
       },
-      error: (err) => {
+      error: (err: any) => {
         console.error('Error al votar:', err);
         this.voting[post.postid] = false;
       }
