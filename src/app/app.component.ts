@@ -32,6 +32,6 @@ export class AppComponent {
         this.authService.clear();
         this.router.navigate(['/login']);
       }
-    }, 1 * 60 * 1000); // 2 minutos (en milisegundos)
+    }, 10 * 60 * 1000); // 2 minutos (en milisegundos)
   }
 }

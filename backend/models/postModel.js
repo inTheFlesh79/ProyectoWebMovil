@@ -43,7 +43,7 @@ const Post = {
       SELECT p.*, u.username, u.profilepicture
       FROM post p
       JOIN users u ON p.userid = u.userid
-      ORDER BY p.date DESC
+      ORDER BY p.postid DESC
     `);
     return rows;
   },

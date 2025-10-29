@@ -5,7 +5,7 @@ const postController = require('../controllers/postController');
 const auth = require('../middleware/authMiddleware');
 
 // Rutas principales
-router.post('/', postController.createPost);
+router.post('/', auth, postController.createPost);
 router.get('/', postController.getPosts);
 router.get('/:id', postController.getPostById);
 router.put('/:id', postController.updatePost);

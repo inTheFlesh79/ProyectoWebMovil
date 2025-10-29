@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { PostService } from '../../services/post.service';
 import { AuthService } from '../../services/auth.service';
 
@@ -10,85 +10,160 @@ import { AuthService } from '../../services/auth.service';
   standalone: false
 })
 export class CommunityPostPage implements OnInit {
-  post: any;
+  post: any = null;
   comments: any[] = [];
-  newComment = '';
+  newComment: string = '';
+  showComments = false;
 
-  // Estado de voto del usuario
-  userVotes: { [postId: number]: 'like' | 'dislike' | null } = {};
-  voting: { [postId: number]: boolean } = {};
+  // Estado de votación
+  voting: Record<number, boolean> = {};
+  commentVoting: Record<number, boolean> = {};
+  votes: Record<number, 'like' | 'dislike' | null> = {};
 
   constructor(
     private route: ActivatedRoute,
     private postService: PostService,
-    private authService: AuthService
+    private authService: AuthService,
+    private router: Router
   ) {}
 
   ngOnInit() {
-    const id = Number(this.route.snapshot.paramMap.get('id'));
-    if (id) this.loadPost(id);
+    const postId = Number(this.route.snapshot.paramMap.get('id'));
+    if (postId) {
+      this.loadPost(postId);
+      this.loadComments(postId);
+    }
   }
 
+  // ==============================
+  // 📦 Cargar datos del post
+  // ==============================
   loadPost(id: number) {
-    console.log('Cargando post con id:', id); // 👈 para depurar
     this.postService.getPostById(id).subscribe({
       next: (data) => {
-        console.log('Post cargado:', data); // 👈 confirma si llega data
         this.post = data;
-        this.loadComments(id);
+        this.votes[id] = this.votes[id] ?? null;
+        this.voting[id] = false;
       },
-      error: (err) => {
-        console.error('Error al cargar post:', err); // 👈 muestra error
-      }
+      error: (err) => console.error('Error al cargar post:', err)
     });
   }
 
-
+  // ==============================
+  // 💬 Comentarios
+  // ==============================
   loadComments(postId: number) {
     this.postService.getCommentsByPostId(postId).subscribe({
-      next: (data) => this.comments = data,
+      next: (data) => {
+        console.log('🟢 Comentarios cargados:', data);
+        this.comments = data.map((c: any) => ({
+          commentid: c.commentid,
+          author: c.username || 'Anónimo',
+          text: c.content,
+          likes: c.likes ?? 0,
+          dislikes: c.dislikes ?? 0
+        }));
+      },
       error: (err) => console.error('Error al cargar comentarios:', err)
     });
   }
 
-  onVote(post: any, voteType: 'like' | 'dislike') {
+  sendComment() {
+    const text = this.newComment.trim();
+    if (!text || !this.post?.postid) return;
+
+    const token = this.authService.getToken();
+
+    this.postService.createComment(this.post.postid, text, token!).subscribe({
+      next: (created) => {
+        // agrega al final y limpia input
+        this.comments.push(created);
+        this.newComment = '';
+        this.showComments = true;
+      },
+      error: (err) => {
+        console.error('Error creando comentario:', err);
+        if (!token) this.router.navigate(['/login']);
+      }
+    });
+  }
+
+  onEnterPress(event: KeyboardEvent) {
+    if (event.key === 'Enter') {
+      this.sendComment();
+    }
+  }
+
+  toggleComments() {
+    this.showComments = !this.showComments;
+  }
+
+
+  onVote(post: any, type: 'like' | 'dislike') {
     const token = this.authService.getToken();
     if (!token) {
-      alert('Debes iniciar sesión para votar.');
+      this.router.navigate(['/login']);
       return;
     }
 
-    if (this.voting[post.postid]) return;
     this.voting[post.postid] = true;
 
-    this.postService.vote(post.postid, voteType, token).subscribe({
+    this.postService.vote(post.postid, type, token).subscribe({
       next: (res: any) => {
-        console.log('Voto registrado:', res);
-        this.loadPost(post.postid); // recarga likes/dislikes actualizados
+        console.log(res.message);
+        // Actualiza contadores directamente sin reordenar
+        this.loadPost(post.postid);
         this.voting[post.postid] = false;
       },
-      error: (err: any) => {
+      error: (err) => {
         console.error('Error al votar:', err);
         this.voting[post.postid] = false;
       }
     });
   }
 
-  sendComment() {
-    if (!this.newComment.trim()) return;
-    const comment = {
-      postid: this.post.postid,
-      content: this.newComment
-    };
-    this.postService.createComment(comment).subscribe({
-      next: (data) => {
-        this.comments.push(data);
-        this.newComment = '';
+  onVoteComment(c: any, type: 'like' | 'dislike') {
+    const token = this.authService.getToken();
+    if (!token) {
+      this.router.navigate(['/login']);
+      return;
+    }
+
+    this.commentVoting[c.commentid] = true;
+    this.postService.voteComment(Number(c.commentid), type, token).subscribe({
+      next: (totals) => {
+        // totals -> { likes, dislikes }
+        c.likes = totals.likes;
+        c.dislikes = totals.dislikes;
+        this.commentVoting[c.commentid] = false;
+      },
+      error: (err) => {
+        console.error('Error al votar comentario:', err);
+        this.commentVoting[c.commentid] = false;
       }
     });
   }
 
-  onEnterPress(event: KeyboardEvent) {
-    if (event.key === 'Enter') this.sendComment();
+
+
+  // Métodos conectados al HTML (para mantener nombres)
+  like() {
+    if (this.post) this.onVote(this.post, 'like');
+  }
+
+  dislike() {
+    if (this.post) this.onVote(this.post, 'dislike');
+  }
+
+  goToProfile() {
+    const user = this.authService.getUser();
+
+    if (user && user.id) {
+      // ✅ Usuario logueado → ir a su perfil
+      this.router.navigate(['/user-profile', user.id]);
+    } else {
+      // 🚪 No logueado → ir a login
+      this.router.navigate(['/login']);
+    }
   }
 }

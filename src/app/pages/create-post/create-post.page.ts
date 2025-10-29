@@ -1,5 +1,8 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { AlertController } from '@ionic/angular';
+import { PostService } from '../../services/post.service';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-create-post',
@@ -14,7 +17,10 @@ export class CreatePostPage {
   readonly TITLE_MAX = 120;
   readonly CONTENT_MAX = 2000;
 
-  constructor(private router: Router) {}
+  constructor(private router: Router,
+    private postService: PostService,
+    private authService: AuthService,
+    private alertCtrl: AlertController) {}
 
   // Lógica para habilitar el botón de publicar
   canPublish(): boolean {
@@ -23,26 +29,40 @@ export class CreatePostPage {
     return !!t && !!c && t.length <= this.TITLE_MAX && c.length <= this.CONTENT_MAX;
   }
 
-  // Botón publicar — aquí dejar el espacio para backend
-  publish() {
-    if (!this.canPublish()) { return; }
+  async publish() {
+    if (!this.canPublish()) return;
 
-    // TODO: integrar con backend
-    // ejemplo: this.postService.createPost({ title: this.title, content: this.content })
-    //    .subscribe(...)
+    const token = this.authService.getToken();
+    if (!token) {
+      const alert = await this.alertCtrl.create({
+        header: 'Error',
+        message: 'Debes iniciar sesión para publicar.',
+        buttons: ['OK']
+      });
+      await alert.present();
+      return;
+    }
 
-    // Dejar los datos listos para que backend los consuma
-    const payload = {
-      title: this.title.trim(),
-      content: this.content.trim(),
-      // ---> Agregar metadatos necesarios (userId, fecha, tags, etc.)
-    };
-
-    // Para tu compadre: se puede inyectar un PostService que envíe 'payload' a la API.
-    // No implementado aquí por petición (solo placeholder).
-
-    // Por ahora, redirigimos a community
-    this.router.navigate(['/community']);
+    this.postService.createPost(this.title.trim(), this.content.trim(), token).subscribe({
+      next: async () => {
+        const alert = await this.alertCtrl.create({
+          header: 'Éxito',
+          message: 'Tu publicación se ha creado correctamente.',
+          buttons: ['OK']
+        });
+        await alert.present();
+        this.router.navigate(['/community']);
+      },
+      error: async (err) => {
+        console.error('Error creando post:', err);
+        const alert = await this.alertCtrl.create({
+          header: 'Error',
+          message: 'No se pudo crear la publicación. Intenta de nuevo.',
+          buttons: ['OK']
+        });
+        await alert.present();
+      }
+    });
   }
 
   // Cancelar y limpiar lo trabajado
@@ -59,5 +79,17 @@ export class CreatePostPage {
 
   get contentRemaining() {
     return this.CONTENT_MAX - (this.content?.length || 0);
+  }
+
+  goToProfile() {
+    const user = this.authService.getUser();
+
+    if (user && user.id) {
+      // ✅ Usuario logueado → ir a su perfil
+      this.router.navigate(['/user-profile', user.id]);
+    } else {
+      // 🚪 No logueado → ir a login
+      this.router.navigate(['/login']);
+    }
   }
 }

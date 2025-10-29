@@ -3,7 +3,23 @@ const Comment = require('../models/commentModel');
 const commentController = {
   createComment: async (req, res) => {
     try {
-      const comment = await Comment.create(req.body);
+      const userid = req.user?.id;
+      if (!userid) return res.status(401).json({ error: 'No autenticado' });
+
+      const { postId, content } = req.body;
+      if (!postId || !content) {
+        return res.status(400).json({ error: 'postId y content son requeridos' });
+      }
+
+      const comment = await Comment.create({
+        postId,
+        content,
+        userid,
+        likes: 0,
+        dislikes: 0,
+        date: new Date().toISOString().slice(0, 10)
+      });
+
       return res.status(201).json(comment);
     } catch (err) {
       console.error('createComment error:', err);

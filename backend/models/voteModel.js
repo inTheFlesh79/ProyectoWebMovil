@@ -29,7 +29,7 @@ const Vote = {
         );
       }
 
-      // Actualiza contadores en Post
+      // 🔹 Recalcular los likes/dislikes totales para ese post
       const counts = await pool.query(`
         SELECT
           SUM(CASE WHEN vote_type = 'like' THEN 1 ELSE 0 END) AS likes,
@@ -37,8 +37,13 @@ const Vote = {
         FROM Votes WHERE postid = $1
       `, [postid]);
 
+      // 🔹 Actualizar el post, preservando su fecha original
       await pool.query(
-        'UPDATE Post SET likes = $1, dislikes = $2 WHERE postid = $3',
+        `UPDATE Post 
+         SET likes = $1, 
+             dislikes = $2, 
+             date = date 
+         WHERE postid = $3`,
         [counts.rows[0].likes || 0, counts.rows[0].dislikes || 0, postid]
       );
 

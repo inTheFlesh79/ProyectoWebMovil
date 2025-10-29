@@ -37,7 +37,7 @@
   display: flex;
   flex-direction: column;
   padding: 1rem;
-  overflow-y: auto;
+  
 }
 
 .page-title {
@@ -98,7 +98,7 @@
   }
 }
 
-/* Responsive para móviles */
+/* Responsive para mÃ³viles */
 @media (max-width: 576px) {
   .page-title {
     font-size: 1.4rem;
@@ -117,7 +117,7 @@
     display: flex;
     flex-direction: column;
     padding: 1rem;
-    overflow-y: auto;
+    
   }
 
   .column-subtitle {

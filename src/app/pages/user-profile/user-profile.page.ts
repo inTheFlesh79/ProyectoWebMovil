@@ -15,6 +15,12 @@ export class UserProfilePage implements OnInit {
   comments: any[] = [];
   opinions: any[] = [];
 
+  // 🔹 Control de paginación
+  itemsPerPage = 6;
+
+  currentPageComments = 1;
+  currentPageOpinions = 1;
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -31,7 +37,6 @@ export class UserProfilePage implements OnInit {
     }
   }
 
-
   loadUserProfile(id: number) {
     this.userService.getUserProfile(id).subscribe({
       next: (data) => {
@@ -42,8 +47,8 @@ export class UserProfilePage implements OnInit {
           name: data.user.username,
           role: data.user.role
         };
-        this.comments = data.comments;
-        this.opinions = data.reviews;
+        this.comments = data.comments || [];
+        this.opinions = data.reviews || [];
       },
       error: (err) => {
         console.error('Error cargando perfil:', err);
@@ -51,7 +56,39 @@ export class UserProfilePage implements OnInit {
     });
   }
 
+  // 🔹 Métodos de paginación para comentarios
+  get paginatedComments() {
+    const start = (this.currentPageComments - 1) * this.itemsPerPage;
+    return this.comments.slice(start, start + this.itemsPerPage);
+  }
 
+  get totalPagesComments() {
+    return Math.ceil(this.comments.length / this.itemsPerPage) || 1;
+  }
+
+  changeCommentsPage(page: number) {
+    if (page >= 1 && page <= this.totalPagesComments) {
+      this.currentPageComments = page;
+    }
+  }
+
+  // 🔹 Métodos de paginación para opiniones
+  get paginatedOpinions() {
+    const start = (this.currentPageOpinions - 1) * this.itemsPerPage;
+    return this.opinions.slice(start, start + this.itemsPerPage);
+  }
+
+  get totalPagesOpinions() {
+    return Math.ceil(this.opinions.length / this.itemsPerPage) || 1;
+  }
+
+  changeOpinionsPage(page: number) {
+    if (page >= 1 && page <= this.totalPagesOpinions) {
+      this.currentPageOpinions = page;
+    }
+  }
+
+  // 🔹 Otros métodos existentes
   getRoleText(role: number): string {
     return role === 1 ? 'Administrador' : 'Miembro';
   }
@@ -59,15 +96,12 @@ export class UserProfilePage implements OnInit {
   goToPost(postId: number) {
     this.router.navigate(['/community-post', postId]);
   }
-  
+
   goToProfile() {
     const user = this.authService.getUser();
-
     if (user && user.id) {
-      // ✅ Usuario logueado → ir a su perfil
       this.router.navigate(['/user-profile', user.id]);
     } else {
-      // 🚪 No logueado → ir a login
       this.router.navigate(['/login']);
     }
   }

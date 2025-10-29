@@ -1,0 +1,119 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-grid>
+      <ion-row>
+        <ion-col class="ion-text-center">
+          <ion-button fill="clear" color="light" [routerLink]="['/home']">Inicio</ion-button>
+        </ion-col>
+        <ion-col class="ion-text-center">
+          <ion-button fill="clear" color="light" [routerLink]="['/community']">Comunidad</ion-button>
+        </ion-col>
+        <ion-col class="ion-text-center">
+          <ion-button fill="clear" color="light" [routerLink]="['/login']">Perfil</ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="teacher-review-page" [fullscreen]="true" color="tertiary">
+  <ion-grid class="page-grid">
+    <ion-row>
+      <ion-col size="12" size-md="8" offset-md="2">
+
+        <!-- PRIMERA CARD -->
+        <ion-card class="qa-card">
+          <ion-card-header>
+            <ion-card-title>Calificación del Profesor</ion-card-title>
+          </ion-card-header>
+
+          <ion-card-content>
+            <form (ngSubmit)="onPublish()" #reviewForm="ngForm">
+              <div class="question">
+                <label class="q-text">¿Qué tan buena es la calidad de enseñanza del Profesor? (1 a 7)</label>
+                <ion-item class="flat-item" lines="none">
+                  <ion-input
+                    inputmode="numeric"
+                    maxlength="1"
+                    placeholder="Escribe aquí tu nota"
+                    [(ngModel)]="teaching"
+                    name="teaching"
+                    required
+                    (ionInput)="onRatingInput($event, 'teaching')"
+                  ></ion-input>
+                </ion-item>
+                <div class="error" *ngIf="teachingTouched && !isValid(teaching)">Ingresa un número entre 1 y 7.</div>
+              </div>
+
+              <div class="question">
+                <label class="q-text">¿Qué tan bueno es el trato y respeto entre el profesor y sus estudiantes? (1 a 7)</label>
+                <ion-item class="flat-item" lines="none">
+                  <ion-input
+                    inputmode="numeric"
+                    maxlength="1"
+                    placeholder="Escribe aquí tu nota"
+                    [(ngModel)]="studentRespect"
+                    name="studentRespect"
+                    required
+                    (ionInput)="onRatingInput($event, 'studentRespect')"
+                  ></ion-input>
+                </ion-item>
+                <div class="error" *ngIf="studentRespectTouched && !isValid(studentRespect)">Ingresa un número entre 1 y 7.</div>
+              </div>
+
+              <div class="question">
+                <label class="q-text">¿Qué tan difíciles son las asignaturas del profesor? (1 a 7)</label>
+                <ion-item class="flat-item" lines="none">
+                  <ion-input
+                    inputmode="numeric"
+                    maxlength="1"
+                    placeholder="Escribe aquí tu nota"
+                    [(ngModel)]="difficulty"
+                    name="difficulty"
+                    required
+                    (ionInput)="onRatingInput($event, 'difficulty')"
+                  ></ion-input>
+                </ion-item>
+                <div class="error" *ngIf="difficultyTouched && !isValid(difficulty)">Ingresa un número entre 1 y 7.</div>
+              </div>
+            </form>
+          </ion-card-content>
+        </ion-card>
+
+        <!-- SEGUNDA CARD -->
+        <ion-card class="review-card">
+          <ion-card-header>
+            <ion-card-title>Reseña</ion-card-title>
+          </ion-card-header>
+
+          <ion-card-content>
+            <p>Por favor, escriba una breve reseña acerca de su experiencia con el profesor</p>
+
+            <ion-item class="flat-item review-item" lines="none">
+              <ion-textarea
+                [(ngModel)]="review"
+                name="review"
+                placeholder="Escribe tu reseña aquí"
+                maxlength="500"
+                rows="6"
+                (ionInput)="onReviewInput($event)"
+                class="review-textarea"
+              ></ion-textarea>
+            </ion-item>
+            <div class="char-count">{{ review?.length || 0 }} / 500</div>
+          </ion-card-content>
+        </ion-card>
+
+        <div class="actions-row">
+          <ion-button class="btn-cancel" fill="clear" (click)="onCancel()" type="button">
+            Cancelar
+          </ion-button>
+          <ion-button class="btn-publish" color="primary" [disabled]="!isFormValid()" (click)="onPublish()">
+            Publicar
+          </ion-button>
+        </div>
+
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

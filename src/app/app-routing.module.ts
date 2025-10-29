@@ -47,6 +47,10 @@ const routes: Routes = [
     path: 'user-profile',
     loadChildren: () => import('./pages/user-profile/user-profile.module').then(m => m.UserProfilePageModule)
   },
+  {
+    path: 'teacher-review',
+    loadChildren: () => import('./pages/teacher-review/teacher-review.module').then(m => m.TeacherReviewPageModule)
+  },
 
 ];
 

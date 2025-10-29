@@ -3,10 +3,25 @@ const Post = require('../models/postModel');
 const postController = {
   createPost: async (req, res) => {
     try {
-      const post = await Post.create(req.body);
+      const { title, content } = req.body;
+      const userId = req.user.id; // obtenido desde el token JWT
+
+      if (!title || !content) {
+        return res.status(400).json({ error: 'Faltan campos obligatorios' });
+      }
+
+      const post = await Post.create({
+        userid: userId,
+        title,
+        content,
+        date: new Date(),
+        likes: 0,
+        dislikes: 0
+      });
+
       res.status(201).json(post);
     } catch (err) {
-      console.error(err);
+      console.error('Error creando post:', err);
       res.status(500).json({ error: 'Error creando post' });
     }
   },

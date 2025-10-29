@@ -27,7 +27,7 @@ export class CommunityPage implements OnInit {
     this.postService.getPosts().subscribe({
       next: (data) => {
         this.posts = data;
-        this.filteredPosts = [...data];
+        this.filteredPosts = data.sort((a, b) => b.postid - a.postid);
         // Inicializamos estado local
         for (const p of this.posts) {
           this.votes[p.postid] = this.votes[p.postid] ?? null;
