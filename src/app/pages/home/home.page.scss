@@ -8,8 +8,18 @@
   background-color: #e0e0e0;
   flex: 1;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
+  padding: 1rem;
+}
+
+.search-intro {
+  text-align: center;
+  margin-bottom: 1rem;
+  font-size: 2rem;
+  font-weight: 600;
+  color: var(--ion-color-dark);
 }
 
 .search-container {
@@ -17,84 +27,119 @@
   gap: 0.5rem;
   align-items: center;
   width: 80%;
-  max-width: 500px;
+  max-width: 600px;
 }
+
+
 
 .bottom-half {
   flex: 1;
   display: flex;
   flex-direction: column;
   padding: 1rem;
+  overflow-y: auto;
 }
 
 .page-title {
   text-align: center;
-  margin-bottom: 0.5rem;
-  font-size: 2.4rem;
+  margin-top: 2rem;;
+  margin-bottom: 2rem;
+  font-size: 3.4rem;
   font-weight: bold;
 }
 
+/* GRID DE CARDS */
 .about-grid {
-  flex: 1;
   display: flex;
-  flex-direction: column;
+  flex-direction: row; /* horizontal desktop */
+  gap: 2rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* Cada card */
+.about-card {
+  flex: 1 1 30%;
+  max-width: 350px;
+  background-color: var(--ion-color-light);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 1rem;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  }
 }
 
 .column-subtitle {
   font-size: 1.7rem;
   font-weight: bold;
-  margin-bottom: 0.3rem;
+  color: var(--ion-color-dark);
+  margin-bottom: 0.5rem;
 }
 
 .column-text {
   font-size: 1.2rem;
-  margin-top: 0.6rem;
+  color: var(--ion-color-dark);
 }
 
-
+/* Responsive para tablets */
 @media (max-width: 991px) {
   .page-title {
-    font-size: 1.6rem;
+    font-size: 2.4rem;
   }
-
   .column-subtitle {
-    font-size: 1.1rem;
+    font-size: 1.4rem;
   }
-
   .column-text {
-    margin-top: 0.5rem;
+    font-size: 1.1rem;
   }
 }
 
+/* Responsive para móviles */
 @media (max-width: 576px) {
   .page-title {
     font-size: 1.4rem;
-    margin-bottom: 0.4rem;
+    margin-bottom: 0.6rem;
+  }
+
+  .about-grid {
+    flex-direction: column; /* vertical */
+    align-items: center;
+    gap: 1.5rem;
+    padding: 0 1rem;
+  }
+
+  .bottom-half {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+    overflow-y: auto;
   }
 
   .column-subtitle {
     font-size: 1.3rem;
-    font-weight: bold;
-    margin-bottom: 0.2rem;
-  }
-
-  .column-text {
-    margin-top: 0.2rem;
-    padding: 0 1rem; 
     text-align: center;
   }
 
-  .about-grid ion-row {
-    gap: 1.5rem; 
+  .column-text {
+    font-size: 1rem;
+    text-align: center;
   }
-
 
   .search-container {
     flex-direction: column;
     width: 90%;
+    margin: 0 auto;
+    gap: 0.5rem;
   }
 
-  ion-col {
-    padding: 0 1rem;
+  .about-card {
+    width: 100%;
+    max-width: 500px;
+    flex: none;
   }
 }

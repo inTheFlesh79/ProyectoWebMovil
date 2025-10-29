@@ -139,4 +139,10 @@ export class CommunityPage implements OnInit {
     this.router.navigate(['/community-post', postId]);
   }
 
+  goToUserProfile(id: number) {
+    this.router.navigate(['/user-profile', id]);
+  }
+
+
+
 }

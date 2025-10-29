@@ -70,8 +70,11 @@
         </ion-label>
 
         <!-- 👤 Nombre + foto del usuario al lado derecho -->
-        <div slot="end" class="author">
-          <div class="author-name">{{ post.username || 'Usuario desconocido' }}</div>
+        <div class="author" style="cursor: pointer;" (click)="goToUserProfile(post.userid)">
+          <ion-label class="username clickable">
+            {{ post.username }}
+          </ion-label>
+
           <ion-avatar class="author-avatar">
             <img *ngIf="post.profilepicture; else defaultPic"
                 [src]="'data:image/jpeg;base64,' + post.profilepicture" />
@@ -80,7 +83,6 @@
             </ng-template>
           </ion-avatar>
         </div>
-
       </ion-item>
     </ion-list>
   </ion-card>

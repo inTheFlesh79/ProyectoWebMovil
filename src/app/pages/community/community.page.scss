@@ -50,8 +50,8 @@ ion-item {
 .author {
   display: flex;
   align-items: center;
+  justify-content: flex-end; /* mantiene todo a la derecha */
   gap: 8px;
-  white-space: nowrap;
 }
 
 .author-name {
@@ -66,3 +66,11 @@ ion-item {
   border-radius: 50%;
 }
 
+.username {
+  font-weight: bold;
+  color: var(--ion-color-primary);
+}
+
+.username:hover {
+  text-decoration: underline;
+}

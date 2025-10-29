@@ -77,7 +77,34 @@ const userController = {
       console.error(err);
       res.status(500).json({ error: 'Error eliminando usuario' });
     }
-  }
+  },
+
+  getUserProfile: async (req, res) => {
+    try {
+      const id = req.params.id;
+
+      // Obtener datos básicos del usuario
+      const user = await User.getById(id);
+      if (!user) return res.status(404).json({ error: 'Usuario no encontrado' });
+
+      // Obtener comentarios del usuario
+      const comments = await User.getUserComments(id);
+
+      // Obtener opiniones del usuario (reviews a profesores)
+      const reviews = await User.getUserReviews(id);
+
+      res.json({
+        user,
+        comments,
+        reviews
+      });
+
+    } catch (err) {
+      console.error('Error obteniendo perfil de usuario:', err);
+      res.status(500).json({ error: 'Error interno del servidor' });
+    }
+  },
+
 };
 
 module.exports = userController;

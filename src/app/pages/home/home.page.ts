@@ -25,4 +25,8 @@ export class HomePage {
       }
     });
   }
+
+  onEnterPress(event: KeyboardEvent) {
+    if (event.key === 'Enter') { this.onSearch(); }
+  }
 }

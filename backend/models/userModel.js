@@ -121,6 +121,41 @@ const User = {
     }
   },
 
+  // Comentarios realizados por el usuario
+getUserComments: async (userid) => {
+  try {
+    const query = `
+      SELECT c.commentid, c.content, c.date, c.likes, c.dislikes, c.postid
+      FROM comment c
+      WHERE c.userid = $1
+      ORDER BY c.date DESC;
+    `;
+    const { rows } = await pool.query(query, [userid]);
+    return rows;
+  } catch (err) {
+    console.error('Error obteniendo comentarios del usuario:', err);
+    throw err;
+  }
+},
+
+// Opiniones (reviews) realizadas por el usuario
+getUserReviews: async (userid) => {
+  try {
+    const query = `
+      SELECT r.reviewid, r.content, r.date, r.likes, r.dislikes, t.name AS teachername
+      FROM review r
+      JOIN teacherpage t ON r.teacherpageid = t.teacherpageid
+      WHERE r.userid = $1
+      ORDER BY r.date DESC;
+    `;
+    const { rows } = await pool.query(query, [userid]);
+    return rows;
+  } catch (err) {
+    console.error('Error obteniendo opiniones del usuario:', err);
+    throw err;
+  }
+},
+
 };
 
 module.exports = User;
