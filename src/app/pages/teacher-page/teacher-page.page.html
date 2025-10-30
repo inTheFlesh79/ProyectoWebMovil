@@ -16,21 +16,21 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content color="light">
+<ion-content color="light" *ngIf="teacher && ratings; else loadingTemplate">
   <ion-card color="light" class="profile-card">
     <ion-card-content>
       <div class="profile-container">
         <!-- Foto + info en un div separado -->
         <div class="profile-left">
           <img 
-            [src]="teacher.profilePicture" 
+            [src]="teacher?.profilepicture || 'assets/default-profile.png'" 
             alt="Foto del profesor" 
             class="profile-photo"
           />
 
           <div class="profile-info">
-            <h2>{{ teacher.name }}</h2>
-            <p class="institution">{{ teacher.institution }}</p>
+            <h2>{{ teacher?.name }}</h2>
+            <p class="institution">{{ teacher?.institution }}</p>
           </div>
         </div>
 
@@ -42,7 +42,7 @@
       </div>
 
       <!-- Descripción o contenido del profesor -->
-      <p class="teacher-content">{{ teacher.content }}</p>
+      <p class="teacher-content">{{ teacher?.content }}</p>
     </ion-card-content>
   </ion-card>
 
@@ -54,10 +54,10 @@
         <div class="rating-item">
           <div class="rating-header">
             <p class="rating-title">Calidad de la enseñanza</p>
-            <span class="rating-value">{{ ratings.teaching | number:'1.1-1' }} / 7</span>
+            <span class="rating-value">{{ ratings?.teaching | number:'1.1-1' }} / 7</span>
           </div>
           <div class="rating-bar">
-            <div class="rating-fill blue" [style.width.%]="(ratings.teaching / 7) * 100"></div>
+            <div class="rating-fill blue" [style.width.%]="(ratings?.teaching / 7) * 100"></div>
           </div>
         </div>
 
@@ -65,10 +65,10 @@
         <div class="rating-item">
           <div class="rating-header">
             <p class="rating-title">Trato con el estudiante</p>
-            <span class="rating-value">{{ ratings.student | number:'1.1-1' }} / 7</span>
+            <span class="rating-value">{{ ratings?.student | number:'1.1-1' }} / 7</span>
           </div>
           <div class="rating-bar">
-            <div class="rating-fill yellow" [style.width.%]="(ratings.student / 7) * 100"></div>
+            <div class="rating-fill yellow" [style.width.%]="(ratings?.student / 7) * 100"></div>
           </div>
         </div>
 
@@ -76,10 +76,10 @@
         <div class="rating-item">
           <div class="rating-header">
             <p class="rating-title">Dificultad de la asignatura</p>
-            <span class="rating-value">{{ ratings.difficulty | number:'1.1-1' }} / 7</span>
+            <span class="rating-value">{{ ratings?.difficulty | number:'1.1-1' }} / 7</span>
           </div>
           <div class="rating-bar">
-            <div class="rating-fill green" [style.width.%]="(ratings.difficulty / 7) * 100"></div>
+            <div class="rating-fill green" [style.width.%]="(ratings?.difficulty / 7) * 100"></div>
           </div>
         </div>
 
@@ -102,11 +102,13 @@
             <span class="student-name">{{ review.username }}</span>
             <span class="comment-date">{{ review.date | date:'dd/MM/yyyy' }}</span>
           </div>
-          <img
-            [src]="review.profilepicture ? ('data:image/jpeg;base64,' + review.profilepicture) : 'assets/default-profile.png'"
-            alt="Foto estudiante"
-            class="student-photo"
-          />
+          <ion-avatar class="author-avatar">
+            <img *ngIf="review.profilepicture; else defaultPic"
+                [src]="'data:image/jpeg;base64,' + review.profilepicture" />
+            <ng-template #defaultPic>
+              <img src="assets/default-profile.png" />
+            </ng-template>
+          </ion-avatar>
         </div>
       </div>
 
@@ -128,3 +130,10 @@
   </ion-card-content>
 </ion-card>
 </ion-content>
+
+<ng-template #loadingTemplate>
+  <ion-content color="light">
+    <ion-spinner name="crescent" style="margin: 20px auto; display: block;"></ion-spinner>
+  </ion-content>
+</ng-template>
+
