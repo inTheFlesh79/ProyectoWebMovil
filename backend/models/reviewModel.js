@@ -103,7 +103,29 @@ const Review = {
       console.error('Error eliminando review:', err);
       throw err;
     }
+  },
+
+  getByTeacherPage: async (teacherPageId) => {
+    const query = `
+      SELECT 
+        r.reviewid,
+        r.date,
+        r.likes,
+        r.dislikes,
+        r.content,
+        r.teacherpageid,
+        r.userid,
+        u.username,
+        u.profilepicture
+      FROM Review r
+      LEFT JOIN Users u ON r.userid = u.userid
+      WHERE r.teacherpageid = $1
+      ORDER BY r.date DESC;
+    `;
+    const { rows } = await pool.query(query, [teacherPageId]);
+    return rows;
   }
+
 };
 
 module.exports = Review;

@@ -20,6 +20,15 @@ export class SearchResultsPage implements OnInit {
     console.log('Resultados recibidos:', this.results);
   }
 
+  openResult(item: any) {
+    if (item.teacherpageid) {
+      this.router.navigate(['/teacher-page', item.teacherpageid]);
+    } else if (item.eduid) {
+      console.log('Institución clickeada:', item.eduname);
+      // más adelante podrías redirigir a su propia página
+    }
+  }
+
   goToProfile() {
     const user = this.authService.getUser();
 

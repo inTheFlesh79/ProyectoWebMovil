@@ -54,7 +54,7 @@
         <div class="rating-item">
           <div class="rating-header">
             <p class="rating-title">Calidad de la enseñanza</p>
-            <span class="rating-value">{{ ratings.teaching }}/7</span>
+            <span class="rating-value">{{ ratings.teaching | number:'1.1-1' }} / 7</span>
           </div>
           <div class="rating-bar">
             <div class="rating-fill blue" [style.width.%]="(ratings.teaching / 7) * 100"></div>
@@ -65,7 +65,7 @@
         <div class="rating-item">
           <div class="rating-header">
             <p class="rating-title">Trato con el estudiante</p>
-            <span class="rating-value">{{ ratings.student }}/7</span>
+            <span class="rating-value">{{ ratings.student | number:'1.1-1' }} / 7</span>
           </div>
           <div class="rating-bar">
             <div class="rating-fill yellow" [style.width.%]="(ratings.student / 7) * 100"></div>
@@ -76,10 +76,10 @@
         <div class="rating-item">
           <div class="rating-header">
             <p class="rating-title">Dificultad de la asignatura</p>
-            <span class="rating-value">{{ ratings.difficulty }}/5</span>
+            <span class="rating-value">{{ ratings.difficulty | number:'1.1-1' }} / 7</span>
           </div>
           <div class="rating-bar">
-            <div class="rating-fill green" [style.width.%]="(ratings.difficulty / 5) * 100"></div>
+            <div class="rating-fill green" [style.width.%]="(ratings.difficulty / 7) * 100"></div>
           </div>
         </div>
 
@@ -87,39 +87,43 @@
     </ion-card-content>
   </ion-card>
 
-  <!-- COMENTARIOS DE ESTUDIANTES -->
+<!-- RESEÑAS DE ESTUDIANTES -->
 <ion-card color="light" class="comments-card">
   <ion-card-content>
     <h3 class="comments-title">Reseñas de estudiantes</h3>
 
-    <!-- Comentarios iterativos -->
-    <div class="comment-item" *ngFor="let comment of comments">
+    <!-- Reseñas iterativas -->
+    <div class="comment-item" *ngFor="let review of reviews">
       <div class="comment-header">
-        <span class="comment-rating">Calificación: {{ comment.rating }}</span>
+        <span class="comment-rating">Calificación: {{ review.rating ? (review.rating | number:'1.1-1') : 'N/A' }}</span>
 
         <div class="comment-user-right">
           <div class="user-info">
-            <span class="student-name">{{ comment.studentName }}</span>
-            <span class="comment-date">{{ comment.date }}</span>
+            <span class="student-name">{{ review.username }}</span>
+            <span class="comment-date">{{ review.date | date:'dd/MM/yyyy' }}</span>
           </div>
-          <img [src]="comment.studentPhoto" alt="Foto estudiante" class="student-photo" />
+          <img
+            [src]="review.profilepicture ? ('data:image/jpeg;base64,' + review.profilepicture) : 'assets/default-profile.png'"
+            alt="Foto estudiante"
+            class="student-photo"
+          />
         </div>
       </div>
 
-      <p class="comment-content">{{ comment.content }}</p>
+      <p class="comment-content">{{ review.content }}</p>
 
       <div class="comment-footer">
-        <ion-button fill="clear" size="small" (click)="likeComment(comment)">
+        <ion-button fill="clear" size="small" (click)="likeComment(review)">
           <ion-icon name="thumbs-up-outline"></ion-icon>
-          <span>{{ comment.likes }}</span>
+          <span>{{ review.likes }}</span>
         </ion-button>
 
-        <ion-button fill="clear" size="small" (click)="dislikeComment(comment)">
+        <ion-button fill="clear" size="small" (click)="dislikeComment(review)">
           <ion-icon name="thumbs-down-outline"></ion-icon>
-          <span>{{ comment.dislikes }}</span>
+          <span>{{ review.dislikes }}</span>
         </ion-button>
       </div>
-    </div> <!-- FIN comment-item -->
+    </div> <!-- FIN review-item -->
   </ion-card-content>
 </ion-card>
 </ion-content>

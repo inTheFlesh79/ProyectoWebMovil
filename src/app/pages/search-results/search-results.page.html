@@ -25,10 +25,15 @@
     <ng-container *ngIf="results && (results.institutions.length || results.teachers.length); else noResults">
 
       <!-- Instituciones -->
-      <ion-card *ngFor="let item of results.institutions">
+      <ion-card
+        button="true"
+        (click)="openResult(item)"
+        *ngFor="let item of results.institutions"
+        class="clickable-card"
+      >
         <ion-card-header>
           <ion-card-subtitle color="medium">Institución</ion-card-subtitle>
-          <ion-card-title color="primary">{{ item.eduname }}</ion-card-title>
+          <ion-card-title class="name">{{ item.eduname }}</ion-card-title>
         </ion-card-header>
         <ion-card-content>
           <p>{{ item.address }}</p>
@@ -36,10 +41,15 @@
       </ion-card>
 
       <!-- Profesores -->
-      <ion-card *ngFor="let item of results.teachers">
+      <ion-card
+        button="true"
+        (click)="openResult(item)"
+        *ngFor="let item of results.teachers" 
+        class="clickable-card"
+      >
         <ion-card-header>
           <ion-card-subtitle color="medium">Profesor</ion-card-subtitle>
-          <ion-card-title color="secondary">{{ item.name }}</ion-card-title>
+          <ion-card-title class="name">{{ item.name }}</ion-card-title>
         </ion-card-header>
         <ion-card-content>
           <p>{{ item.content }}</p>

@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { TeacherService } from '../../services/teacher.service';
 
 @Component({
   selector: 'app-teacher-page',
@@ -7,13 +9,71 @@ import { Component, OnInit } from '@angular/core';
   standalone: false
 })
 export class TeacherPage implements OnInit {
+  teacher: any = null;
+  ratings: any = null;
+  reviews: any[] = [];
 
-  teacher = {
-    profilePicture: 'assets/default-profile.png',
-    name: 'Profesor Ejemplo',
-    institution: 'Universidad de Valparaíso',
-    content: 'Este es un ejemplo de descripción del profesor.'
-  };
+  constructor(
+    private route: ActivatedRoute,
+    private teacherService: TeacherService
+  ) {}
+
+  ngOnInit() {
+    const teacherId = Number(this.route.snapshot.paramMap.get('id'));
+    console.log('Cargando profesor con ID:', teacherId);
+
+    this.loadTeacherData(teacherId);
+  }
+
+  loadTeacherData(id: number) {
+    // 1️⃣ Cargar datos del profesor
+    this.teacherService.getTeacherPageById(id).subscribe({
+      next: (data) => {
+        console.log('Profesor cargado:', data);
+        this.teacher = data;
+      },
+      error: (err) => console.error('Error al obtener profesor:', err)
+    });
+
+    // 2️⃣ Cargar promedios de rating
+    this.teacherService.getTeacherAverage(id).subscribe({
+      next: (avg) => {
+        console.log('Promedios cargados:', avg);
+        this.ratings = {
+          teaching: Number(avg.avg_quality) || 0,
+          student: Number(avg.avg_politeness) || 0,
+          difficulty: Number(avg.avg_difficulty) || 0
+        };
+      },
+      error: (err) => console.error('Error al obtener promedio:', err)
+    });
+
+    this.teacherService.getTeacherReviews(id).subscribe((reviewsData) => {
+      console.log('Reseñas cargadas:', reviewsData);
+      this.reviews = reviewsData;
+
+      // 🔽 Obtener todas las calificaciones
+      this.teacherService.getAllTeacherRatings().subscribe((ratingsData) => {
+        console.log('Ratings cargados:', ratingsData);
+
+        // Asignar promedio de cada usuario a su reseña correspondiente
+        this.reviews.forEach((review) => {
+          const userRatings = ratingsData.filter(
+            (r: any) => Number(r.userid) === Number(review.userid)
+          );
+
+          if (userRatings.length > 0) {
+            const r = userRatings[0]; // cada usuario debería tener 1 rating por profesor
+            const avg = (r.teachingpoliteness + r.teachingquality + r.teachingdifficulty) / 3;
+            review.rating = avg.toFixed(1); // redondear a un decimal
+          } else {
+            review.rating = null;
+          }
+        });
+      });
+    });
+
+  }
 
   likeComment(comment: any) {
     comment.likes++;
@@ -22,40 +82,4 @@ export class TeacherPage implements OnInit {
   dislikeComment(comment: any) {
     comment.dislikes++;
   }
-
-
-
-  comments = [
-  {
-    id: 1,
-    studentName: 'Juan Pérez',
-    studentPhoto: 'assets/default-profile.png',
-    date: '21/10/2025',
-    content: 'Excelente profesor, explica muy claro.',
-    rating: 4.2, // 👈 Agrega esto
-    likes: 12,
-    dislikes: 2
-  },
-  {
-    id: 2,
-    studentName: 'María López',
-    studentPhoto: 'assets/default-profile.png',
-    date: '20/10/2025',
-    content: 'Clases muy completas, aunque a veces algo rápidas.',
-    rating: 5.0, // 👈 También aquí
-    likes: 8,
-    dislikes: 1
-  }
-];
-
-
-  ratings = {
-    teaching: 1,   // 1 a 7
-    student: 3,    // 1 a 7
-    difficulty: 5  // 1 a 7
-  };
-
-  constructor() {}
-
-  ngOnInit() {}
 }
