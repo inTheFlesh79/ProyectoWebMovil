@@ -4,7 +4,7 @@ import { TeacherPage } from './teacher-page.page';
 
 const routes: Routes = [
   {
-    path: ':id',
+    path: '',
     component: TeacherPage
   }
 ];

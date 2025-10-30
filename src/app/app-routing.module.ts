@@ -20,7 +20,7 @@ const routes: Routes = [
     loadChildren: () => import('./pages/home/home.module').then( m => m.HomePageModule)
   },
   {
-    path: 'teacher-page',
+    path: 'teacher-page/:id',
     loadChildren: () => import('./pages/teacher-page/teacher-page.module').then( m => m.TeacherPageModule)
   },
   {
@@ -48,7 +48,7 @@ const routes: Routes = [
     loadChildren: () => import('./pages/user-profile/user-profile.module').then(m => m.UserProfilePageModule)
   },
   {
-    path: 'teacher-review',
+    path: 'teacher-review/:id',
     loadChildren: () => import('./pages/teacher-review/teacher-review.module').then(m => m.TeacherReviewPageModule)
   },
 

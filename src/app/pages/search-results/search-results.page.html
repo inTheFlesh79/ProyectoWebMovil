@@ -42,10 +42,12 @@
 
       <!-- Profesores -->
       <ion-card
-        button="true"
-        (click)="openResult(item)"
         *ngFor="let item of results.teachers" 
+        button="true"
+        [routerLink]="['/teacher-page', item.teacherpageid]"
         class="clickable-card"
+        routerDirection="forward"
+        detail="false"
       >
         <ion-card-header>
           <ion-card-subtitle color="medium">Profesor</ion-card-subtitle>

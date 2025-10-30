@@ -1,9 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const reviewController = require('../controllers/reviewController');
+const auth = require('../middleware/authMiddleware');
 
 // Endpoints básicos CRUD
-router.post('/', reviewController.createReview);
+router.post('/', auth, reviewController.createReview);
 router.get('/', reviewController.getReviews);
 router.get('/:id', reviewController.getReviewById);
 router.put('/:id', reviewController.updateReview);

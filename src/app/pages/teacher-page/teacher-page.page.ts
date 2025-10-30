@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { ActivatedRoute } from '@angular/router';
 import { TeacherService } from '../../services/teacher.service';
+import { AuthService } from 'src/app/services/auth.service';
+import { TeacherReviewService } from 'src/app/services/teacher-review.service';
 
 @Component({
   selector: 'app-teacher-page',
@@ -12,10 +15,14 @@ export class TeacherPage implements OnInit {
   teacher: any = null;
   ratings: any = null;
   reviews: any[] = [];
+  reviewVoting: Record<number, boolean> = {};
 
   constructor(
     private route: ActivatedRoute,
-    private teacherService: TeacherService
+    private router: Router,
+    private teacherReviewService: TeacherReviewService,
+    private teacherService: TeacherService,
+    private authService: AuthService
   ) {}
 
   ngOnInit() {
@@ -75,11 +82,59 @@ export class TeacherPage implements OnInit {
 
   }
 
-  likeComment(comment: any) {
-    comment.likes++;
+  goToReview() {
+    const user = this.authService.getUser(); // o el método que uses para obtener el usuario logueado
+    const teacherId = this.teacher?.teacherpageid; // ajusta según cómo tengas la data
+
+    if (!teacherId) return;
+
+    if (!user) {
+      // No está logueado → redirigir a login
+      this.router.navigate(['/login']);
+    } else {
+      // Logueado → ir a pantalla de calificación
+      this.router.navigate(['/teacher-review', teacherId]);
+    }
   }
 
-  dislikeComment(comment: any) {
-    comment.dislikes++;
+  onReviewVote(review: any, type: 'like' | 'dislike') {
+    const token = this.authService.getToken();
+    if (!token) {
+      this.router.navigate(['/login']);
+      return;
+    }
+
+    const id = Number(review.reviewid || review.id);
+    if (!id) return;
+
+    if (this.reviewVoting[id]) return;
+    this.reviewVoting[id] = true;
+
+    // Optimista (local)
+    const prevLikes = review.likes || 0;
+    const prevDislikes = review.dislikes || 0;
+
+    // Si quieres toggling con memoria local necesitarías conocer si el usuario ya votó; para simplificar:
+    if (type === 'like') review.likes = (review.likes || 0) + 1;
+    if (type === 'dislike') review.dislikes = (review.dislikes || 0) + 1;
+
+    const rollback = () => {
+      review.likes = prevLikes;
+      review.dislikes = prevDislikes;
+      this.reviewVoting[id] = false;
+    };
+
+    this.teacherReviewService.voteReview(id, type, token).subscribe({
+      next: (totals) => {
+        // sincroniza con DB
+        review.likes = totals.likes;
+        review.dislikes = totals.dislikes;
+        this.reviewVoting[id] = false;
+      },
+      error: (err) => {
+        console.error('Error votando review:', err);
+        rollback();
+      }
+    });
   }
 }

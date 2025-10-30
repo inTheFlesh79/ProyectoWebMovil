@@ -35,7 +35,7 @@
         </div>
 
         <!-- Botón Calificar a la derecha -->
-        <ion-button color="secondary" [routerLink]="['/teacher-review']">
+        <ion-button color="secondary" (click)="goToReview()">
           <ion-icon name="heart-outline" slot="start"></ion-icon>
           Calificar
         </ion-button>
@@ -112,13 +112,14 @@
 
       <p class="comment-content">{{ review.content }}</p>
 
+      <!-- dentro del *ngFor="let review of reviews" -->
       <div class="comment-footer">
-        <ion-button fill="clear" size="small" (click)="likeComment(review)">
+        <ion-button fill="clear" size="small" (click)="onReviewVote(review, 'like')">
           <ion-icon name="thumbs-up-outline"></ion-icon>
           <span>{{ review.likes }}</span>
         </ion-button>
 
-        <ion-button fill="clear" size="small" (click)="dislikeComment(review)">
+        <ion-button fill="clear" size="small" (click)="onReviewVote(review, 'dislike')">
           <ion-icon name="thumbs-down-outline"></ion-icon>
           <span>{{ review.dislikes }}</span>
         </ion-button>
