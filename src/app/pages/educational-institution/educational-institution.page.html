@@ -9,7 +9,9 @@
           <ion-button fill="clear" color="light" [routerLink]="['/community']">Comunidad</ion-button>
         </ion-col>
         <ion-col class="ion-text-center">
-          <ion-button fill="clear" color="light" [routerLink]="['/login']">Perfil</ion-button>
+          <ion-button fill="clear" color="light" (click)="goToProfile()">
+            Perfil
+          </ion-button>
         </ion-col>
       </ion-row>
     </ion-grid>
@@ -21,8 +23,8 @@
     <!-- Tarjeta de la institución -->
     <ion-card color="light" class="institution-card">
       <ion-card-content>
-        <h2 class="institution-name">{{ institution.name }}</h2>
-        <p class="institution-address">{{ institution.address }}</p>
+        <h2 class="institution-name">{{ institution?.eduname }}</h2>
+        <p class="institution-address">{{ institution?.address }}</p>
       </ion-card-content>
     </ion-card>
 
@@ -34,7 +36,11 @@
         <div class="comment-item" *ngFor="let prof of professors">
           <div class="comment-user-right">
             <!-- Foto del profesor -->
-            <img [src]="prof.photo" alt="Foto profesor" class="student-photo" />
+            <img
+              [src]="prof.profilepicture ? ('data:image/jpeg;base64,' + prof.profilepicture) : 'assets/default-profile.png'"
+              alt="Foto profesor"
+              class="student-photo"
+            />
 
             <!-- Nombre y descripción -->
             <div class="user-info">
@@ -43,9 +49,15 @@
             </div>
 
             <!-- Botón de perfil -->
-            <ion-button class="profile-btn" color="secondary" fill="outline">
+            <ion-button
+              class="profile-btn"
+              color="secondary"
+              fill="outline"
+              (click)="goToTeacherPage(prof)"
+            >
               Perfil
             </ion-button>
+
           </div>
         </div>
 

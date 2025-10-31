@@ -8,5 +8,6 @@ router.get('/:id', eduController.getInstitutionById);        // GET  /api/educat
 router.put('/:id', eduController.replaceInstitution);        // PUT  /api/educational-institutions/:id
 router.patch('/:id', eduController.updateInstitution);       // PATCH /api/educational-institutions/:id
 router.delete('/:id', eduController.deleteInstitution);      // DELETE /api/educational-institutions/:id
+router.get('/:id/teachers', eduController.getTeachersByInstitution);
 
 module.exports = router;

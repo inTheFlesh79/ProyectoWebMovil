@@ -25,7 +25,7 @@ export class SearchResultsPage implements OnInit {
       this.router.navigate(['/teacher-page', item.teacherpageid]);
     } else if (item.eduid) {
       console.log('Institución clickeada:', item.eduname);
-      // más adelante podrías redirigir a su propia página
+      this.router.navigate(['/educational-institution', item.eduid]);
     }
   }
 

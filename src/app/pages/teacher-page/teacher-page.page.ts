@@ -137,4 +137,16 @@ export class TeacherPage implements OnInit {
       }
     });
   }
+
+  goToProfile() {
+    const user = this.authService.getUser();
+
+    if (user && user.id) {
+      // ✅ Usuario logueado → ir a su perfil
+      this.router.navigate(['/user-profile', user.id]);
+    } else {
+      // 🚪 No logueado → ir a login
+      this.router.navigate(['/login']);
+    }
+  }
 }

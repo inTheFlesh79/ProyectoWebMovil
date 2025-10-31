@@ -1,3 +1,4 @@
+const pool = require('../config/db');
 const EducationalInstitution = require('../models/educationalInstitutionModel');
 
 const eduController = {
@@ -67,7 +68,28 @@ const eduController = {
       console.error('deleteInstitution error:', err);
       return res.status(500).json({ error: 'Error eliminando institución' });
     }
-  }
+  },
+
+  getTeachersByInstitution: async (req, res) => {
+    try {
+      const eduId = req.params.id;
+
+      const query = `
+        SELECT tp.teacherpageid, tp.name, tp.content, tp.profilepicture
+        FROM teacherpage tp
+        INNER JOIN edutea et ON tp.teacherpageid = et.teacherpageid
+        WHERE et.eduid = $1
+        ORDER BY tp.name ASC;
+      `;
+
+      const { rows } = await pool.query(query, [eduId]);
+      return res.json(rows);
+    } catch (err) {
+      console.error('getTeachersByInstitution error:', err);
+      return res.status(500).json({ error: 'Error obteniendo profesores de la institución' });
+    }
+  },
+
 };
 
 module.exports = eduController;
