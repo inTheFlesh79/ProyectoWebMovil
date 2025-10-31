@@ -1,16 +1,11 @@
 const express = require('express');
 const router = express.Router();
 
-const teacherPageController = require('../controllers/teacherPageController');
-const eduController = require('../controllers/educationalInstitutionController');
+// uso de operaciones CRUD a través de endpoints RESTful
 
-// 🔍 Ruta de búsqueda general
 router.get('/', async (req, res) => {
   try {
     const query = req.query.query?.toLowerCase() || '';
-
-    // Usar métodos existentes de los controladores si ofrecen búsqueda
-    // Pero si no la tienen, puedes usar sus modelos directamente
     const TeacherPage = require('../models/teacherPageModel');
     const EducationalInstitution = require('../models/educationalInstitutionModel');
 

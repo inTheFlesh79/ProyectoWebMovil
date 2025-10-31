@@ -3,7 +3,8 @@ const router = express.Router();
 const commentController = require('../controllers/commentController');
 const auth = require('../middleware/authMiddleware');
 
-// 🔹 Rutas más específicas primero
+// uso de operaciones CRUD a través de endpoints RESTful
+
 router.get('/teacher/:teacherPageId/all', commentController.getCommentsByTeacher);
 router.get('/post/:postId', commentController.getCommentsByPostId);
 

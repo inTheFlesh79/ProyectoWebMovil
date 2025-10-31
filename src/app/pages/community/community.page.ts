@@ -81,7 +81,22 @@ export class CommunityPage implements OnInit {
   }
 
   goToUserProfile(id: number) {
+    const token = this.authService.getToken();
+    if (!token) {
+      this.router.navigate(['/login']);
+      return;
+    }
     this.router.navigate(['/user-profile', id]);
+  }
+
+  goToCreatePost() {
+    const token = this.authService.getToken();
+    if (!token) {
+      this.router.navigate(['/login']);
+      return;
+    }
+
+    this.router.navigate(['/create-post']);
   }
 
   goToProfile() {

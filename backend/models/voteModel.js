@@ -12,11 +12,11 @@ const Vote = {
       if (existing.rows.length > 0) {
         const previous = existing.rows[0];
         if (previous.vote_type === vote_type) {
-          // Mismo voto → no hacer nada
+          // Mismo voto
           return { message: 'Voto ya registrado', changed: false };
         }
 
-        // Cambia el voto (de like a dislike o viceversa)
+        // Cambiar el voto (de like a dislike o viceversa)
         await pool.query(
           'UPDATE Votes SET vote_type = $1 WHERE postid = $2 AND userid = $3',
           [vote_type, postid, userid]
@@ -29,7 +29,7 @@ const Vote = {
         );
       }
 
-      // 🔹 Recalcular los likes/dislikes totales para ese post
+      // Recalcular los likes/dislikes totales para ese post
       const counts = await pool.query(`
         SELECT
           SUM(CASE WHEN vote_type = 'like' THEN 1 ELSE 0 END) AS likes,
@@ -37,7 +37,7 @@ const Vote = {
         FROM Votes WHERE postid = $1
       `, [postid]);
 
-      // 🔹 Actualizar el post, preservando su fecha original
+      // Actualizar el post, preservando su fecha original
       await pool.query(
         `UPDATE Post 
          SET likes = $1, 

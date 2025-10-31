@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
+// uso de HttpClient para realizar solicitudes HTTP
+
 @Injectable({
   providedIn: 'root'
 })

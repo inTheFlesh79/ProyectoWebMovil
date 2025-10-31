@@ -124,7 +124,7 @@ const Comment = {
     }
   },
 
-  // (Opcional) Buscar comentarios de una página de profesor
+  // Buscar comentarios de una página de profesor
   findByTeacherPage: async (teacherPageId) => {
     try {
       const { rows } = await pool.query(

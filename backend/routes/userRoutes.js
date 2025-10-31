@@ -2,7 +2,8 @@ const express = require('express');
 const router = express.Router();
 const userController = require('../controllers/userController');
 
-// Rutas RESTful
+// uso de operaciones CRUD a través de endpoints RESTful
+
 router.get('/', userController.getUsers);        // GET todos los usuarios
 router.get('/:id', userController.getUserById);  // GET usuario por ID
 router.post('/', userController.createUser);     // POST crear nuevo usuario

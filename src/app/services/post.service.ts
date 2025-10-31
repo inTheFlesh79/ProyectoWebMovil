@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
+// uso de HttpClient para realizar solicitudes HTTP
+
 @Injectable({
   providedIn: 'root'
 })
@@ -13,30 +15,28 @@ export class PostService {
 
   constructor(private http: HttpClient) {}
 
-  // 🔹 Obtener todos los posts
+  // btener todos los posts
   getPosts(): Observable<any[]> {
     return this.http.get<any[]>(this.apiUrl);
   }
 
-  // 🔹 Obtener un post por ID
+  // Obtener un post por ID
   getPostById(id: number): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/${id}`);
   }
 
-  // 🔹 Obtener comentarios del post
+  // Obtener comentarios del post
   getCommentsByPostId(postId: number): Observable<any[]> {
     return this.http.get<any[]>(`${this.commentUrl}/post/${postId}`);
   }
 
-  // 🔹 Crear un nuevo comentario
-  // En post.service.ts
+  // Crear un nuevo comentario
   createComment(postId: number, content: string, token: string) {
     const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
-    // Solo mandamos lo mínimo: el server tomará req.user.id
     return this.http.post<any>(this.commentUrl, { postId, content }, { headers });
   }
 
-
+  // Votar post
   vote(postid: number, vote_type: 'like' | 'dislike', token: string): Observable<any> {
     const headers = new HttpHeaders({
       Authorization: `Bearer ${token}`,
@@ -44,11 +44,13 @@ export class PostService {
     return this.http.post<any>(this.voteUrl, { postid, vote_type }, { headers });
   }
 
+  // Votar comentario
   voteComment(commentid: number, vote_type: 'like' | 'dislike', token: string) {
     const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
     return this.http.post<any>(this.commentVoteUrl, { commentid, vote_type }, { headers });
   }
 
+  // Crear post
   createPost(title: string, content: string, token: string): Observable<any> {
     const headers = new HttpHeaders({
       Authorization: `Bearer ${token}`,

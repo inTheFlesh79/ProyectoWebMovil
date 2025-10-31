@@ -3,7 +3,7 @@ const pool = require('../config/db');
 const ReviewVote = {
   registerVote: async (userid, reviewid, vote_type) => {
     try {
-      // ¿Ya existe voto de este usuario?
+      // ver si existe voto del usuario
       const existing = await pool.query(
         'SELECT vote_type FROM ReviewVotes WHERE reviewid = $1 AND userid = $2',
         [reviewid, userid]
@@ -11,13 +11,13 @@ const ReviewVote = {
 
       if (existing.rows.length > 0) {
         if (existing.rows[0].vote_type === vote_type) {
-          // mismo voto → toggle OFF (elimina)
+          // mismo voto
           await pool.query(
             'DELETE FROM ReviewVotes WHERE reviewid = $1 AND userid = $2',
             [reviewid, userid]
           );
         } else {
-          // cambia like <-> dislike
+          // cambia like/dislike
           await pool.query(
             'UPDATE ReviewVotes SET vote_type = $1 WHERE reviewid = $2 AND userid = $3',
             [vote_type, reviewid, userid]

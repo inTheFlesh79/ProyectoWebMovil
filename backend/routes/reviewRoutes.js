@@ -3,7 +3,8 @@ const router = express.Router();
 const reviewController = require('../controllers/reviewController');
 const auth = require('../middleware/authMiddleware');
 
-// Endpoints básicos CRUD
+// uso de operaciones CRUD a través de endpoints RESTful
+
 router.post('/', auth, reviewController.createReview);
 router.get('/', reviewController.getReviews);
 router.get('/:id', reviewController.getReviewById);

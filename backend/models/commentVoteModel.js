@@ -10,10 +10,10 @@ const CommentVote = {
 
       if (existing.rows.length > 0) {
         if (existing.rows[0].vote_type === vote_type) {
-          // mismo voto -> quitar (toggle off)
+          // mismo voto
           await pool.query('DELETE FROM CommentVotes WHERE commentid = $1 AND userid = $2', [commentid, userid]);
         } else {
-          // cambiar de like <-> dislike
+          // cambiar de like/dislike
           await pool.query(
             'UPDATE CommentVotes SET vote_type = $1 WHERE commentid = $2 AND userid = $3',
             [vote_type, commentid, userid]

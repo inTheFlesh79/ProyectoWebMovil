@@ -31,7 +31,7 @@
       (ionInput)="buscarPublicaciones()">
     </ion-searchbar>
 
-    <ion-button fill="solid" color="primary" class="create-button" [routerLink]="['/create-post']">
+    <ion-button fill="solid" color="primary" class="create-button" (click)="goToCreatePost()">
       <ion-icon slot="start" name="pencil"></ion-icon>
       Crear Publicación
     </ion-button>

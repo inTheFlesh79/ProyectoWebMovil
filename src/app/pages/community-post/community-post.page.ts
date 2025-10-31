@@ -69,10 +69,13 @@ export class CommunityPostPage implements OnInit {
   }
 
   sendComment() {
+    const token = this.authService.getToken();
+    if (!token) {
+      this.router.navigate(['/login']);
+      return;
+    }
     const text = this.newComment.trim();
     if (!text || !this.post?.postid) return;
-
-    const token = this.authService.getToken();
 
     this.postService.createComment(this.post.postid, text, token!).subscribe({
       next: (created) => {

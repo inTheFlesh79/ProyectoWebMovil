@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const eduController = require('../controllers/educationalInstitutionController');
 
+// uso de operaciones CRUD a través de endpoints RESTful
+
 router.post('/', eduController.createInstitution);           // POST /api/educational-institutions
 router.get('/', eduController.getInstitutions);              // GET  /api/educational-institutions
 router.get('/:id', eduController.getInstitutionById);        // GET  /api/educational-institutions/:id

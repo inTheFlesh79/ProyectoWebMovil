@@ -3,8 +3,9 @@ const { body } = require('express-validator');
 const authController = require('../controllers/authController');
 const auth = require('../middleware/authMiddleware');
 const validate = require('../middleware/validate');
-
 const router = express.Router();
+
+// uso de operaciones CRUD para registro y login de usuario
 
 // Registro
 router.post(
@@ -14,7 +15,7 @@ router.post(
     body('correo').isEmail().withMessage('correo inválido'),
     body('password').isLength({ min: 6 }).withMessage('password muy corta')
   ],
-  validate,  // 👈 agrega este middleware aquí
+  validate,
   authController.register
 );
 
@@ -25,7 +26,7 @@ router.post(
     body('correo').isEmail().withMessage('correo inválido'),
     body('password').notEmpty().withMessage('password requerida')
   ],
-  validate,  // 👈 y también aquí
+  validate,
   authController.login
 );
 
