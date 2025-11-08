@@ -1,3 +1,4 @@
+/* 📏 Ajustes generales */
 .responsive-square-card {
   width: 100%;
   max-width: 1250px;
@@ -13,6 +14,7 @@
   height: 100%;          
 }
 
+/* 🔍 Barra de búsqueda + botón Crear */
 .search-button-container {
   display: flex;
   gap: 10px;           
@@ -34,6 +36,14 @@
   min-width: 100px;  
 }
 
+/* 📋 Publicaciones */
+.post-list-card {
+  width: 100%;
+  max-width: 1250px;  /* Igual que barra superior */
+  margin: 15px auto;
+  padding: 0 5px;
+}
+
 ion-item {
   align-items: flex-start;
   --padding-start: 10px;
@@ -50,7 +60,7 @@ ion-item {
 .author {
   display: flex;
   align-items: center;
-  justify-content: flex-end; /* mantiene todo a la derecha */
+  justify-content: flex-end;
   gap: 8px;
 }
 
@@ -68,9 +78,26 @@ ion-item {
 
 .username {
   font-weight: bold;
-  color: var(--ion-color-primary);
+  color: var(--ion-color-secondary);
 }
 
 .username:hover {
   text-decoration: underline;
+}
+
+/* 🎛️ Estilo para centrar verticalmente texto del popover */
+ion-popover ion-item {
+  --min-height: 44px;
+  display: flex;
+  align-items: center;
+}
+
+ion-popover ion-label {
+  margin: 0;
+}
+
+.vote-number {
+  color: var(--ion-color-secondary);
+  font-weight: 500;
+  margin-left: 4px;
 }

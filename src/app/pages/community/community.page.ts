@@ -13,14 +13,30 @@ export class CommunityPage implements OnInit {
   posts: any[] = [];
   filteredPosts: any[] = [];
   searchTerm: string = '';
-  votes: Record<number, 'like'|'dislike'|null> = {};
-  voting: Record<number, boolean> = {}; // para evitar doble click rápido
+  votes: Record<number, 'like' | 'dislike' | null> = {};
+  voting: Record<number, boolean> = {};
 
-  constructor(private postService: PostService, private authService: AuthService, private router: Router) {}
-  
+  isLoggedIn: boolean = false;
+  showPopover: boolean = false;
+  popoverEvent: any;
+
+  constructor(
+    private postService: PostService,
+    private authService: AuthService,
+    private router: Router
+  ) {}
 
   ngOnInit() {
     this.cargarPosts();
+    this.actualizarEstadoLogin();
+  }
+
+  ionViewWillEnter() {
+    this.actualizarEstadoLogin();
+  }
+
+  actualizarEstadoLogin() {
+    this.isLoggedIn = this.authService.isLoggedIn();
   }
 
   cargarPosts() {
@@ -28,7 +44,6 @@ export class CommunityPage implements OnInit {
       next: (data) => {
         this.posts = data;
         this.filteredPosts = data.sort((a, b) => b.postid - a.postid);
-        // Inicializamos estado local
         for (const p of this.posts) {
           this.votes[p.postid] = this.votes[p.postid] ?? null;
           this.voting[p.postid] = false;
@@ -38,19 +53,14 @@ export class CommunityPage implements OnInit {
     });
   }
 
-  // 🔎 Método para filtrar las publicaciones por título
   buscarPublicaciones() {
     const term = this.searchTerm.toLowerCase();
-
-    if (term.trim() === '') {
-      // Si no se ha escrito nada, muestra todo
-      this.filteredPosts = this.posts;
-    } else {
-      // Si hay término, filtra los resultados
-      this.filteredPosts = this.posts.filter((post) =>
-        post.title.toLowerCase().includes(term)
-      );
-    }
+    this.filteredPosts =
+      term.trim() === ''
+        ? this.posts
+        : this.posts.filter((post) =>
+            post.title.toLowerCase().includes(term)
+          );
   }
 
   onVote(post: any, type: 'like' | 'dislike') {
@@ -61,28 +71,24 @@ export class CommunityPage implements OnInit {
     }
 
     this.voting[post.postid] = true;
-
     this.postService.vote(post.postid, type, token).subscribe({
-      next: (res: any) => {
-        console.log(res.message);
-        this.cargarPosts(); // recargar para mostrar likes/dislikes actualizados
+      next: () => {
+        this.cargarPosts();
         this.voting[post.postid] = false;
       },
-      error: err => {
+      error: (err) => {
         console.error('Error al votar:', err);
         this.voting[post.postid] = false;
       }
     });
   }
 
-
   openPost(postId: number) {
     this.router.navigate(['/community-post', postId]);
   }
 
   goToUserProfile(id: number) {
-    const token = this.authService.getToken();
-    if (!token) {
+    if (!this.authService.getToken()) {
       this.router.navigate(['/login']);
       return;
     }
@@ -90,25 +96,46 @@ export class CommunityPage implements OnInit {
   }
 
   goToCreatePost() {
-    const token = this.authService.getToken();
-    if (!token) {
+    if (!this.authService.getToken()) {
       this.router.navigate(['/login']);
       return;
     }
-
     this.router.navigate(['/create-post']);
+  }
+
+  // 🔹 Click en botón Perfil / Iniciar Sesión
+  onProfileButtonClick(event: Event) {
+    if (!this.isLoggedIn) {
+      this.router.navigate(['/login']);
+    } else {
+      this.popoverEvent = event;
+      this.showPopover = true;
+    }
+  }
+
+  // 🔹 Ir al perfil desde menú
+  goToProfileFromMenu() {
+    const user = this.authService.getUser();
+    if (user && user.id) {
+      this.router.navigate(['/user-profile', user.id]);
+    }
+    this.showPopover = false; // ✅ se cierra
+  }
+
+  // 🔹 Cerrar sesión desde menú
+  logout() {
+    this.authService.clear();
+    this.isLoggedIn = false;
+    this.showPopover = false; // ✅ se cierra
+    this.router.navigate(['/login']);
   }
 
   goToProfile() {
     const user = this.authService.getUser();
-
     if (user && user.id) {
-      // ✅ Usuario logueado → ir a su perfil
       this.router.navigate(['/user-profile', user.id]);
     } else {
-      // 🚪 No logueado → ir a login
       this.router.navigate(['/login']);
     }
   }
-
 }
