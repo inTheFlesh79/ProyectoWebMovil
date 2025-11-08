@@ -17,6 +17,10 @@ export class CreatePostPage {
   readonly TITLE_MAX = 120;
   readonly CONTENT_MAX = 2000;
 
+  isLoggedIn: boolean = false;
+  showPopover: boolean = false;
+  popoverEvent: any;
+
   constructor(private router: Router,
     private postService: PostService,
     private authService: AuthService,
@@ -91,5 +95,36 @@ export class CreatePostPage {
       // 🚪 No logueado → ir a login
       this.router.navigate(['/login']);
     }
+  }
+
+  ionViewWillEnter() {
+    this.isLoggedIn = this.authService.isLoggedIn();
+  }
+
+  // 🔹 Al hacer clic en "Perfil" / "Iniciar Sesión"
+  onProfileButtonClick(event: Event) {
+    if (!this.isLoggedIn) {
+      this.router.navigate(['/login']);
+    } else {
+      this.popoverEvent = event;
+      this.showPopover = true;
+    }
+  }
+
+  // 🔹 Ir al perfil
+  goToProfileFromMenu() {
+    const user = this.authService.getUser();
+    if (user && user.id) {
+      this.router.navigate(['/user-profile', user.id]);
+    }
+    this.showPopover = false; // cerrar menú
+  }
+
+  // 🔹 Cerrar sesión
+  logout() {
+    this.authService.clear();
+    this.isLoggedIn = false;
+    this.showPopover = false; // cerrar menú
+    this.router.navigate(['/login']);
   }
 }

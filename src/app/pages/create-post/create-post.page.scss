@@ -197,4 +197,15 @@ ion-button[color="primary"] {
     --background: var(--ion-color-primary-tint);
     --color: var(--ion-color-primary-contrast);
   }
+  
+  ion-popover ion-item {
+    --min-height: 44px;
+    display: flex;
+    align-items: center;
+  }
+
+  ion-popover ion-label {
+    margin: 0;
+  }
+
 }

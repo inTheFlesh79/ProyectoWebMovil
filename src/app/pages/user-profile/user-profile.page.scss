@@ -101,3 +101,12 @@
   font-size: 0.85rem;
 }
 
+ion-popover ion-item {
+  --min-height: 44px;
+  display: flex;
+  align-items: center;
+}
+
+ion-popover ion-label {
+  margin: 0;
+}

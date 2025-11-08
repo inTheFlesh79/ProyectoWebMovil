@@ -72,3 +72,13 @@ ion-content {
 :host-context(.dark) ion-button {
   color: #ffffff !important;
 }
+
+ion-popover ion-item {
+  --min-height: 44px;
+  display: flex;
+  align-items: center;
+}
+
+ion-popover ion-label {
+  margin: 0;
+}

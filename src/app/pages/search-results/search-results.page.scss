@@ -44,3 +44,13 @@ ion-card {
   text-decoration: underline;
   color: var(--ion-color-primary);
 }
+
+ion-popover ion-item {
+  --min-height: 44px;
+  display: flex;
+  align-items: center;
+}
+
+ion-popover ion-label {
+  margin: 0;
+}

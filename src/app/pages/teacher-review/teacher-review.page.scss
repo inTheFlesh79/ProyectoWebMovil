@@ -105,3 +105,13 @@ ion-card.review-card {
     padding: 24px 32px 80px;
   }
 }
+
+ion-popover ion-item {
+  --min-height: 44px;
+  display: flex;
+  align-items: center;
+}
+
+ion-popover ion-label {
+  margin: 0;
+}

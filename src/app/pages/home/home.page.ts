@@ -12,6 +12,10 @@ import { AuthService } from '../../services/auth.service';
 export class HomePage {
   searchQuery: string = '';
 
+  isLoggedIn: boolean = false;
+  showPopover: boolean = false;
+  popoverEvent: any;
+  
   constructor(private searchService: SearchService, private authService: AuthService, private router: Router) {}
 
   onSearch() {
@@ -41,5 +45,36 @@ export class HomePage {
       // 🚪 No logueado → ir a login
       this.router.navigate(['/login']);
     }
+  }
+
+  ionViewWillEnter() {
+    this.isLoggedIn = this.authService.isLoggedIn();
+  }
+
+  // 🔹 Al hacer clic en "Perfil" / "Iniciar Sesión"
+  onProfileButtonClick(event: Event) {
+    if (!this.isLoggedIn) {
+      this.router.navigate(['/login']);
+    } else {
+      this.popoverEvent = event;
+      this.showPopover = true;
+    }
+  }
+
+  // 🔹 Ir al perfil
+  goToProfileFromMenu() {
+    const user = this.authService.getUser();
+    if (user && user.id) {
+      this.router.navigate(['/user-profile', user.id]);
+    }
+    this.showPopover = false; // cerrar menú
+  }
+
+  // 🔹 Cerrar sesión
+  logout() {
+    this.authService.clear();
+    this.isLoggedIn = false;
+    this.showPopover = false; // cerrar menú
+    this.router.navigate(['/login']);
   }
 }

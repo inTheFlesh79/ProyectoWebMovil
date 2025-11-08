@@ -11,6 +11,10 @@ import { AuthService } from '../../services/auth.service';
 export class SearchResultsPage implements OnInit {
   results: any = null;
 
+  isLoggedIn: boolean = false;
+  showPopover: boolean = false;
+  popoverEvent: any;
+
   constructor(private router: Router, private authService: AuthService) {}
 
   ngOnInit() {
@@ -40,4 +44,36 @@ export class SearchResultsPage implements OnInit {
       this.router.navigate(['/login']);
     }
   }
+
+  ionViewWillEnter() {
+    this.isLoggedIn = this.authService.isLoggedIn();
+  }
+
+  // 🔹 Al hacer clic en "Perfil" / "Iniciar Sesión"
+  onProfileButtonClick(event: Event) {
+    if (!this.isLoggedIn) {
+      this.router.navigate(['/login']);
+    } else {
+      this.popoverEvent = event;
+      this.showPopover = true;
+    }
+  }
+
+  // 🔹 Ir al perfil
+  goToProfileFromMenu() {
+    const user = this.authService.getUser();
+    if (user && user.id) {
+      this.router.navigate(['/user-profile', user.id]);
+    }
+    this.showPopover = false; // cerrar menú
+  }
+
+  // 🔹 Cerrar sesión
+  logout() {
+    this.authService.clear();
+    this.isLoggedIn = false;
+    this.showPopover = false; // cerrar menú
+    this.router.navigate(['/login']);
+  }
+
 }
