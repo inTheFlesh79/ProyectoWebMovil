@@ -1,16 +1,24 @@
 ion-content {
   --background: var(--ion-color-tertiary);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-/* === POST CARD === */
-.post-card {
+/* 📏 Contenedor central igual a la página de comunidad */
+.post-card,
+.comments-card {
+  width: 100%;
+  max-width: 1250px;
+  margin: 15px auto;
   background: var(--ion-card-background, var(--ion-color-light));
   color: var(--ion-text-color, var(--ion-color-dark));
   border-radius: 16px;
   transition: background-color 0.3s, color 0.3s;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
+/* 📝 Post principal */
 .post-title {
   font-size: 1.3rem;
   font-weight: bold;
@@ -28,6 +36,7 @@ ion-content {
   margin-bottom: 0.6rem;
 }
 
+/* 💬 Acciones del post */
 .actions-row {
   display: flex;
   justify-content: space-between;
@@ -40,7 +49,7 @@ ion-content {
   gap: 0.3rem;
 }
 
-/* === COMMENTS CARD === */
+/* 💭 Comentarios */
 .comments-card {
   margin-top: 1rem;
   border-radius: 12px;
@@ -58,7 +67,24 @@ ion-content {
   margin-top: 0.4rem;
 }
 
-/* === DARK MODE SUPPORT === */
+/* ❤️ Like / Dislike */
+.vote-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.vote-row ion-button {
+  color: var(--ion-color-secondary);
+}
+
+.vote-row span {
+  color: var(--ion-color-secondary);
+  font-weight: 500;
+  margin-left: 4px;
+}
+
+/* 🌙 Dark Mode */
 :host-context(.dark) .post-card,
 :host-context(.dark) .comments-card {
   background: #1f2430 !important;
@@ -73,6 +99,7 @@ ion-content {
   color: #ffffff !important;
 }
 
+/* 🎛️ Centrado vertical en popover */
 ion-popover ion-item {
   --min-height: 44px;
   display: flex;

@@ -15,7 +15,6 @@
         </ion-col>
 
         <ion-col class="ion-text-center">
-          <!-- Cambia dinámicamente entre Perfil / Iniciar Sesión -->
           <ion-button fill="clear" color="light" (click)="onProfileButtonClick($event)">
             {{ isLoggedIn ? 'Perfil' : 'Iniciar Sesión' }}
           </ion-button>
@@ -25,7 +24,7 @@
   </ion-toolbar>
 </ion-header>
 
-<!-- 🔽 Menú desplegable (centrado y con cierre automático) -->
+<!-- 🔽 Menú del header -->
 <ion-popover [isOpen]="showPopover" (didDismiss)="showPopover = false" [event]="popoverEvent">
   <ng-template>
     <ion-content>
@@ -42,7 +41,7 @@
 </ion-popover>
 
 <ion-content class="ion-padding" color="tertiary">
-  <!-- 🔍 Barra de búsqueda + botón Crear -->
+  <!-- 🔍 Buscar + Crear -->
   <div class="search-button-container">
     <ion-searchbar
       placeholder="Buscar publicación..."
@@ -57,11 +56,10 @@
     </ion-button>
   </div>
 
-  <!-- 🧾 Publicaciones -->
+  <!-- 🧾 Lista de publicaciones -->
   <ion-card *ngIf="filteredPosts.length > 0" class="post-list-card">
     <ion-list>
       <ion-item *ngFor="let post of filteredPosts" lines="none">
-
         <ion-label>
           <h2 class="post-title"
               [routerLink]="['/community-post', post.postid]"
@@ -88,29 +86,51 @@
           </div>
         </ion-label>
 
-        <!-- 👤 Autor -->
-        <div class="author" style="cursor: pointer;" (click)="goToUserProfile(post.userid)">
-          <ion-label class="username clickable">
+        <!-- 👤 Autor + menú contextual -->
+        <div class="author">
+          <ion-label class="username clickable" (click)="goToUserProfile(post.userid)">
             {{ post.username }}
           </ion-label>
 
-          <ion-avatar class="author-avatar">
+          <ion-avatar class="author-avatar" (click)="goToUserProfile(post.userid)">
             <img *ngIf="post.profilepicture; else defaultPic"
-                [src]="'data:image/jpeg;base64,' + post.profilepicture" />
+                 [src]="'data:image/jpeg;base64,' + post.profilepicture" />
             <ng-template #defaultPic>
               <img src="assets/default-profile.png" />
             </ng-template>
           </ion-avatar>
+
+          <!-- ⋮ Tres puntos solo si puede modificar -->
+          <ion-button fill="clear" size="small" color="light"
+                      *ngIf="canModify(post)"
+                      (click)="openPostPopover($event, post)">
+            <ion-icon slot="icon-only" name="ellipsis-vertical"></ion-icon>
+          </ion-button>
         </div>
       </ion-item>
     </ion-list>
   </ion-card>
 
-  <!-- 🚫 Mensaje si no hay publicaciones -->
+  <!-- 🚫 Sin publicaciones -->
   <ion-card *ngIf="filteredPosts.length === 0" class="responsive-square-card">
     <ion-card-content class="ion-text-center ion-align-items-center"
                       style="display: flex; justify-content: center; height: 100%;">
       No hay publicaciones disponibles por el momento.
     </ion-card-content>
   </ion-card>
+
+  <!-- Popover contextual por publicación -->
+  <ion-popover [isOpen]="postPopoverOpen"
+               [event]="postPopoverEvent"
+               (didDismiss)="postPopoverOpen = false">
+    <ng-template>
+      <ion-content>
+        <ion-list>
+          <ion-item button (click)="deletePost(selectedPost)">
+            <ion-label color="danger">Eliminar publicación</ion-label>
+          </ion-item>
+        </ion-list>
+      </ion-content>
+    </ng-template>
+  </ion-popover>
 </ion-content>

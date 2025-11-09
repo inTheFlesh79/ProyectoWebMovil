@@ -10,36 +10,36 @@
 .card-content-left {
   display: flex;
   align-items: center;
-  justify-content: flex-start; 
-  height: 100%;          
+  justify-content: flex-start;
+  height: 100%;
 }
 
 /* 🔍 Barra de búsqueda + botón Crear */
 .search-button-container {
   display: flex;
-  gap: 10px;           
+  gap: 10px;
   width: 100%;
-  max-width: 1250px;   
-  margin: auto;   
+  max-width: 1250px;
+  margin: auto;
 }
 
 .search-button-container ion-searchbar {
-  flex: 3;   
-  min-width: 150px;      
+  flex: 3;
+  min-width: 150px;
 }
 
 .search-button-container .create-button {
-  flex: 2;    
+  flex: 2;
   display: flex;
   align-items: center;
   justify-content: center;
-  min-width: 100px;  
+  min-width: 100px;
 }
 
 /* 📋 Publicaciones */
 .post-list-card {
   width: 100%;
-  max-width: 1250px;  /* Igual que barra superior */
+  max-width: 1250px;
   margin: 15px auto;
   padding: 0 5px;
 }
@@ -48,8 +48,10 @@ ion-item {
   align-items: flex-start;
   --padding-start: 10px;
   --padding-end: 10px;
+  position: relative;
 }
 
+/* 👍👎 Votos */
 .vote-row {
   display: flex;
   gap: 8px;
@@ -57,35 +59,62 @@ ion-item {
   align-items: center;
 }
 
+.vote-number {
+  color: var(--ion-color-secondary);
+  font-weight: 500;
+  margin-left: 4px;
+}
+
+/* 👤 Autor */
 .author {
   display: flex;
   align-items: center;
   justify-content: flex-end;
   gap: 8px;
-}
-
-.author-name {
-  font-weight: 600;
-  font-size: 0.9rem;
-  line-height: 1;
+  flex-shrink: 0;
+  position: relative;
+  padding-right: 32px; /* espacio para los 3 puntos */
 }
 
 .author-avatar {
   width: 36px;
   height: 36px;
   border-radius: 50%;
+  flex-shrink: 0;
 }
 
 .username {
   font-weight: bold;
   color: var(--ion-color-secondary);
+  cursor: pointer;
+  white-space: nowrap;
 }
 
 .username:hover {
   text-decoration: underline;
 }
 
-/* 🎛️ Estilo para centrar verticalmente texto del popover */
+/* ⋮ Botón de menú contextual */
+.author ion-button {
+  --padding-start: 0;
+  --padding-end: 0;
+  --background: transparent;
+  --color: var(--ion-color-light);
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+} 
+
+/* 🧾 Ajuste de texto del post */
+ion-label {
+  display: block;
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+/* 🎛️ Popover */
 ion-popover ion-item {
   --min-height: 44px;
   display: flex;
@@ -96,8 +125,29 @@ ion-popover ion-label {
   margin: 0;
 }
 
-.vote-number {
-  color: var(--ion-color-secondary);
+/* 🧭 Header */
+ion-header ion-toolbar {
+  --background: var(--ion-color-primary);
+  color: #fff;
+}
+
+ion-header ion-button {
+  color: #fff;
   font-weight: 500;
-  margin-left: 4px;
+}
+
+/* 📱 Responsivo */
+@media (max-width: 768px) {
+  .search-button-container {
+    flex-direction: column;
+  }
+
+  .search-button-container ion-searchbar,
+  .search-button-container .create-button {
+    width: 100%;
+  }
+
+  .author {
+    padding-right: 24px;
+  }
 }

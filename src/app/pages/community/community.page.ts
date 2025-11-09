@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { PostService } from '../../services/post.service';
 import { AuthService } from '../../services/auth.service';
+import { AlertController } from '@ionic/angular';
 
 @Component({
   selector: 'app-community',
@@ -12,23 +14,33 @@ import { AuthService } from '../../services/auth.service';
 export class CommunityPage implements OnInit {
   posts: any[] = [];
   filteredPosts: any[] = [];
-  searchTerm: string = '';
+  searchTerm = '';
   votes: Record<number, 'like' | 'dislike' | null> = {};
   voting: Record<number, boolean> = {};
 
-  isLoggedIn: boolean = false;
-  showPopover: boolean = false;
+  isLoggedIn = false;
+  showPopover = false;
   popoverEvent: any;
+
+  postPopoverOpen = false;
+  postPopoverEvent: any;
+  selectedPost: any = null;
+  currentUser: any = null;
+
+  private apiUrl = 'http://localhost:3000/api/posts';
 
   constructor(
     private postService: PostService,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private http: HttpClient,
+    private alertCtrl: AlertController
   ) {}
 
   ngOnInit() {
     this.cargarPosts();
     this.actualizarEstadoLogin();
+    this.currentUser = this.authService.getUser();
   }
 
   ionViewWillEnter() {
@@ -103,7 +115,6 @@ export class CommunityPage implements OnInit {
     this.router.navigate(['/create-post']);
   }
 
-  // 🔹 Click en botón Perfil / Iniciar Sesión
   onProfileButtonClick(event: Event) {
     if (!this.isLoggedIn) {
       this.router.navigate(['/login']);
@@ -113,20 +124,18 @@ export class CommunityPage implements OnInit {
     }
   }
 
-  // 🔹 Ir al perfil desde menú
   goToProfileFromMenu() {
     const user = this.authService.getUser();
     if (user && user.id) {
       this.router.navigate(['/user-profile', user.id]);
     }
-    this.showPopover = false; // ✅ se cierra
+    this.showPopover = false;
   }
 
-  // 🔹 Cerrar sesión desde menú
   logout() {
     this.authService.clear();
     this.isLoggedIn = false;
-    this.showPopover = false; // ✅ se cierra
+    this.showPopover = false;
     this.router.navigate(['/login']);
   }
 
@@ -138,4 +147,65 @@ export class CommunityPage implements OnInit {
       this.router.navigate(['/login']);
     }
   }
+
+  // 🔹 Verifica si el usuario puede modificar un post
+  canModify(post: any): boolean {
+    const currentUser = this.authService.getUser()
+    if (!this.currentUser) return false;
+      const isAdmin = currentUser.role === 1;
+      const isOwner = currentUser.id === post.userid;
+    return isAdmin || isOwner;
+  }
+
+  // 🔹 Abre el popover contextual del post
+  openPostPopover(event: Event, post: any) {
+    this.selectedPost = post;
+    this.postPopoverEvent = event;
+    this.postPopoverOpen = true;
+  }
+
+  // 🔹 Eliminar publicación (con confirmación moderna)
+  async deletePost(post: any) {
+    const alert = await this.alertCtrl.create({
+      header: 'Eliminar publicación',
+      message: '¿Seguro que deseas eliminar esta publicación?',
+      buttons: [
+        { text: 'Cancelar', role: 'cancel' },
+        {
+          text: 'Eliminar',
+          role: 'destructive',
+          handler: () => this.confirmDelete(post)
+        }
+      ]
+    });
+
+    await alert.present();
+  }
+
+  // 🔹 Confirmar eliminación (realiza la petición HTTP DELETE)
+  private confirmDelete(post: any) {
+    const token = this.authService.getToken();
+    if (!token) {
+      this.router.navigate(['/login']);
+      return;
+    }
+
+    const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
+
+    this.http.delete(`${this.apiUrl}/${post.postid}`, { headers }).subscribe({
+      next: () => {
+        console.log(`Post ${post.postid} eliminado con éxito.`);
+        this.postPopoverOpen = false;
+        setTimeout(() => {
+          window.location.reload();
+        }, 300);
+      },
+      error: (err) => {
+        console.error('Error eliminando publicación:', err);
+        this.postPopoverOpen = false;
+      }
+    });
+  }
+
+
 }

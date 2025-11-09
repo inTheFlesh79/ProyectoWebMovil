@@ -67,7 +67,8 @@
           fill="clear"
           color="primary"
           (click)="sendComment()"
-          [disabled]="!newComment.trim()">
+          [disabled]="!newComment.trim()"
+          color = "secondary">
           <ion-icon slot="icon-only" name="send-outline"></ion-icon>
         </ion-button>
       </ion-item>
@@ -77,22 +78,21 @@
         <div class="left-actions">
           <ion-button fill="clear" size="small"
                       [disabled]="voting[post.postid]"
-                      (click)="onVote(post, 'like')">
+                      (click)="onVote(post, 'like')"
+                      color = "secondary">
             <ion-icon name="thumbs-up-outline"></ion-icon>
             <span>{{ post.likes }}</span>
           </ion-button>
 
           <ion-button fill="clear" size="small"
                       [disabled]="voting[post.postid]"
-                      (click)="onVote(post, 'dislike')">
+                      (click)="onVote(post, 'dislike')"
+                      color = "secondary">
             <ion-icon name="thumbs-down-outline"></ion-icon>
             <span>{{ post.dislikes }}</span>
           </ion-button>
-        </div>
 
-
-        <div class="right-actions">
-          <ion-button fill="clear" (click)="toggleComments()">
+          <ion-button fill="clear" (click)="toggleComments()" color = "secondary">
             <ion-icon name="chatbubble-ellipses-outline"></ion-icon>
           </ion-button>
         </div>
@@ -101,7 +101,7 @@
   </ion-card>
 
   <!-- COMMENTS -->
-  <ion-card class="comments-card" *ngIf="showComments">
+  <ion-card class="comments-card" *ngIf="showComments" >
     <ion-card-header>
       <ion-card-title>Comentarios</ion-card-title>
     </ion-card-header>
@@ -115,14 +115,16 @@
               <div class="vote-row">
                 <ion-button fill="clear" size="small"
                             [disabled]="commentVoting[c.commentid]"
-                            (click)="onVoteComment(c, 'like')">
+                            (click)="onVoteComment(c, 'like')"
+                            color = "secondary">
                   <ion-icon name="thumbs-up-outline"></ion-icon>
                   <span>{{ c.likes }}</span>
                 </ion-button>
 
                 <ion-button fill="clear" size="small"
                             [disabled]="commentVoting[c.commentid]"
-                            (click)="onVoteComment(c, 'dislike')">
+                            (click)="onVoteComment(c, 'dislike')"
+                            color = "secondary">
                   <ion-icon name="thumbs-down-outline"></ion-icon>
                   <span>{{ c.dislikes }}</span>
                 </ion-button>
