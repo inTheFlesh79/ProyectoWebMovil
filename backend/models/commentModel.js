@@ -115,14 +115,31 @@ const Comment = {
 
   // Eliminar comentario
   remove: async (id) => {
+    const client = await pool.connect();
     try {
-      const { rows } = await pool.query('DELETE FROM Comment WHERE commentId = $1 RETURNING *', [id]);
-      return rows[0];
+      await client.query('BEGIN');
+
+      // 1️⃣ Eliminar votos asociados al comentario
+      await client.query(`
+        DELETE FROM CommentVotes WHERE commentid = $1;
+      `, [id]);
+
+      // 2️⃣ Eliminar el comentario
+      const { rowCount } = await client.query(`
+        DELETE FROM Comment WHERE commentid = $1;
+      `, [id]);
+
+      await client.query('COMMIT');
+      return rowCount > 0;
     } catch (err) {
-      console.error('Error eliminando comentario:', err);
+      await client.query('ROLLBACK');
+      console.error('Error eliminando comentario y votos:', err);
       throw err;
+    } finally {
+      client.release();
     }
   },
+
 
   // Buscar comentarios de una página de profesor
   findByTeacherPage: async (teacherPageId) => {

@@ -76,12 +76,14 @@ const postController = {
     try {
       const deleted = await Post.delete(req.params.id);
       if (!deleted) return res.status(404).json({ error: 'Post no encontrado' });
-      res.json({ message: 'Post eliminado correctamente' });
+      res.json({ message: 'Post, comentarios y votos eliminados correctamente' });
     } catch (err) {
-      console.error(err);
-      res.status(500).json({ error: 'Error eliminando post' });
+      console.error('Error eliminando post:', err);
+      res.status(500).json({ error: 'Error eliminando post y dependencias' });
     }
   },
+
+
 
 };
 

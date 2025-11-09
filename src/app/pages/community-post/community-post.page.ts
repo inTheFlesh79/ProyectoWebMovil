@@ -297,13 +297,19 @@ export class CommunityPostPage implements OnInit {
 
     const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
 
-    // 🧩 Mock temporal hasta que el backend lo implemente
-    console.log(`🧹 Eliminando comentario ${comment.commentid} (mock)`);
-
-    // 🔥 Si el backend existiera, sería:
-    // this.http.delete(`${this.commentUrl}/${comment.commentid}`, { headers }).subscribe(...)
-
-    this.comments = this.comments.filter(c => c.commentid !== comment.commentid);
-    this.commentPopoverOpen = false;
+    // 🔥 Llamada real al backend
+    this.http.delete(`${this.commentUrl}/${comment.commentid}`, { headers }).subscribe({
+      next: () => {
+        console.log(`🗑️ Comentario ${comment.commentid} eliminado correctamente.`);
+        // Remueve el comentario de la lista en el front
+        this.comments = this.comments.filter(c => c.commentid !== comment.commentid);
+        this.commentPopoverOpen = false;
+      },
+      error: (err) => {
+        console.error('❌ Error eliminando comentario:', err);
+        this.commentPopoverOpen = false;
+      }
+    });
   }
+
 }

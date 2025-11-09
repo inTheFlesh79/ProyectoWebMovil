@@ -98,14 +98,45 @@ const Post = {
 
   // Eliminar un post
   delete: async (id) => {
+    const client = await pool.connect();
     try {
-      const result = await pool.query('DELETE FROM Post WHERE postId = $1 RETURNING postId', [id]);
+      await client.query('BEGIN');
+
+      // 1️⃣ Eliminar votos de los comentarios asociados a este post
+      await client.query(`
+        DELETE FROM CommentVotes
+        WHERE commentid IN (
+          SELECT commentid FROM Comment WHERE postid = $1
+        );
+      `, [id]);
+
+      // 2️⃣ Eliminar comentarios asociados al post
+      await client.query(`
+        DELETE FROM Comment WHERE postid = $1;
+      `, [id]);
+
+      // 3️⃣ Eliminar votos del post
+      await client.query(`
+        DELETE FROM Votes WHERE postid = $1;
+      `, [id]);
+
+      // 4️⃣ Finalmente, eliminar el post
+      const result = await client.query(`
+        DELETE FROM Post WHERE postid = $1 RETURNING postid;
+      `, [id]);
+
+      await client.query('COMMIT');
       return result.rowCount > 0;
     } catch (err) {
-      console.error('Error eliminando post:', err);
+      await client.query('ROLLBACK');
+      console.error('Error eliminando post en cascada:', err);
       throw err;
+    } finally {
+      client.release();
     }
   },
+
+
 
 };
 
