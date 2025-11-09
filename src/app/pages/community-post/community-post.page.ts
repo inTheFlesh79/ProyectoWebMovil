@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PostService } from '../../services/post.service';
 import { AuthService } from '../../services/auth.service';
+import { AlertController } from '@ionic/angular';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 @Component({
   selector: 'app-community-post',
@@ -20,15 +22,32 @@ export class CommunityPostPage implements OnInit {
   commentVoting: Record<number, boolean> = {};
   votes: Record<number, 'like' | 'dislike' | null> = {};
 
-  isLoggedIn: boolean = false;
-  showPopover: boolean = false;
+  // Header & popover
+  isLoggedIn = false;
+  showPopover = false;
   popoverEvent: any;
+
+  // Popover de post
+  postPopoverOpen = false;
+  postPopoverEvent: any;
+  selectedPost: any;
+
+  // Popover de comentario
+  commentPopoverOpen = false;
+  commentPopoverEvent: any;
+  selectedComment: any;
+
+  // API base
+  private apiUrl = 'http://localhost:3000/api/posts';
+  private commentUrl = 'http://localhost:3000/api/comments';
 
   constructor(
     private route: ActivatedRoute,
     private postService: PostService,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private alertCtrl: AlertController,
+    private http: HttpClient
   ) {}
 
   ngOnInit() {
@@ -40,7 +59,7 @@ export class CommunityPostPage implements OnInit {
   }
 
   // ==============================
-  // 📦 Cargar datos del post
+  // 📦 Cargar datos
   // ==============================
   loadPost(id: number) {
     this.postService.getPostById(id).subscribe({
@@ -49,46 +68,46 @@ export class CommunityPostPage implements OnInit {
         this.votes[id] = this.votes[id] ?? null;
         this.voting[id] = false;
       },
-      error: (err) => console.error('Error al cargar post:', err)
+      error: (err: any) => console.error('Error al cargar post:', err)
     });
   }
 
-  // ==============================
-  // 💬 Comentarios
-  // ==============================
   loadComments(postId: number) {
     this.postService.getCommentsByPostId(postId).subscribe({
       next: (data) => {
-        console.log('🟢 Comentarios cargados:', data);
         this.comments = data.map((c: any) => ({
           commentid: c.commentid,
+          userid: c.userid,
           author: c.username || 'Anónimo',
           text: c.content,
           likes: c.likes ?? 0,
           dislikes: c.dislikes ?? 0
         }));
       },
-      error: (err) => console.error('Error al cargar comentarios:', err)
+      error: (err: any) => console.error('Error al cargar comentarios:', err)
     });
   }
 
+  // ==============================
+  // 💬 Comentarios
+  // ==============================
   sendComment() {
     const token = this.authService.getToken();
     if (!token) {
       this.router.navigate(['/login']);
       return;
     }
+
     const text = this.newComment.trim();
     if (!text || !this.post?.postid) return;
 
-    this.postService.createComment(this.post.postid, text, token!).subscribe({
-      next: (created) => {
-        // agrega al final y limpia input
-        this.comments.push(created);
+    this.postService.createComment(this.post.postid, text, token).subscribe({
+      next: () => {
         this.newComment = '';
         this.showComments = true;
+        window.location.reload();
       },
-      error: (err) => {
+      error: (err: any) => {
         console.error('Error creando comentario:', err);
         if (!token) this.router.navigate(['/login']);
       }
@@ -96,16 +115,16 @@ export class CommunityPostPage implements OnInit {
   }
 
   onEnterPress(event: KeyboardEvent) {
-    if (event.key === 'Enter') {
-      this.sendComment();
-    }
+    if (event.key === 'Enter') this.sendComment();
   }
 
   toggleComments() {
     this.showComments = !this.showComments;
   }
 
-
+  // ==============================
+  // 👍 / 👎 Votaciones
+  // ==============================
   onVote(post: any, type: 'like' | 'dislike') {
     const token = this.authService.getToken();
     if (!token) {
@@ -116,13 +135,11 @@ export class CommunityPostPage implements OnInit {
     this.voting[post.postid] = true;
 
     this.postService.vote(post.postid, type, token).subscribe({
-      next: (res: any) => {
-        console.log(res.message);
-        // Actualiza contadores directamente sin reordenar
+      next: () => {
         this.loadPost(post.postid);
         this.voting[post.postid] = false;
       },
-      error: (err) => {
+      error: (err: any) => {
         console.error('Error al votar:', err);
         this.voting[post.postid] = false;
       }
@@ -139,34 +156,24 @@ export class CommunityPostPage implements OnInit {
     this.commentVoting[c.commentid] = true;
     this.postService.voteComment(Number(c.commentid), type, token).subscribe({
       next: (totals) => {
-        // totals -> { likes, dislikes }
         c.likes = totals.likes;
         c.dislikes = totals.dislikes;
         this.commentVoting[c.commentid] = false;
       },
-      error: (err) => {
+      error: (err: any) => {
         console.error('Error al votar comentario:', err);
         this.commentVoting[c.commentid] = false;
       }
     });
   }
 
-
-
-  // Métodos conectados al HTML (para mantener nombres)
-  like() {
-    if (this.post) this.onVote(this.post, 'like');
-  }
-
-  dislike() {
-    if (this.post) this.onVote(this.post, 'dislike');
-  }
-
+  // ==============================
+  // 👤 Header popover
+  // ==============================
   ionViewWillEnter() {
     this.isLoggedIn = this.authService.isLoggedIn();
   }
 
-  // 🔹 Al hacer clic en "Perfil" / "Iniciar Sesión"
   onProfileButtonClick(event: Event) {
     if (!this.isLoggedIn) {
       this.router.navigate(['/login']);
@@ -176,32 +183,127 @@ export class CommunityPostPage implements OnInit {
     }
   }
 
-  // 🔹 Ir al perfil
   goToProfileFromMenu() {
     const user = this.authService.getUser();
     if (user && user.id) {
       this.router.navigate(['/user-profile', user.id]);
     }
-    this.showPopover = false; // cerrar menú
+    this.showPopover = false;
   }
 
-  // 🔹 Cerrar sesión
   logout() {
     this.authService.clear();
     this.isLoggedIn = false;
-    this.showPopover = false; // cerrar menú
+    this.showPopover = false;
     this.router.navigate(['/login']);
   }
 
-  goToProfile() {
-    const user = this.authService.getUser();
+  // ==============================
+  // 🗑️ Popover de post
+  // ==============================
+  openPostPopover(event: Event, post: any) {
+    event.stopPropagation?.();
+    this.selectedPost = post;
+    this.postPopoverEvent = event;
+    this.postPopoverOpen = true;
+  }
 
-    if (user && user.id) {
-      // ✅ Usuario logueado → ir a su perfil
-      this.router.navigate(['/user-profile', user.id]);
-    } else {
-      // 🚪 No logueado → ir a login
+  canModify(post: any): boolean {
+    const user = this.authService.getUser();
+    const isAdmin = user?.role === 'admin';
+    return !!user && (isAdmin || user.id === post.userid);
+  }
+
+  async deletePost(post: any) {
+    const alert = await this.alertCtrl.create({
+      header: 'Eliminar publicación',
+      message: '¿Seguro que deseas eliminar esta publicación?',
+      buttons: [
+        { text: 'Cancelar', role: 'cancel' },
+        {
+          text: 'Eliminar',
+          role: 'destructive',
+          handler: () => this.confirmDelete(post)
+        }
+      ]
+    });
+
+    await alert.present();
+  }
+
+  private confirmDelete(post: any) {
+    const token = this.authService.getToken();
+    if (!token) {
       this.router.navigate(['/login']);
+      return;
     }
+
+    const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
+
+    this.http.delete(`${this.apiUrl}/${post.postid}`, { headers }).subscribe({
+      next: () => {
+        console.log(`🗑️ Post ${post.postid} eliminado con éxito.`);
+        this.postPopoverOpen = false;
+        setTimeout(() => {
+          this.router.navigate(['/community']).then(() => window.location.reload());
+        }, 300);
+      },
+      error: (err) => {
+        console.error('Error eliminando publicación:', err);
+        this.postPopoverOpen = false;
+      }
+    });
+  }
+
+  // ==============================
+  // 💬 Popover de comentarios
+  // ==============================
+  openCommentPopover(event: Event, comment: any) {
+    event.stopPropagation?.();
+    this.selectedComment = comment;
+    this.commentPopoverEvent = event;
+    this.commentPopoverOpen = true;
+  }
+
+  canModifyComment(comment: any): boolean {
+    const user = this.authService.getUser();
+    const isAdmin = user?.role === 'admin';
+    return !!user && (isAdmin || user.id === comment.userid);
+  }
+
+  async deleteComment(comment: any) {
+    const alert = await this.alertCtrl.create({
+      header: 'Eliminar comentario',
+      message: '¿Seguro que deseas eliminar este comentario?',
+      buttons: [
+        { text: 'Cancelar', role: 'cancel' },
+        {
+          text: 'Eliminar',
+          role: 'destructive',
+          handler: () => this.confirmDeleteComment(comment)
+        }
+      ]
+    });
+
+    await alert.present();
+  }
+
+  private confirmDeleteComment(comment: any) {
+    const token = this.authService.getToken();
+    if (!token) {
+      this.router.navigate(['/login']);
+      return;
+    }
+
+    const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
+
+    // 🧩 Mock temporal hasta que el backend lo implemente
+    console.log(`🧹 Eliminando comentario ${comment.commentid} (mock)`);
+
+    // 🔥 Si el backend existiera, sería:
+    // this.http.delete(`${this.commentUrl}/${comment.commentid}`, { headers }).subscribe(...)
+
+    this.comments = this.comments.filter(c => c.commentid !== comment.commentid);
+    this.commentPopoverOpen = false;
   }
 }

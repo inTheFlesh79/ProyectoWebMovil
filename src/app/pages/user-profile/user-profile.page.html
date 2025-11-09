@@ -67,8 +67,14 @@
         <p class="comment-content">{{ c.content }}</p>
         <div class="comment-footer">
           <span class="comment-date">{{ c.date | date:'dd/MM/yyyy' }}</span>
-          <span class="comment-likes">👍 {{ c.likes }}</span>
-          <span class="comment-dislikes">👎 {{ c.dislikes }}</span>
+          <span class="comment-likes">
+            <ion-icon name="thumbs-up-outline"></ion-icon> {{ c.likes }}
+          </span>
+
+          <span class="comment-dislikes">
+            <ion-icon name="thumbs-down-outline"></ion-icon> {{ c.dislikes }}
+          </span>
+
         </div>
       </div>
     </div>

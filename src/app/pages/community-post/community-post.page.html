@@ -1,21 +1,15 @@
+<!-- Igual que tu header actual -->
 <ion-header>
   <ion-toolbar color="primary">
     <ion-grid>
       <ion-row>
         <ion-col class="ion-text-center">
-          <ion-button fill="clear" color="light" [routerLink]="['/home']">
-            Inicio
-          </ion-button>
+          <ion-button fill="clear" color="light" [routerLink]="['/home']">Inicio</ion-button>
         </ion-col>
-
         <ion-col class="ion-text-center">
-          <ion-button fill="clear" color="light" [routerLink]="['/community']">
-            Comunidad
-          </ion-button>
+          <ion-button fill="clear" color="light" [routerLink]="['/community']">Comunidad</ion-button>
         </ion-col>
-
         <ion-col class="ion-text-center">
-          <!-- Muestra "Perfil" o "Iniciar Sesión" -->
           <ion-button fill="clear" color="light" (click)="onProfileButtonClick($event)">
             {{ isLoggedIn ? 'Perfil' : 'Iniciar Sesión' }}
           </ion-button>
@@ -25,8 +19,8 @@
   </ion-toolbar>
 </ion-header>
 
-<!-- 🔽 Menú desplegable -->
-<ion-popover [isOpen]="showPopover" (didDismiss)="showPopover = false" [event]="popoverEvent">
+<!-- Popover del header -->
+<ion-popover [isOpen]="showPopover" (didDismiss)="showPopover = false" [event]="popoverEvent" class="header-popover">
   <ng-template>
     <ion-content>
       <ion-list>
@@ -41,97 +35,128 @@
   </ng-template>
 </ion-popover>
 
+<!-- CONTENIDO -->
 <ion-content class="ion-padding" color="tertiary">
-  <!-- POST CARD -->
-  <ion-card class="post-card" *ngIf="post">
-    <ion-card-header>
-      <ion-card-title class="post-title">{{ post.title }}</ion-card-title>
-      <ion-card-subtitle class="post-author">por {{ post.username || 'Usuario' }}</ion-card-subtitle>
-    </ion-card-header>
-
-    <ion-card-content>
-      <p class="post-content">
-        {{ post.content }}
-      </p>
-
-      <!-- comment input + send -->
-      <ion-item lines="none" class="write-box">
-        <ion-input
-          placeholder="Escribe un comentario"
-          [(ngModel)]="newComment"
-          clear-input
-          (keyup)="onEnterPress($event)">
-        </ion-input>
-
-        <ion-button
-          fill="clear"
-          color="primary"
-          (click)="sendComment()"
-          [disabled]="!newComment.trim()"
-          color = "secondary">
-          <ion-icon slot="icon-only" name="send-outline"></ion-icon>
-        </ion-button>
-      </ion-item>
-
-      <!-- actions -->
-      <div class="actions-row">
-        <div class="left-actions">
-          <ion-button fill="clear" size="small"
-                      [disabled]="voting[post.postid]"
-                      (click)="onVote(post, 'like')"
-                      color = "secondary">
-            <ion-icon name="thumbs-up-outline"></ion-icon>
-            <span>{{ post.likes }}</span>
-          </ion-button>
-
-          <ion-button fill="clear" size="small"
-                      [disabled]="voting[post.postid]"
-                      (click)="onVote(post, 'dislike')"
-                      color = "secondary">
-            <ion-icon name="thumbs-down-outline"></ion-icon>
-            <span>{{ post.dislikes }}</span>
-          </ion-button>
-
-          <ion-button fill="clear" (click)="toggleComments()" color = "secondary">
-            <ion-icon name="chatbubble-ellipses-outline"></ion-icon>
+  <div class="post-container">
+    <!-- POST -->
+    <ion-card class="post-card" *ngIf="post">
+      <ion-card-header>
+        <div class="post-header">
+          <div>
+            <ion-card-title class="post-title">{{ post.title }}</ion-card-title>
+            <ion-card-subtitle class="post-author">por {{ post.username || 'Usuario' }}</ion-card-subtitle>
+          </div>
+          <ion-button fill="clear" size="small" color="light"
+                      *ngIf="canModify(post)"
+                      (click)="openPostPopover($event, post)">
+            <ion-icon slot="icon-only" name="ellipsis-vertical"></ion-icon>
           </ion-button>
         </div>
-      </div>
-    </ion-card-content>
-  </ion-card>
+      </ion-card-header>
 
-  <!-- COMMENTS -->
-  <ion-card class="comments-card" *ngIf="showComments" >
-    <ion-card-header>
-      <ion-card-title>Comentarios</ion-card-title>
-    </ion-card-header>
+      <ion-card-content>
+        <p class="post-content">{{ post.content }}</p>
 
-    <ion-card-content>
-      <ion-list>
-        <ion-item lines="none" *ngFor="let c of comments">
-          <ion-label>
-            <h3 class="comment-author">{{ c.author }}</h3>
-            <p class="comment-text">{{ c.text }}</p>
-              <div class="vote-row">
-                <ion-button fill="clear" size="small"
-                            [disabled]="commentVoting[c.commentid]"
-                            (click)="onVoteComment(c, 'like')"
-                            color = "secondary">
-                  <ion-icon name="thumbs-up-outline"></ion-icon>
-                  <span>{{ c.likes }}</span>
-                </ion-button>
+        <ion-item lines="none" class="write-box">
+          <ion-input placeholder="Escribe un comentario"
+                     [(ngModel)]="newComment"
+                     clear-input
+                     (keyup)="onEnterPress($event)">
+          </ion-input>
+          <ion-button fill="clear" color="secondary"
+                      (click)="sendComment()"
+                      [disabled]="!newComment.trim()">
+            <ion-icon slot="icon-only" name="send-outline"></ion-icon>
+          </ion-button>
+        </ion-item>
 
-                <ion-button fill="clear" size="small"
-                            [disabled]="commentVoting[c.commentid]"
-                            (click)="onVoteComment(c, 'dislike')"
-                            color = "secondary">
-                  <ion-icon name="thumbs-down-outline"></ion-icon>
-                  <span>{{ c.dislikes }}</span>
+        <div class="actions-row">
+          <div class="left-actions">
+            <ion-button fill="clear" size="small" color="secondary"
+                        [disabled]="voting[post.postid]"
+                        (click)="onVote(post, 'like')">
+              <ion-icon name="thumbs-up-outline"></ion-icon>
+              <span class="vote-number">{{ post.likes }}</span>
+            </ion-button>
+            <ion-button fill="clear" size="small" color="secondary"
+                        [disabled]="voting[post.postid]"
+                        (click)="onVote(post, 'dislike')">
+              <ion-icon name="thumbs-down-outline"></ion-icon>
+              <span class="vote-number">{{ post.dislikes }}</span>
+            </ion-button>
+            <ion-button fill="clear" color="secondary" (click)="toggleComments()">
+              <ion-icon name="chatbubble-ellipses-outline"></ion-icon>
+            </ion-button>
+          </div>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- COMENTARIOS -->
+    <ion-card class="comments-card" *ngIf="showComments">
+      <ion-card-header><ion-card-title>Comentarios</ion-card-title></ion-card-header>
+      <ion-card-content>
+        <ion-list>
+          <ion-item lines="none" *ngFor="let c of comments">
+            <ion-label>
+              <div class="comment-header">
+                <h3 class="comment-author">{{ c.author }}</h3>
+                <ion-button fill="clear" size="small" color="medium"
+                            *ngIf="canModifyComment(c)"
+                            (click)="openCommentPopover($event, c)">
+                  <ion-icon slot="icon-only" name="ellipsis-vertical"></ion-icon>
                 </ion-button>
               </div>
-          </ion-label>
-        </ion-item>
-      </ion-list>
-    </ion-card-content>
-  </ion-card>
+              <p class="comment-text">{{ c.text }}</p>
+              <div class="vote-row">
+                <ion-button fill="clear" size="small" color="secondary"
+                            [disabled]="commentVoting[c.commentid]"
+                            (click)="onVoteComment(c, 'like')">
+                  <ion-icon name="thumbs-up-outline"></ion-icon>
+                  <span class="vote-number">{{ c.likes }}</span>
+                </ion-button>
+                <ion-button fill="clear" size="small" color="secondary"
+                            [disabled]="commentVoting[c.commentid]"
+                            (click)="onVoteComment(c, 'dislike')">
+                  <ion-icon name="thumbs-down-outline"></ion-icon>
+                  <span class="vote-number">{{ c.dislikes }}</span>
+                </ion-button>
+              </div>
+            </ion-label>
+          </ion-item>
+        </ion-list>
+      </ion-card-content>
+    </ion-card>
+  </div>
+
+  <!-- Popovers -->
+  <ion-popover [isOpen]="postPopoverOpen"
+               [event]="postPopoverEvent"
+               (didDismiss)="postPopoverOpen = false"
+               class="post-popover">
+    <ng-template>
+      <ion-content>
+        <ion-list>
+          <ion-item button (click)="deletePost(selectedPost)">
+            <ion-label color="danger">Eliminar publicación</ion-label>
+          </ion-item>
+        </ion-list>
+      </ion-content>
+    </ng-template>
+  </ion-popover>
+
+  <ion-popover [isOpen]="commentPopoverOpen"
+               [event]="commentPopoverEvent"
+               (didDismiss)="commentPopoverOpen = false"
+               class="comment-popover">
+    <ng-template>
+      <ion-content>
+        <ion-list>
+          <ion-item button (click)="deleteComment(selectedComment)">
+            <ion-label color="danger">Eliminar comentario</ion-label>
+          </ion-item>
+        </ion-list>
+      </ion-content>
+    </ng-template>
+  </ion-popover>
 </ion-content>
