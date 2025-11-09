@@ -11,6 +11,22 @@ router.get('/:id', reviewController.getReviewById);
 router.put('/:id', reviewController.updateReview);
 router.patch('/:id', reviewController.patchReview);
 router.delete('/:id', reviewController.deleteReview);
+router.get('/check/:teacherPageId/:userId', reviewController.checkUserReview);
+router.get('/check/:teacherPageId/:userId', async (req, res) => {
+  try {
+    const { teacherPageId, userId } = req.params;
+    const pool = require('../config/db');
+    const { rows } = await pool.query(
+      'SELECT 1 FROM Review WHERE teacherPageId = $1 AND userid = $2 LIMIT 1',
+      [teacherPageId, userId]
+    );
+    res.json({ exists: rows.length > 0 });
+  } catch (err) {
+    console.error('Error en reviews/check:', err);
+    res.status(500).json({ error: 'Error verificando review' });
+  }
+});
+
 router.get('/teacher/:teacherPageId', async (req, res) => {
   try {
     const teacherPageId = req.params.teacherPageId;

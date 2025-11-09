@@ -97,13 +97,42 @@ const Review = {
   // Eliminar reseña
   delete: async (reviewId) => {
     try {
-      const result = await pool.query('DELETE FROM Review WHERE reviewId = $1 RETURNING *', [reviewId]);
+      // 1️⃣ Asegurar que la FK tenga ON DELETE CASCADE
+      await pool.query(`
+        DO $$
+        BEGIN
+          IF NOT EXISTS (
+            SELECT 1
+            FROM information_schema.referential_constraints rc
+            JOIN information_schema.table_constraints tc
+              ON rc.constraint_name = tc.constraint_name
+            WHERE tc.table_name = 'reviewvotes'
+            AND rc.delete_rule = 'CASCADE'
+          ) THEN
+            ALTER TABLE ReviewVotes
+            DROP CONSTRAINT IF EXISTS reviewvotes_reviewid_fkey;
+            
+            ALTER TABLE ReviewVotes
+            ADD CONSTRAINT reviewvotes_reviewid_fkey
+            FOREIGN KEY (reviewid) REFERENCES Review(reviewid)
+            ON DELETE CASCADE;
+          END IF;
+        END $$;
+      `);
+
+      // 2️⃣ Eliminar la review (los votos asociados se eliminarán automáticamente)
+      const result = await pool.query(
+        'DELETE FROM Review WHERE reviewId = $1 RETURNING *',
+        [reviewId]
+      );
+
       return result.rows[0];
     } catch (err) {
       console.error('Error eliminando review:', err);
       throw err;
     }
   },
+
 
   getByTeacherPage: async (teacherPageId) => {
     const query = `
@@ -124,6 +153,16 @@ const Review = {
     `;
     const { rows } = await pool.query(query, [teacherPageId]);
     return rows;
+  },
+
+  getByTeacherAndUser: async (teacherPageId, userId) => {
+    const query = `
+      SELECT * FROM Review
+      WHERE teacherPageId = $1 AND userId = $2
+      LIMIT 1;
+    `;
+    const { rows } = await pool.query(query, [teacherPageId, userId]);
+    return rows[0];
   }
 
 };

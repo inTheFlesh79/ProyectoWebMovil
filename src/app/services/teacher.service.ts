@@ -32,4 +32,8 @@ export class TeacherService {
     return this.http.get(`${this.apiUrl}/teacherRating`);
   }
 
+  getRatingsByTeacher(id: number): Observable<any> {
+    return this.http.get(`${this.apiUrl}/teacherRating/teacher/${id}/all`);
+  }
+
 }

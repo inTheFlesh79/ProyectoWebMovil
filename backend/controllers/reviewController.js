@@ -60,6 +60,17 @@ const reviewController = {
       console.error(err);
       res.status(500).json({ error: 'Error eliminando review' });
     }
+  },
+
+  checkUserReview: async (req, res) => {
+    try {
+      const { teacherPageId, userId } = req.params;
+      const existing = await Review.getByTeacherAndUser(teacherPageId, userId);
+      res.json({ exists: !!existing });
+    } catch (err) {
+      console.error('Error verificando reseña del usuario:', err);
+      res.status(500).json({ error: 'Error verificando reseña del usuario' });
+    }
   }
 };
 

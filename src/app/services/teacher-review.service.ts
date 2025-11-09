@@ -25,5 +25,15 @@ export class TeacherReviewService {
   voteReview(reviewid: number, vote_type: 'like' | 'dislike', token: string) {
     const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
     return this.http.post<any>(`${this.apiUrl}/review-votes`, { reviewid, vote_type }, { headers });
-    }
+  }
+
+  checkUserReview(teacherPageId: number, userId: number): Observable<{ exists: boolean }> {
+    return this.http.get<{ exists: boolean }>(`${this.apiUrl}/reviews/check/${teacherPageId}/${userId}`);
+  }
+
+  deleteUserFeedback(teacherPageId: number, token: string) {
+    const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
+    return this.http.delete(`${this.apiUrl}/teacherReviewRating/${teacherPageId}`, { headers });
+  }
+
 }

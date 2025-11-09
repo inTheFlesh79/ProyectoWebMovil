@@ -25,13 +25,12 @@ export class AppComponent {
   resetInactivityTimer() {
     clearTimeout(this.inactivityTimer);
 
-    // Configura el tiempo de inactividad (2 minutos)
     this.inactivityTimer = setTimeout(() => {
       if (this.authService.isLoggedIn()) {
         console.log('⏳ Sesión cerrada por inactividad');
         this.authService.clear();
         this.router.navigate(['/login']);
       }
-    }, 10 * 60 * 1000); // 2 minutos (en milisegundos)
+    }, 1440 * 60 * 1000);
   }
 }

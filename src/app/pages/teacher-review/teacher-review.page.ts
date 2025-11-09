@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Location } from '@angular/common';
 import { TeacherReviewService } from 'src/app/services/teacher-review.service';
-import { AuthService } from 'src/app/services/auth.service'; // si tienes auth
+import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
   selector: 'app-teacher-review',
@@ -11,8 +11,10 @@ import { AuthService } from 'src/app/services/auth.service'; // si tienes auth
   standalone: false
 })
 export class TeacherReviewPage implements OnInit {
+
   teacherPageId!: number;
   userId!: number;
+  username!: string;
 
   teaching: string = '';
   studentRespect: string = '';
@@ -27,26 +29,44 @@ export class TeacherReviewPage implements OnInit {
   showPopover: boolean = false;
   popoverEvent: any;
 
+  isSubmitting: boolean = false; // para deshabilitar botón mientras se envía
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private location: Location,
     private teacherReviewService: TeacherReviewService,
-    private authService: AuthService // si manejas sesión
+    private authService: AuthService
   ) {}
 
   ngOnInit() {
-    // Obtener ID del profesor desde la ruta
+    // obtener id del profesor desde la ruta
     this.teacherPageId = Number(this.route.snapshot.paramMap.get('id'));
 
-    // Obtener usuario actual
-    const user = this.authService.getUser(); // o el método que uses
-    this.userId = user?.userid ?? 1; // valor temporal si no tienes auth
+    // obtener usuario desde auth
+    const user = this.authService.getUser();
+
+    if (!user || !user.id) {
+      // no hay sesión: redirigir a login
+      console.warn('⚠️ No hay sesión activa → redirigiendo a login.');
+      this.router.navigate(['/login']);
+      return;
+    }
+
+    this.userId = user.id;
+    this.username = user.username ?? (user.name || '');
+    console.log('👤 Usuario:', this.username, '(ID:', this.userId, ')');
   }
 
+  ionViewWillEnter() {
+    // actualizar flag de sesión cada vez que entra la vista
+    this.isLoggedIn = this.authService.isLoggedIn ? this.authService.isLoggedIn() : !!this.authService.getUser();
+  }
+
+  /** Restricción: solo valores 1..7 */
   onRatingInput(event: any, field: string) {
     const raw = (event.target as HTMLInputElement).value || '';
-    let sanitized = raw.replace(/[^1-7]/g, '').slice(0, 1);
+    const sanitized = raw.replace(/[^1-7]/g, '').slice(0, 1);
     (this as any)[field] = sanitized;
     (this as any)[`${field}Touched`] = true;
   }
@@ -68,9 +88,13 @@ export class TeacherReviewPage implements OnInit {
     );
   }
 
+  /** PUBLICAR rating + review (evita duplicados manejando respuestas del backend) */
   async onPublish() {
     this.teachingTouched = this.studentRespectTouched = this.difficultyTouched = true;
     if (!this.isFormValid()) return;
+
+    if (this.isSubmitting) return; // evita envíos dobles
+    this.isSubmitting = true;
 
     const ratingData = {
       teachingPoliteness: Number(this.studentRespect),
@@ -84,19 +108,37 @@ export class TeacherReviewPage implements OnInit {
       content: this.review,
       userid: this.userId,
       teacherPageId: this.teacherPageId,
+      username: this.username, // enviamos nombre para que el backend lo guarde y el frontend lo muestre
       date: new Date().toISOString().slice(0, 10),
       likes: 0,
       dislikes: 0
     };
 
     try {
+      // 1) Crear rating (backend debe validar duplicados por userid+teacherPageId)
       await this.teacherReviewService.createRating(ratingData).toPromise();
+
+      // 2) Crear review (backend también valida duplicados)
       await this.teacherReviewService.createReview(reviewData).toPromise();
 
-      console.log('Review y rating publicados correctamente');
-      this.router.navigate(['/teacher-page', this.teacherPageId]);
-    } catch (err) {
-      console.error('Error publicando reseña:', err);
+      console.log('✅ Review y rating publicados correctamente');
+
+      // 3) Navegar a la página del profesor y recargar para que aparezca la nueva reseña
+      this.router.navigate(['/teacher-page', this.teacherPageId]).then(() => {
+        window.location.reload();
+      });
+
+    } catch (err: any) {
+      // manejo básico de errores
+      console.error('❌ Error publicando reseña:', err);
+
+      // Si el backend devuelve 400 con mensaje de duplicado, muéstralo en consola o toast
+      if (err?.status === 400) {
+        // puedes reemplazar console.warn por un toast/alert más amable
+        console.warn('No se puede crear: ya existe una review/rating para este usuario y profesor.');
+      }
+    } finally {
+      this.isSubmitting = false;
     }
   }
 
@@ -104,46 +146,52 @@ export class TeacherReviewPage implements OnInit {
     this.location.back();
   }
 
-  goToProfile() {
-    const user = this.authService.getUser();
+  /* --- Manejo del botón Perfil / Popover / Logout --- */
 
-    if (user && user.id) {
-      // ✅ Usuario logueado → ir a su perfil
-      this.router.navigate(['/user-profile', user.id]);
-    } else {
-      // 🚪 No logueado → ir a login
-      this.router.navigate(['/login']);
-    }
-  }
-
-  ionViewWillEnter() {
-    this.isLoggedIn = this.authService.isLoggedIn();
-  }
-
-  // 🔹 Al hacer clic en "Perfil" / "Iniciar Sesión"
   onProfileButtonClick(event: Event) {
+    // Si NO está logueado → ir a login
     if (!this.isLoggedIn) {
       this.router.navigate(['/login']);
-    } else {
-      this.popoverEvent = event;
-      this.showPopover = true;
+      return;
     }
+
+    // Si está logueado → abrir popover/menu contextual
+    this.popoverEvent = event;
+    this.showPopover = true;
   }
 
-  // 🔹 Ir al perfil
   goToProfileFromMenu() {
     const user = this.authService.getUser();
     if (user && user.id) {
       this.router.navigate(['/user-profile', user.id]);
+    } else {
+      this.router.navigate(['/login']);
     }
-    this.showPopover = false; // cerrar menú
+    this.showPopover = false;
   }
 
-  // 🔹 Cerrar sesión
   logout() {
-    this.authService.clear();
+    // limpia sesión (dependiendo de tu AuthService)
+    if (this.authService.clear) {
+      this.authService.clear();
+    } else {
+      // fallback: borrar localStorage manualmente si tu servicio no tiene clear()
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+    }
+
     this.isLoggedIn = false;
-    this.showPopover = false; // cerrar menú
+    this.showPopover = false;
+    // redirigir a login
     this.router.navigate(['/login']);
+  }
+
+  goToProfile() {
+    const user = this.authService.getUser();
+    if (user && user.id) {
+      this.router.navigate(['/user-profile', user.id]);
+    } else {
+      this.router.navigate(['/login']);
+    }
   }
 }

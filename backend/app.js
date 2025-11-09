@@ -21,6 +21,7 @@ const authRoutes = require('./routes/authRoutes');
 const voteRoutes = require('./routes/voteRoutes');
 const commentVoteRoutes = require('./routes/commentVoteRoutes');
 const reviewVoteRoutes = require('./routes/reviewVoteRoutes');
+const teacherReviewRatingRoutes = require('./routes/teacherReviewRatingRoutes');
 
 // Rutas
 app.use('/api/users', userRoutes);
@@ -36,6 +37,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/votes', voteRoutes);
 app.use('/api/comment-votes', commentVoteRoutes);
 app.use('/api/review-votes', reviewVoteRoutes);
+app.use('/api/teacherReviewRating', teacherReviewRatingRoutes);
 
 
 // Ruta raíz opcional
