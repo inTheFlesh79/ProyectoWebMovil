@@ -15,7 +15,6 @@
         </ion-col>
 
         <ion-col class="ion-text-center">
-          <!-- Muestra "Perfil" o "Iniciar Sesión" -->
           <ion-button fill="clear" color="light" (click)="onProfileButtonClick($event)">
             {{ isLoggedIn ? 'Perfil' : 'Iniciar Sesión' }}
           </ion-button>
@@ -25,7 +24,11 @@
   </ion-toolbar>
 </ion-header>
 
-<!-- 🔽 Menú desplegable -->
+
+<!-- Overlay desenfoque -->
+<div class="backdrop-blur" *ngIf="showPopover" (click)="showPopover=false"></div>
+
+
 <ion-popover [isOpen]="showPopover" (didDismiss)="showPopover = false" [event]="popoverEvent">
   <ng-template>
     <ion-content>
@@ -42,11 +45,11 @@
 </ion-popover>
 
 
-<ion-content color="light">
+<ion-content>
   <div class="page-container">
 
     <!-- TARJETA PERFIL USUARIO -->
-    <ion-card color="light" class="profile-card">
+    <ion-card class="profile-card">
       <ion-card-content>
         <div class="profile-container-vertical">
           <img [src]="user.photo" alt="Foto usuario" class="profile-photo" />
@@ -56,81 +59,94 @@
       </ion-card-content>
     </ion-card>
 
-    <!-- TARJETA HISTORIAL DE COMENTARIOS -->
     <!-- HISTORIAL DE COMENTARIOS -->
-<ion-card color="light" class="comments-card">
-  <ion-card-content>
-    <h3 class="card-title">Historial de comentarios</h3>
+    <ion-card class="comments-card">
+      <ion-card-content>
+        <h3 class="card-title">Historial de comentarios</h3>
 
-    <div *ngIf="paginatedComments.length > 0; else noComments">
-      <div class="comment-item" *ngFor="let c of paginatedComments" (click)="goToPost(c.postId)">
-        <p class="comment-content">{{ c.content }}</p>
-        <div class="comment-footer">
-          <span class="comment-date">{{ c.date | date:'dd/MM/yyyy' }}</span>
-          <span class="comment-likes">
-            <ion-icon name="thumbs-up-outline"></ion-icon> {{ c.likes }}
-          </span>
-
-          <span class="comment-dislikes">
-            <ion-icon name="thumbs-down-outline"></ion-icon> {{ c.dislikes }}
-          </span>
-
+        <div *ngIf="paginatedComments.length > 0; else noComments">
+          <div class="comment-item" *ngFor="let c of paginatedComments" (click)="goToPost(c.postId)">
+            <p class="comment-content">{{ c.content }}</p>
+            <div class="comment-footer">
+              <span class="comment-date">{{ c.date | date:'dd/MM/yyyy' }}</span>
+              <span class="comment-likes">
+                <ion-icon name="thumbs-up-outline" color = "secondary"></ion-icon> {{ c.likes }}
+              </span>
+              <span class="comment-dislikes" color = "secondary">
+                <ion-icon name="thumbs-down-outline" color = "secondary"></ion-icon> {{ c.dislikes }}
+              </span>
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
 
-    <ng-template #noComments>
-      <p class="ion-text-center">No hay comentarios aún</p>
-    </ng-template>
+        <ng-template #noComments>
+          <p class="ion-text-center">No hay comentarios aún</p>
+        </ng-template>
 
-    <!-- PAGINADOR -->
-    <div class="pagination" *ngIf="totalPagesComments > 1">
-      <ion-button fill="clear" (click)="changeCommentsPage(currentPageComments - 1)" [disabled]="currentPageComments === 1"><</ion-button>
-      <ion-button *ngFor="let p of [].constructor(totalPagesComments); let i = index"
-                  [fill]="currentPageComments === i + 1 ? 'solid' : 'clear'"
-                  (click)="changeCommentsPage(i + 1)">
-        {{ i + 1 }}
-      </ion-button>
-      <ion-button fill="clear" (click)="changeCommentsPage(currentPageComments + 1)" [disabled]="currentPageComments === totalPagesComments">></ion-button>
-    </div>
-  </ion-card-content>
-</ion-card>
+        <div class="pagination" *ngIf="totalPagesComments > 1">
+          <ion-button fill="clear" color="secondary"
+                      (click)="changeCommentsPage(currentPageComments - 1)"
+                      [disabled]="currentPageComments === 1"><</ion-button>
 
+          <ion-button *ngFor="let p of [].constructor(totalPagesComments); let i = index"
+                      [fill]="currentPageComments === i + 1 ? 'solid' : 'clear'"
+                      color="secondary"
+                      (click)="changeCommentsPage(i + 1)">
+            {{ i + 1 }}
+          </ion-button>
 
-<!-- HISTORIAL DE OPINIONES -->
-<ion-card color="light" class="comments-card">
-  <ion-card-content>
-    <h3 class="card-title">Historial de opiniones</h3>
-
-    <div *ngIf="paginatedOpinions.length > 0; else noOpinions">
-      <div class="comment-item" *ngFor="let o of paginatedOpinions">
-        <p class="prof-name">{{ o.teacherName }}</p>
-        <p class="comment-content">{{ o.content }}</p>
-        <div class="comment-footer">
-          <span class="comment-date">{{ o.date | date:'dd/MM/yyyy' }}</span>
-          <span class="comment-likes">👍 {{ o.likes }}</span>
-          <span class="comment-dislikes">👎 {{ o.dislikes }}</span>
+          <ion-button fill="clear"
+                      (click)="changeCommentsPage(currentPageComments + 1)"
+                      [disabled]="currentPageComments === totalPagesComments">></ion-button>
         </div>
-      </div>
-    </div>
+      </ion-card-content>
+    </ion-card>
 
-    <ng-template #noOpinions>
-      <p class="ion-text-center">No hay opiniones aún</p>
-    </ng-template>
 
-    <!-- PAGINADOR -->
-    <div class="pagination" *ngIf="totalPagesOpinions > 1">
-      <ion-button fill="clear" (click)="changeOpinionsPage(currentPageOpinions - 1)" [disabled]="currentPageOpinions === 1"><</ion-button>
-      <ion-button *ngFor="let p of [].constructor(totalPagesOpinions); let i = index"
-                  [fill]="currentPageOpinions === i + 1 ? 'solid' : 'clear'"
-                  (click)="changeOpinionsPage(i + 1)">
-        {{ i + 1 }}
-      </ion-button>
-      <ion-button fill="clear" (click)="changeOpinionsPage(currentPageOpinions + 1)" [disabled]="currentPageOpinions === totalPagesOpinions">></ion-button>
-    </div>
-  </ion-card-content>
-</ion-card>
+    <!-- HISTORIAL DE OPINIONES -->
+    <ion-card class="comments-card">
+      <ion-card-content>
+        <h3 class="card-title">Historial de opiniones</h3>
 
+        <div *ngIf="paginatedOpinions.length > 0; else noOpinions">
+          <div class="comment-item" *ngFor="let o of paginatedOpinions">
+            <p class="prof-name">{{ o.teacherName }}</p>
+            <p class="comment-content">{{ o.content }}</p>
+            <div class="comment-footer">
+              <span class="comment-date">{{ o.date | date:'dd/MM/yyyy' }}</span>
+              <span class="comment-likes">
+                <ion-icon name="thumbs-up-outline" color = "secondary"></ion-icon> {{ o.likes }}
+              </span>
+              <span class="comment-dislikes" color = "secondary">
+                <ion-icon name="thumbs-down-outline"></ion-icon> {{ o.dislikes }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <ng-template #noOpinions>
+          <p class="ion-text-center">No hay opiniones aún</p>
+        </ng-template>
+
+        <div class="pagination" *ngIf="totalPagesOpinions > 1">
+          <ion-button fill="clear" color="secondary"
+                      (click)="changeOpinionsPage(currentPageOpinions - 1)"
+                      [disabled]="currentPageOpinions === 1"><</ion-button>
+
+          <ion-button *ngFor="let p of [].constructor(totalPagesOpinions); let i = index"
+                      [fill]="currentPageOpinions === i + 1 ? 'solid' : 'clear'"
+                      color="secondary"
+                      (click)="changeOpinionsPage(i + 1)">
+            {{ i + 1 }}
+          </ion-button>
+
+          <ion-button fill="clear"
+                      (click)="changeOpinionsPage(currentPageOpinions + 1)"
+                      [disabled]="currentPageOpinions === totalPagesOpinions">></ion-button>
+        </div>
+
+      </ion-card-content>
+    </ion-card>
 
   </div>
 </ion-content>
