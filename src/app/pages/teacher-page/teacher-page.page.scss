@@ -145,7 +145,7 @@
 .comment-user-right {
   display: flex;
   align-items: center;
-  gap: 8px; /* espacio entre la info y la foto */
+  gap: 8px;
 }
 
 .user-info {
@@ -171,7 +171,8 @@
 
 .comment-footer {
   display: flex;
-  gap: 16px;
+  gap: 12px;
+  align-items: center;
 }
 
 .comment-footer ion-button {
@@ -185,6 +186,11 @@
 .comment-footer ion-icon {
   margin-right: 4px;
   vertical-align: middle;
+}
+
+/* Ajuste del menú de tres puntos */
+.comment-footer ion-button[color="secondary"] ion-icon {
+  margin-right: 0;
 }
 
 .author-avatar {
@@ -207,22 +213,17 @@ ion-popover ion-label {
 }
 
 @media (prefers-color-scheme: dark) {
-
-  /* Fondo general */
   ion-content {
     --background: var(--ion-color-dark) !important;
   }
 
-  /* Cards: perfil, ratings y comentarios */
   .profile-card,
   .rating-card,
   .comments-card {
     background: var(--ion-color-dark-tint) !important;
-    box-shadow: none !important;
     color: var(--ion-color-light-contrast) !important;
   }
 
-  /* Texto principal dentro de cards */
   .profile-info h2,
   .teacher-content,
   .comments-title,
@@ -232,14 +233,12 @@ ion-popover ion-label {
     color: var(--ion-color-light) !important;
   }
 
-  /* Textos secundarios (institución, fechas, valores numéricos) */
   .institution,
   .rating-value,
   .comment-date {
     color: var(--ion-color-secondary-contrast) !important;
   }
 
-  /* Cada comentario */
   .comment-item {
     background-color: var(--ion-color-dark-shade) !important;
   }
@@ -248,17 +247,14 @@ ion-popover ion-label {
     background-color: var(--ion-color-dark) !important;
   }
 
-  /* Barra de calificación detrás del fill */
   .rating-bar {
     background-color: var(--ion-color-medium-shade) !important;
   }
 
-  /* Botones dentro de comentarios */
   .comment-footer ion-button {
     --color: var(--ion-color-light);
   }
 }
-
 
 .backdrop-blur {
   position: fixed;

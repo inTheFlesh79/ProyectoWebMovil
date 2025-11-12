@@ -147,13 +147,24 @@
       <!-- dentro del *ngFor="let review of reviews" -->
       <div class="comment-footer">
         <ion-button fill="clear" size="small" (click)="onReviewVote(review, 'like')">
-          <ion-icon name="thumbs-up-outline" color = "secondary"></ion-icon>
+          <ion-icon name="thumbs-up-outline" color="secondary"></ion-icon>
           <span>{{ review.likes }}</span>
         </ion-button>
 
         <ion-button fill="clear" size="small" (click)="onReviewVote(review, 'dislike')">
-          <ion-icon name="thumbs-down-outline" color = "secondary"></ion-icon>
+          <ion-icon name="thumbs-down-outline" color="secondary"></ion-icon>
           <span>{{ review.dislikes }}</span>
+        </ion-button>
+
+        <!-- 🔹 Botón de menú (3 puntos horizontales) -->
+        <ion-button
+          *ngIf="canModify(review)"
+          fill="clear"
+          size="small"
+          color="secondary"
+          (click)="openReviewPopover($event, review)"
+        >
+          <ion-icon name="ellipsis-horizontal"></ion-icon>
         </ion-button>
       </div>
     </div> <!-- FIN review-item -->
@@ -166,4 +177,19 @@
     <ion-spinner name="crescent" style="margin: 20px auto; display: block;"></ion-spinner>
   </ion-content>
 </ng-template>
+
+<!-- 🔹 Popover contextual -->
+<ion-popover
+  [isOpen]="reviewPopoverOpen"
+  [event]="reviewPopoverEvent"
+  (didDismiss)="reviewPopoverOpen = false"
+>
+  <ng-template>
+    <ion-list>
+      <ion-item button (click)="deleteReview(selectedReview)">
+        <ion-label color="danger">Eliminar reseña</ion-label>
+      </ion-item>
+    </ion-list>
+  </ng-template>
+</ion-popover>
 
