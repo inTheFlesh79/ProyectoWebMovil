@@ -53,7 +53,7 @@
       <ion-card-content>
         <div class="profile-container-vertical">
           <img [src]="user.photo" alt="Foto usuario" class="profile-photo" />
-          <h2>{{ user.name }}</h2>
+          <h2 class="username">{{ user.name }}</h2>
           <p class="user-role">{{ getRoleText(user.role) }}</p>
         </div>
       </ion-card-content>
@@ -117,8 +117,8 @@
               <span class="comment-likes">
                 <ion-icon name="thumbs-up-outline" color = "secondary"></ion-icon> {{ o.likes }}
               </span>
-              <span class="comment-dislikes" color = "secondary">
-                <ion-icon name="thumbs-down-outline"></ion-icon> {{ o.dislikes }}
+              <span class="comment-dislikes">
+                <ion-icon name="thumbs-down-outline" color = "secondary"></ion-icon> {{ o.dislikes }}
               </span>
             </div>
           </div>

@@ -25,6 +25,10 @@
   </ion-toolbar>
 </ion-header>
 
+<!-- Overlay desenfoque -->
+<div class="backdrop-blur" *ngIf="showPopover" (click)="showPopover=false"></div>
+
+
 <!-- 🔽 Menú desplegable -->
 <ion-popover [isOpen]="showPopover" (didDismiss)="showPopover = false" [event]="popoverEvent">
   <ng-template>
@@ -42,8 +46,8 @@
 </ion-popover>
 
 
-<ion-content color="light" *ngIf="teacher && ratings; else loadingTemplate">
-  <ion-card color="light" class="profile-card">
+<ion-content *ngIf="teacher && ratings; else loadingTemplate">
+  <ion-card class="profile-card">
     <ion-card-content>
       <div class="profile-container">
         <!-- Foto + info en un div separado -->
@@ -72,7 +76,7 @@
     </ion-card-content>
   </ion-card>
 
-  <ion-card color="light" class="rating-card">
+  <ion-card  class="rating-card">
     <ion-card-content>
       <div class="rating-container">
         
@@ -114,14 +118,14 @@
   </ion-card>
 
 <!-- RESEÑAS DE ESTUDIANTES -->
-<ion-card color="light" class="comments-card">
+<ion-card  class="comments-card">
   <ion-card-content>
     <h3 class="comments-title">Reseñas de estudiantes</h3>
 
     <!-- Reseñas iterativas -->
     <div class="comment-item" *ngFor="let review of reviews">
       <div class="comment-header">
-        <span class="comment-rating">Calificación: {{ review.rating ? (review.rating | number:'1.1-1') : 'N/A' }}</span>
+        <span class="comment-rating" >Calificación: {{ review.rating ? (review.rating | number:'1.1-1') : 'N/A' }}</span>
 
         <div class="comment-user-right">
           <div class="user-info">
@@ -143,12 +147,12 @@
       <!-- dentro del *ngFor="let review of reviews" -->
       <div class="comment-footer">
         <ion-button fill="clear" size="small" (click)="onReviewVote(review, 'like')">
-          <ion-icon name="thumbs-up-outline"></ion-icon>
+          <ion-icon name="thumbs-up-outline" color = "secondary"></ion-icon>
           <span>{{ review.likes }}</span>
         </ion-button>
 
         <ion-button fill="clear" size="small" (click)="onReviewVote(review, 'dislike')">
-          <ion-icon name="thumbs-down-outline"></ion-icon>
+          <ion-icon name="thumbs-down-outline" color = "secondary"></ion-icon>
           <span>{{ review.dislikes }}</span>
         </ion-button>
       </div>

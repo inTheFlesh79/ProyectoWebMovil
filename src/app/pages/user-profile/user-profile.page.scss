@@ -6,8 +6,10 @@
   align-items: center;
 }
 
+/* Tarjetas del perfil, ratings y comentarios */
 .profile-card,
-.comments-card {
+.comments-card,
+.rating-card {
   width: 100%;
   max-width: 700px;
   margin: 0 auto;
@@ -17,33 +19,82 @@
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
-/* MODO OSCURO: tarjetas y texto claro */
+/* Fondo completo (modo claro) */
+ion-content {
+  --background: var(--ion-color-light) !important;
+}
+
+.username {
+  color: var(--ion-color-dark); /* modo claro */
+  font-weight: bold;
+  text-align: center;
+}
+
+/* Centrado general de texto */
+.ion-text-center {
+  color: var(--ion-color-dark);
+}
+
+/* MODO OSCURO con tus variables */
 @media (prefers-color-scheme: dark) {
-  .profile-card,
-  .comments-card {
-    background-color: var(--ion-color-dark) !important;
-    color: var(--ion-color-dark-contrast) !important;
+  
+  .username,
+  .ion-text-center {
+    color: var(--ion-color-light) !important;
+  }
+  /* FONDO GENERAL */
+  ion-content {
+    --background: var(--ion-color-dark) !important;
   }
 
+  /* CARDS */
+  .profile-card,
+  .comments-card,
+  .rating-card {
+    background: var(--ion-color-dark-tint) !important;
+    box-shadow: none !important;
+    color: var(--ion-color-light-contrast) !important;
+  }
+
+  /* Texto general dentro de las tarjetas */
   .card-title,
   .prof-name,
+  .teacher-content,
+  .comments-title,
   .comment-content,
-  .user-role,
-  .comment-footer,
-  ion-text,
-  p, h1, h2, h3 {
-    color: var(--ion-color-dark-contrast) !important;
+  .rating-title {
+    color: var(--ion-color-light) !important;
   }
 
+  /* Textos secundarios */
+  .user-role,
+  .rating-value,
+  .comment-date {
+    color: var(--ion-color-secondary-contrast) !important;
+  }
+
+  /* Comentarios */
   .comment-item {
-    background-color: #3a3a3a !important;
-    color: var(--ion-color-dark-contrast) !important;
+    background-color: var(--ion-color-dark-shade) !important;
+    color: var(--ion-color-light-contrast) !important;
   }
 
   .comment-item:hover {
-    background-color: #4a4a4a !important;
+    background-color: var(--ion-color-dark) !important;
+  }
+
+  /* Barras de calificación */
+  .rating-bar {
+    background-color: var(--ion-color-medium-shade) !important;
+  }
+
+  /* Botones dentro de comentarios */
+  .comment-footer ion-button {
+    --color: var(--ion-color-light);
   }
 }
+
+/* ---- Perfil del profesor ---- */
 
 .profile-container-vertical {
   display: flex;
@@ -66,18 +117,27 @@
   text-align: center;
 }
 
+.prof-name {
+  font-weight: bold;
+  color: var(--ion-color-primary);
+  margin-bottom: 4px;
+}
+
 .user-role {
   font-size: 0.9rem;
   color: var(--ion-color-medium);
   text-align: center;
 }
 
+/* Títulos */
 .card-title {
   font-weight: bold;
   font-size: 1.1rem;
   color: var(--ion-color-dark);
   margin-bottom: 16px;
 }
+
+/* ---- Comentarios ---- */
 
 .comment-item {
   background-color: #fff;
@@ -90,18 +150,13 @@
   background-color: #f0f0f0;
 }
 
-.prof-name {
-  font-weight: bold;
-  color: var(--ion-color-primary);
-  margin-bottom: 4px;
-}
-
 .comment-content {
   font-size: 0.9rem;
   color: var(--ion-color-dark);
   margin-bottom: 4px;
 }
 
+/* Footer de cada comentario */
 .comment-footer {
   display: flex;
   gap: 12px;
@@ -115,22 +170,22 @@
   gap: 4px;
 }
 
-/* PAGINADOR */
+/* ---- Paginación ---- */
+
 .pagination {
   display: flex;
   justify-content: center;
   gap: 0.5rem;
   margin-top: 8px;
-  
 }
 
 .pagination ion-button {
   min-width: 36px;
   height: 32px;
   font-size: 0.85rem;
-  
 }
 
+/* Popover */
 ion-popover ion-item {
   --min-height: 44px;
   display: flex;
@@ -141,6 +196,7 @@ ion-popover ion-label {
   margin: 0;
 }
 
+/* Blur cuando se abre modal/popover */
 .backdrop-blur {
   position: fixed;
   top: 0;
@@ -151,4 +207,3 @@ ion-popover ion-label {
   background: rgba(0, 0, 0, 0.35);
   z-index: 9998;
 }
-

@@ -25,6 +25,9 @@
   </ion-toolbar>
 </ion-header>
 
+<!-- Overlay desenfoque -->
+<div class="backdrop-blur" *ngIf="showPopover" (click)="showPopover=false"></div>
+
 <!-- 🔽 Menú desplegable -->
 <ion-popover [isOpen]="showPopover" (didDismiss)="showPopover = false" [event]="popoverEvent">
   <ng-template>

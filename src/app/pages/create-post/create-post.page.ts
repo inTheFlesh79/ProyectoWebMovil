@@ -52,10 +52,17 @@ export class CreatePostPage {
         const alert = await this.alertCtrl.create({
           header: 'Éxito',
           message: 'Tu publicación se ha creado correctamente.',
-          buttons: ['OK']
+          buttons: [{
+            text: 'OK',
+            handler: () => {
+              // Esto se ejecuta cuando el usuario hace click en OK
+              this.router.navigate(['/community']).then(() => {
+                window.location.reload();
+              });
+            }
+          }]
         });
         await alert.present();
-        this.router.navigate(['/community']);
       },
       error: async (err) => {
         console.error('Error creando post:', err);
