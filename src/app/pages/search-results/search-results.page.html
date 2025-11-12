@@ -25,7 +25,11 @@
   </ion-toolbar>
 </ion-header>
 
-<!-- 🔽 Menú desplegable -->
+<!-- Overlay desenfoque -->
+<div class="backdrop-blur" *ngIf="showPopover" (click)="showPopover=false"></div>
+
+
+<!-- Menú desplegable -->
 <ion-popover [isOpen]="showPopover" (didDismiss)="showPopover = false" [event]="popoverEvent">
   <ng-template>
     <ion-content>
@@ -74,11 +78,11 @@
         detail="false"
       >
         <ion-card-header>
-          <ion-card-subtitle color="medium">Profesor</ion-card-subtitle>
+          <ion-card-subtitle>Profesor</ion-card-subtitle>
           <ion-card-title class="name">{{ item.name }}</ion-card-title>
         </ion-card-header>
         <ion-card-content>
-          <p>{{ item.content }}</p>
+          <p class = "contenido-card">{{ item.content }}</p>
         </ion-card-content>
       </ion-card>
 

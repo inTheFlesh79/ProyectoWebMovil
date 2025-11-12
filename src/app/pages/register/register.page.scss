@@ -55,3 +55,29 @@ ion-button.primary {
   display: block;          
   margin: 20px auto 0 auto;  
 }
+
+
+/* 🌙 Modo oscuro */
+@media (prefers-color-scheme: dark) {
+  ion-content {
+    --background: var(--ion-color-dark);
+  }
+
+  .responsive-square-card {
+    background-color: var(--ion-color-dark-tint);
+    box-shadow: 0 2px 8px rgba(255, 255, 255, 0.05);
+  }
+
+  ion-card-title {
+    color: var(--ion-color-light);
+  }
+
+  ion-item {
+    --background: var(--ion-color-dark-tint);
+  }
+
+  ion-input{
+    --background: var(--ion-color-dark);
+    --color: var(--ion-color-light);
+  }
+}
