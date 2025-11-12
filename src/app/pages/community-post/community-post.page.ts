@@ -168,7 +168,7 @@ export class CommunityPostPage implements OnInit {
   }
 
   // ==============================
-  // 👤 Header popover
+  // Header popover
   // ==============================
   ionViewWillEnter() {
     this.isLoggedIn = this.authService.isLoggedIn();
@@ -199,7 +199,7 @@ export class CommunityPostPage implements OnInit {
   }
 
   // ==============================
-  // 🗑️ Popover de post
+  // Popover de post
   // ==============================
   openPostPopover(event: Event, post: any) {
     event.stopPropagation?.();
@@ -256,7 +256,7 @@ export class CommunityPostPage implements OnInit {
   }
 
   // ==============================
-  // 💬 Popover de comentarios
+  // Popover de comentarios
   // ==============================
   openCommentPopover(event: Event, comment: any) {
     event.stopPropagation?.();
@@ -266,9 +266,13 @@ export class CommunityPostPage implements OnInit {
   }
 
   canModifyComment(comment: any): boolean {
-    const user = this.authService.getUser();
-    const isAdmin = user?.role === 'admin';
-    return !!user && (isAdmin || user.id === comment.userid);
+    const currentUser = this.authService.getUser();
+    if (!currentUser) return false;
+
+    const isAdmin = currentUser.role === 1;
+    const isOwner = currentUser.id === comment.userid;
+
+    return isAdmin || isOwner;
   }
 
   async deleteComment(comment: any) {
@@ -310,6 +314,6 @@ export class CommunityPostPage implements OnInit {
         this.commentPopoverOpen = false;
       }
     });
-  }
 
+  }
 }

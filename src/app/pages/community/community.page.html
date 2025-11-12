@@ -86,7 +86,7 @@
           </div>
         </ion-label>
 
-        <!-- 👤 Autor + menú contextual -->
+        <!-- Autor + menú contextual -->
         <div class="author">
           <ion-label class="username clickable" (click)="goToUserProfile(post.userid)">
             {{ post.username }}
@@ -100,7 +100,7 @@
             </ng-template>
           </ion-avatar>
 
-          <!-- ⋮ Tres puntos solo si puede modificar -->
+          <!-- Tres puntos solo si puede modificar -->
           <ion-button fill="clear" size="small" color="light"
                       *ngIf="canModify(post)"
                       (click)="openPostPopover($event, post)">
@@ -111,7 +111,7 @@
     </ion-list>
   </ion-card>
 
-  <!-- 🚫 Sin publicaciones -->
+  <!-- Sin publicaciones -->
   <ion-card *ngIf="filteredPosts.length === 0" class="responsive-square-card">
     <ion-card-content class="ion-text-center ion-align-items-center"
                       style="display: flex; justify-content: center; height: 100%;">

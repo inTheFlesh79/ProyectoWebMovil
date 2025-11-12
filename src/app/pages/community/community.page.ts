@@ -150,13 +150,15 @@ export class CommunityPage implements OnInit {
 
   // 🔹 Verifica si el usuario puede modificar un post
   canModify(post: any): boolean {
-    const currentUser = this.authService.getUser()
-    if (!this.currentUser) return false;
-      const isAdmin = currentUser.role === 1;
-      const isOwner = currentUser.id === post.userid;
+    const currentUser = this.authService.getUser();
+    if (!currentUser) return false;
+
+    const isAdmin = currentUser.role === 1;
+    const isOwner = currentUser.id === post.userid;
+
     return isAdmin || isOwner;
   }
-
+  
   // 🔹 Abre el popover contextual del post
   openPostPopover(event: Event, post: any) {
     this.selectedPost = post;
