@@ -17,6 +17,7 @@
   padding: 16px;
   background-color: var(--ion-color-light);
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  position: relative;
 }
 
 /* Fondo completo (modo claro) */
@@ -35,13 +36,153 @@ ion-content {
   color: var(--ion-color-dark);
 }
 
-/* MODO OSCURO con tus variables */
+/* ---- Botón tres puntos ---- */
+.three-dots-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px; /* 🔹 Movido más hacia la derecha */
+  z-index: 10;
+  --padding-start: 6px;
+  --padding-end: 6px;
+  color: var(--ion-color-secondary);
+  transition: transform 0.15s ease-in-out;
+}
+
+.three-dots-btn:hover {
+  transform: scale(1.15);
+}
+
+/* Popover */
+ion-popover {
+  --background: var(--ion-color-light);
+  --color: var(--ion-color-dark);
+}
+
+ion-popover ion-item {
+  --min-height: 44px;
+  display: flex;
+  align-items: center;
+  --background: transparent;
+}
+
+ion-popover ion-label {
+  margin: 0;
+}
+
+ion-popover ion-item[color="danger"] {
+  --background: transparent !important;
+  --color: var(--ion-color-danger) !important;
+}
+
+/* Blur cuando se abre modal/popover */
+.backdrop-blur {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  backdrop-filter: blur(12px);
+  background: rgba(0, 0, 0, 0.35);
+  z-index: 9998;
+}
+
+/* ---- Perfil del profesor ---- */
+
+.profile-container-vertical {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.profile-photo {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--ion-color-primary);
+}
+
+.profile-container-vertical h2 {
+  margin: 0;
+  font-weight: bold;
+  text-align: center;
+}
+
+.prof-name {
+  font-weight: bold;
+  color: var(--ion-color-primary);
+  margin-bottom: 4px;
+}
+
+.user-role {
+  font-size: 0.9rem;
+  color: var(--ion-color-medium);
+  text-align: center;
+}
+
+/* ---- Títulos ---- */
+.card-title {
+  font-weight: bold;
+  font-size: 1.1rem;
+  color: var(--ion-color-dark);
+  margin-bottom: 16px;
+}
+
+/* ---- Comentarios ---- */
+.comment-item {
+  background-color: #fff;
+  border-radius: 10px;
+  padding: 12px;
+  margin-bottom: 12px;
+}
+
+.comment-item:hover {
+  background-color: #f0f0f0;
+}
+
+.comment-content {
+  font-size: 0.9rem;
+  color: var(--ion-color-dark);
+  margin-bottom: 4px;
+}
+
+/* Footer de cada comentario */
+.comment-footer {
+  display: flex;
+  gap: 12px;
+  font-size: 0.8rem;
+  color: var(--ion-color-medium);
+}
+
+.comment-footer span {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* ---- Paginación ---- */
+.pagination {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 8px;
+}
+
+.pagination ion-button {
+  min-width: 36px;
+  height: 32px;
+  font-size: 0.85rem;
+}
+
+/* ---- MODO OSCURO ---- */
 @media (prefers-color-scheme: dark) {
   
   .username,
   .ion-text-center {
     color: var(--ion-color-light) !important;
   }
+
   /* FONDO GENERAL */
   ion-content {
     --background: var(--ion-color-dark) !important;
@@ -88,122 +229,14 @@ ion-content {
     background-color: var(--ion-color-medium-shade) !important;
   }
 
-  /* Botones dentro de comentarios */
-  .comment-footer ion-button {
+  /* Popover modo oscuro */
+  ion-popover {
+    --background: var(--ion-color-dark-tint);
     --color: var(--ion-color-light);
   }
-}
 
-/* ---- Perfil del profesor ---- */
-
-.profile-container-vertical {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-}
-
-.profile-photo {
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 2px solid var(--ion-color-primary);
-}
-
-.profile-container-vertical h2 {
-  margin: 0;
-  font-weight: bold;
-  text-align: center;
-}
-
-.prof-name {
-  font-weight: bold;
-  color: var(--ion-color-primary);
-  margin-bottom: 4px;
-}
-
-.user-role {
-  font-size: 0.9rem;
-  color: var(--ion-color-medium);
-  text-align: center;
-}
-
-/* Títulos */
-.card-title {
-  font-weight: bold;
-  font-size: 1.1rem;
-  color: var(--ion-color-dark);
-  margin-bottom: 16px;
-}
-
-/* ---- Comentarios ---- */
-
-.comment-item {
-  background-color: #fff;
-  border-radius: 10px;
-  padding: 12px;
-  margin-bottom: 12px;
-}
-
-.comment-item:hover {
-  background-color: #f0f0f0;
-}
-
-.comment-content {
-  font-size: 0.9rem;
-  color: var(--ion-color-dark);
-  margin-bottom: 4px;
-}
-
-/* Footer de cada comentario */
-.comment-footer {
-  display: flex;
-  gap: 12px;
-  font-size: 0.8rem;
-  color: var(--ion-color-medium);
-}
-
-.comment-footer span {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
-/* ---- Paginación ---- */
-
-.pagination {
-  display: flex;
-  justify-content: center;
-  gap: 0.5rem;
-  margin-top: 8px;
-}
-
-.pagination ion-button {
-  min-width: 36px;
-  height: 32px;
-  font-size: 0.85rem;
-}
-
-/* Popover */
-ion-popover ion-item {
-  --min-height: 44px;
-  display: flex;
-  align-items: center;
-}
-
-ion-popover ion-label {
-  margin: 0;
-}
-
-/* Blur cuando se abre modal/popover */
-.backdrop-blur {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  backdrop-filter: blur(12px);
-  background: rgba(0, 0, 0, 0.35);
-  z-index: 9998;
+  ion-popover ion-item[color="danger"] {
+    --color: var(--ion-color-danger) !important;
+    --background: transparent !important;
+  }
 }

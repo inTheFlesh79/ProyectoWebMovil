@@ -24,10 +24,8 @@
   </ion-toolbar>
 </ion-header>
 
-
 <!-- Overlay desenfoque -->
 <div class="backdrop-blur" *ngIf="showPopover" (click)="showPopover=false"></div>
-
 
 <ion-popover [isOpen]="showPopover" (didDismiss)="showPopover = false" [event]="popoverEvent">
   <ng-template>
@@ -44,12 +42,16 @@
   </ng-template>
 </ion-popover>
 
-
 <ion-content>
   <div class="page-container">
 
     <!-- TARJETA PERFIL USUARIO -->
     <ion-card class="profile-card">
+      <!-- Botón 3 puntos solo visible si el usuario puede modificar -->
+      <ion-button *ngIf="canModify" fill="clear" class="three-dots-btn" (click)="openUserPopover($event)">
+        <ion-icon name="ellipsis-vertical" color="secondary"></ion-icon>
+      </ion-button>
+
       <ion-card-content>
         <div class="profile-container-vertical">
           <img [src]="user.photo" alt="Foto usuario" class="profile-photo" />
@@ -58,6 +60,20 @@
         </div>
       </ion-card-content>
     </ion-card>
+
+    <!-- POPOVER DEL MENÚ DE USUARIO -->
+    <ion-popover [isOpen]="userPopoverOpen" (didDismiss)="userPopoverOpen = false" [event]="userPopoverEvent">
+      <ng-template>
+        <ion-content class="user-popover-content">
+          <ion-list>
+            <ion-item button (click)="deleteUser()">
+              <ion-icon name="trash-outline" slot="start" color="danger"></ion-icon>
+              <ion-label class="danger-label" color="danger">Eliminar usuario</ion-label>
+            </ion-item>
+          </ion-list>
+        </ion-content>
+      </ng-template>
+    </ion-popover>
 
     <!-- HISTORIAL DE COMENTARIOS -->
     <ion-card class="comments-card">
@@ -70,10 +86,10 @@
             <div class="comment-footer">
               <span class="comment-date">{{ c.date | date:'dd/MM/yyyy' }}</span>
               <span class="comment-likes">
-                <ion-icon name="thumbs-up-outline" color = "secondary"></ion-icon> {{ c.likes }}
+                <ion-icon name="thumbs-up-outline" color="secondary"></ion-icon> {{ c.likes }}
               </span>
-              <span class="comment-dislikes" color = "secondary">
-                <ion-icon name="thumbs-down-outline" color = "secondary"></ion-icon> {{ c.dislikes }}
+              <span class="comment-dislikes">
+                <ion-icon name="thumbs-down-outline" color="secondary"></ion-icon> {{ c.dislikes }}
               </span>
             </div>
           </div>
@@ -102,7 +118,6 @@
       </ion-card-content>
     </ion-card>
 
-
     <!-- HISTORIAL DE OPINIONES -->
     <ion-card class="comments-card">
       <ion-card-content>
@@ -115,10 +130,10 @@
             <div class="comment-footer">
               <span class="comment-date">{{ o.date | date:'dd/MM/yyyy' }}</span>
               <span class="comment-likes">
-                <ion-icon name="thumbs-up-outline" color = "secondary"></ion-icon> {{ o.likes }}
+                <ion-icon name="thumbs-up-outline" color="secondary"></ion-icon> {{ o.likes }}
               </span>
               <span class="comment-dislikes">
-                <ion-icon name="thumbs-down-outline" color = "secondary"></ion-icon> {{ o.dislikes }}
+                <ion-icon name="thumbs-down-outline" color="secondary"></ion-icon> {{ o.dislikes }}
               </span>
             </div>
           </div>
@@ -144,9 +159,7 @@
                       (click)="changeOpinionsPage(currentPageOpinions + 1)"
                       [disabled]="currentPageOpinions === totalPagesOpinions">></ion-button>
         </div>
-
       </ion-card-content>
     </ion-card>
-
   </div>
 </ion-content>

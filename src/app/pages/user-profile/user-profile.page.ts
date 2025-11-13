@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UserService } from '../../services/user.service';
 import { AuthService } from '../../services/auth.service';
+import { AlertController } from '@ionic/angular';
 
 @Component({
   selector: 'app-user-profile',
@@ -15,9 +16,7 @@ export class UserProfilePage implements OnInit {
   comments: any[] = [];
   opinions: any[] = [];
 
-  // 🔹 Control de paginación
   itemsPerPage = 6;
-
   currentPageComments = 1;
   currentPageOpinions = 1;
 
@@ -25,26 +24,35 @@ export class UserProfilePage implements OnInit {
   showPopover: boolean = false;
   popoverEvent: any;
 
+  // Popover menú usuario (3 puntos)
+  userPopoverOpen: boolean = false;
+  userPopoverEvent: any;
+
+  // Control permisos
+  canModify: boolean = false;
+  loggedUser: any = {};
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private authService: AuthService,
-    private userService: UserService
+    private userService: UserService,
+    private alertController: AlertController
   ) {}
 
   ngOnInit() {
     const userId = Number(this.route.snapshot.paramMap.get('id'));
-    if (userId) {
-      this.loadUserProfile(userId);
-    } else {
-      console.error('No se recibió el ID de usuario en la URL');
-    }
+    if (userId) this.loadUserProfile(userId);
+
+    this.loggedUser = this.authService.getUser();
+    this.canModify = this.loggedUser?.role === 1; // Solo admins
   }
 
   loadUserProfile(id: number) {
     this.userService.getUserProfile(id).subscribe({
       next: (data) => {
         this.user = {
+          id: id,
           photo: data.user.profilepicture
             ? 'data:image/jpeg;base64,' + data.user.profilepicture
             : 'assets/default-profile.png',
@@ -54,13 +62,10 @@ export class UserProfilePage implements OnInit {
         this.comments = data.comments || [];
         this.opinions = data.reviews || [];
       },
-      error: (err) => {
-        console.error('Error cargando perfil:', err);
-      }
+      error: (err) => console.error('Error cargando perfil:', err)
     });
   }
 
-  // 🔹 Métodos de paginación para comentarios
   get paginatedComments() {
     const start = (this.currentPageComments - 1) * this.itemsPerPage;
     return this.comments.slice(start, start + this.itemsPerPage);
@@ -71,12 +76,9 @@ export class UserProfilePage implements OnInit {
   }
 
   changeCommentsPage(page: number) {
-    if (page >= 1 && page <= this.totalPagesComments) {
-      this.currentPageComments = page;
-    }
+    if (page >= 1 && page <= this.totalPagesComments) this.currentPageComments = page;
   }
 
-  // 🔹 Métodos de paginación para opiniones
   get paginatedOpinions() {
     const start = (this.currentPageOpinions - 1) * this.itemsPerPage;
     return this.opinions.slice(start, start + this.itemsPerPage);
@@ -87,12 +89,9 @@ export class UserProfilePage implements OnInit {
   }
 
   changeOpinionsPage(page: number) {
-    if (page >= 1 && page <= this.totalPagesOpinions) {
-      this.currentPageOpinions = page;
-    }
+    if (page >= 1 && page <= this.totalPagesOpinions) this.currentPageOpinions = page;
   }
 
-  // 🔹 Otros métodos existentes
   getRoleText(role: number): string {
     return role === 1 ? 'Administrador' : 'Miembro';
   }
@@ -103,41 +102,75 @@ export class UserProfilePage implements OnInit {
 
   goToProfile() {
     const user = this.authService.getUser();
-    if (user && user.id) {
-      this.router.navigate(['/user-profile', user.id]);
-    } else {
-      this.router.navigate(['/login']);
-    }
+    if (user && user.id) this.router.navigate(['/user-profile', user.id]);
+    else this.router.navigate(['/login']);
   }
 
   ionViewWillEnter() {
     this.isLoggedIn = this.authService.isLoggedIn();
   }
 
-  // 🔹 Al hacer clic en "Perfil" / "Iniciar Sesión"
   onProfileButtonClick(event: Event) {
-    if (!this.isLoggedIn) {
-      this.router.navigate(['/login']);
-    } else {
+    if (!this.isLoggedIn) this.router.navigate(['/login']);
+    else {
       this.popoverEvent = event;
       this.showPopover = true;
     }
   }
 
-  // 🔹 Ir al perfil
   goToProfileFromMenu() {
     const user = this.authService.getUser();
-    if (user && user.id) {
-      this.router.navigate(['/user-profile', user.id]);
-    }
-    this.showPopover = false; // cerrar menú
+    if (user && user.id) this.router.navigate(['/user-profile', user.id]);
+    this.showPopover = false;
   }
 
-  // 🔹 Cerrar sesión
   logout() {
     this.authService.clear();
     this.isLoggedIn = false;
-    this.showPopover = false; // cerrar menú
+    this.showPopover = false;
     this.router.navigate(['/login']);
+  }
+
+  // 🔹 Menú de 3 puntos
+  openUserPopover(event: Event) {
+    this.userPopoverEvent = event;
+    this.userPopoverOpen = true;
+  }
+
+  // 🔹 Confirmación visual con restricciones
+  async deleteUser() {
+    if (!this.canModify) return;
+
+    // Si el admin intenta borrarse a sí mismo o a otro admin
+    if (this.loggedUser.id === this.user.id || this.user.role === 1) {
+      const alert = await this.alertController.create({
+        header: 'Acción no permitida',
+        message: 'No puedes eliminar tu propio perfil ni el de otro administrador.',
+        buttons: [{ text: 'Cancelar', role: 'cancel' }]
+      });
+      await alert.present();
+      return;
+    }
+
+    // Confirmación normal
+    const alert = await this.alertController.create({
+      header: 'Eliminar usuario',
+      message: '¿Seguro que deseas eliminar este usuario? Esta acción no se puede deshacer.',
+      buttons: [
+        { text: 'Cancelar', role: 'cancel' },
+        {
+          text: 'Eliminar',
+          role: 'destructive',
+          handler: () => this.confirmDeleteUser()
+        }
+      ]
+    });
+
+    await alert.present();
+  }
+
+  confirmDeleteUser() {
+    console.log('Simulando eliminación de usuario', this.user);
+    this.userPopoverOpen = false;
   }
 }
