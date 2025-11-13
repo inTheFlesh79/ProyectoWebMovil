@@ -2,6 +2,8 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { SearchService } from '../../services/search.service';
 import { AuthService } from '../../services/auth.service';
+import { TeacherService } from '../../services/teacher.service';
+import { HttpHeaders } from '@angular/common/http';
 
 @Component({
   selector: 'app-home',
@@ -23,7 +25,8 @@ export class HomePage {
   constructor(
     private searchService: SearchService,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private teacherService: TeacherService
   ) {}
 
   onSearch() {
@@ -65,11 +68,35 @@ export class HomePage {
 
   // 🔹 Placeholder sin lógica backend
   addTeacher() {
-    console.log('Nuevo profesor:', {
-      nombre: this.newTeacherName,
-      descripcion: this.newTeacherDescription
+    const name = this.newTeacherName?.trim();
+    const content = this.newTeacherDescription?.trim();
+
+    if (!name || !content) {
+      console.warn('Faltan campos obligatorios');
+      return;
+    }
+
+    if (name.length > 120 || content.length > 500) {
+      console.warn('Campos exceden el límite permitido');
+      return;
+    }
+
+    const token = this.authService.getToken();
+    if (!token) {
+      this.router.navigate(['/login']);
+      return;
+    }
+
+    this.teacherService.createTeacher(name, content, token).subscribe({
+      next: (res) => {
+        console.log('Profesor agregado correctamente:', res);
+        this.closeAddTeacherPopover();
+        window.location.reload();
+      },
+      error: (err) => {
+        console.error('Error agregando profesor:', err);
+      }
     });
-    this.closeAddTeacherPopover();
   }
 
   goToProfile() {

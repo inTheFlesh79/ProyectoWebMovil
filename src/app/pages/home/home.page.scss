@@ -203,13 +203,23 @@
   margin-bottom: 16px;
   font-size: 1.05rem;
   font-weight: 500;
-  color: var(--ion-color-dark); /* Por defecto en modo claro */
-  transition: color 0.2s ease;
+   /* Por defecto en modo claro */
+  
+}
+@media (prefer-color-scheme: light) {
+  .field-label{
+    color: var(--ion-color-dark) !important;
+  }
+ 
 }
 
-:host-context(.dark) .field-label {
-  color: rgba(255, 255, 255, 0.85); /* Más clara en modo oscuro */
+@media (prefer-color-scheme: dark) {
+  .field-label{
+    color: var(--ion-color-light) !important;
+  }
+ 
 }
+
 
 .add-teacher-popover .popover-content ion-input,
 .add-teacher-popover .popover-content ion-textarea {
@@ -353,4 +363,11 @@
   .backdrop-blur {
     background: rgba(0,0,0,0.75);
   }
+}
+
+@media (prefer-color-scheme: dark) {
+  .field-label{
+    color: var(--ion-color-light) !important;
+  }
+ 
 }

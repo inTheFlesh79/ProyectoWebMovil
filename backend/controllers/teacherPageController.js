@@ -3,13 +3,38 @@ const TeacherPage = require('../models/teacherPageModel');
 const teacherPageController = {
   createTeacherPage: async (req, res) => {
     try {
-      const page = await TeacherPage.create(req.body);
+      const user = req.user; // viene del JWT
+
+      // Solo admins (role = 1) pueden crear profesores
+      if (!user || user.role !== 1) {
+        return res.status(403).json({ error: 'No tienes permiso para agregar profesores' });
+      }
+
+      const { name, content } = req.body;
+
+      // Validaciones básicas
+      if (!name || !content) {
+        return res.status(400).json({ error: 'Nombre y descripción son obligatorios' });
+      }
+
+      if (name.length > 120 || content.length > 500) {
+        return res.status(400).json({ error: 'Exceso de caracteres en los campos' });
+      }
+
+      // Crear teacherPage sin imagen
+      const page = await TeacherPage.create({
+        name,
+        content,
+        profilePicture: null
+      });
+
       return res.status(201).json(page);
     } catch (err) {
       console.error('createTeacherPage error:', err);
       return res.status(500).json({ error: 'Error creando teacher page' });
     }
   },
+
 
   getTeacherPages: async (req, res) => {
     try {

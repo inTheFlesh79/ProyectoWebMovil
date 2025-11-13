@@ -36,4 +36,12 @@ export class TeacherService {
     return this.http.get(`${this.apiUrl}/teacherRating/teacher/${id}/all`);
   }
 
+  createTeacher(name: string, content: string, token: string) {
+    const headers = { Authorization: `Bearer ${token}` };
+
+    return this.http.post(`${this.apiUrl}/teacherPage`, {
+      name,
+      content
+    }, { headers });
+  }
 }
