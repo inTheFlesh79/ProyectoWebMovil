@@ -209,9 +209,11 @@ export class CommunityPostPage implements OnInit {
   }
 
   canModify(post: any): boolean {
-    const user = this.authService.getUser();
-    const isAdmin = user?.role === 'admin';
-    return !!user && (isAdmin || user.id === post.userid);
+    const currentUser = this.authService.getUser();
+    if (!currentUser) return false;
+    const isAdmin = currentUser.role === 1;
+    const isOwner = currentUser.id === post.userid;
+    return isAdmin || isOwner;
   }
 
   async deletePost(post: any) {
