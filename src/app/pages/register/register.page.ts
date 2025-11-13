@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { NavController } from '@ionic/angular';
 import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../../services/auth.service';
+import { LocationService } from '../../services/location.service';
 
 @Component({
   selector: 'app-register',
@@ -9,23 +10,56 @@ import { AuthService } from '../../services/auth.service';
   styleUrls: ['./register.page.scss'],
   standalone: false
 })
-export class RegisterPage {
-  correo: string = '';
-  username: string = '';
-  password: string = '';
-  confirmPassword: string = '';
-  rut: string = '';
-  region: string = '';
-  district: string = '';
-  telefono: string = '';
-  errorMessage: string = '';
-  loading: boolean = false;
+export class RegisterPage implements OnInit {
+  correo = '';
+  username = '';
+  password = '';
+  confirmPassword = '';
+  rut = '';
+  region = '';
+  district = '';
+  telefono = '';
+  errorMessage = '';
+  loading = false;
+
+  regiones: any[] = [];
+  comunas: any[] = [];
 
   constructor(
     private navCtrl: NavController,
     private http: HttpClient,
-    private authService: AuthService
+    private authService: AuthService,
+    private locationService: LocationService
   ) {}
+
+  ngOnInit() {
+    this.cargarRegiones();
+  }
+
+  cargarRegiones() {
+    this.locationService.getRegiones().subscribe({
+      next: (data) => {
+        console.log('✅ Regiones cargadas:', data);
+        this.regiones = data;
+      },
+      error: (err) => console.error('❌ Error al cargar regiones:', err)
+    });
+  }
+
+  onRegionChange(event: any) {
+    const regionCodigo = event.detail.value;
+
+    this.region = regionCodigo; 
+    this.comunas = []; 
+    this.district = ''; 
+
+    this.locationService.getComunasPorRegion(regionCodigo).subscribe({
+      next: (data) => {
+        this.comunas = data;
+      },
+      error: (err) => console.error('Error al cargar comunas:', err)
+    });
+  }
 
   goBack() {
     this.navCtrl.back();
@@ -49,22 +83,16 @@ export class RegisterPage {
           rut: this.rut,
           region: this.region,
           district: this.district,
+          telefono: this.telefono,
           isMember: true,
           role: 0
         })
         .toPromise();
 
       this.authService.setToken(response.token);
-      console.log('Usuario registrado:', response.user);
-
       this.navCtrl.navigateRoot('/community');
     } catch (err: any) {
       console.error('❌ Error completo al registrar:', err);
-
-      if (err.error) {
-        console.log('➡️ Respuesta del backend:', err.error);
-      }
-
       this.errorMessage = err.error?.error || 'Error al registrar usuario.';
     } finally {
       this.loading = false;
