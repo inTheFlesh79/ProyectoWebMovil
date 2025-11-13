@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const userController = require('../controllers/userController');
+const auth = require('../middleware/authMiddleware');
 
 // uso de operaciones CRUD a través de endpoints RESTful
 
@@ -9,7 +10,7 @@ router.get('/:id', userController.getUserById);  // GET usuario por ID
 router.post('/', userController.createUser);     // POST crear nuevo usuario
 router.put('/:id', userController.updateUser);   // PUT actualizar usuario completo
 router.patch('/:id', userController.patchUser);  // PATCH actualizar parcialmente
-router.delete('/:id', userController.deleteUser);// DELETE eliminar usuario
+router.delete('/:id', auth, userController.deleteUser);// DELETE eliminar usuario
 router.get('/:id/profile', userController.getUserProfile);
 
 module.exports = router;

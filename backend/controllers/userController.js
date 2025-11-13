@@ -1,4 +1,5 @@
 const User = require('../models/userModel');
+const pool = require('../config/db');
 
 const userController = {
   // CREATE
@@ -67,15 +68,90 @@ const userController = {
 
   // DELETE
   deleteUser: async (req, res) => {
+    const client = await pool.connect();
+    const userid = req.params.id;
+
     try {
-      const deleted = await User.delete(req.params.id);
-      if (!deleted) {
+      await client.query('BEGIN');
+
+      // 1) ELIMINAR VOTOS HECHOS POR EL USUARIO
+      await client.query(`DELETE FROM Votes WHERE userid = $1`, [userid]);
+      await client.query(`DELETE FROM CommentVotes WHERE userid = $1`, [userid]);
+      await client.query(`DELETE FROM ReviewVotes WHERE userid = $1`, [userid]);
+
+      // 2) ELIMINAR VOTOS HECHOS A SUS COMMENTS
+      await client.query(`
+        DELETE FROM CommentVotes
+        WHERE commentid IN (SELECT commentid FROM Comment WHERE userid = $1)
+      `, [userid]);
+
+      // 3) ELIMINAR VOTOS HECHOS A SUS REVIEWS
+      await client.query(`
+        DELETE FROM ReviewVotes
+        WHERE reviewid IN (SELECT reviewid FROM Review WHERE userid = $1)
+      `, [userid]);
+
+      // 4) ELIMINAR TODAS LAS REVIEWS DEL USUARIO
+      await client.query(`DELETE FROM Review WHERE userid = $1`, [userid]);
+
+      // 5) ELIMINAR TODAS LAS CALIFICACIONES TeacherRating DEL USUARIO
+      await client.query(`DELETE FROM TeacherRating WHERE userid = $1`, [userid]);
+
+      // 6) ELIMINAR COMMENTS HECHOS POR EL USUARIO
+      await client.query(`DELETE FROM Comment WHERE userid = $1`, [userid]);
+
+
+      // -------------------------------
+      // 7) ELIMINAR POSTS DEL USUARIO
+      // -------------------------------
+
+      // 7.1 Eliminar votes hacia posts creados por el usuario
+      await client.query(`
+        DELETE FROM Votes
+        WHERE postid IN (SELECT postid FROM Post WHERE userid = $1)
+      `, [userid]);
+
+      // 7.2 Eliminar commentVotes en comments dentro de posts del usuario
+      await client.query(`
+        DELETE FROM CommentVotes
+        WHERE commentid IN (
+          SELECT commentid FROM Comment 
+          WHERE postid IN (SELECT postid FROM Post WHERE userid = $1)
+        )
+      `, [userid]);
+
+      // 7.3 Eliminar comments dentro de posts del usuario
+      await client.query(`
+        DELETE FROM Comment
+        WHERE postid IN (SELECT postid FROM Post WHERE userid = $1)
+      `, [userid]);
+
+      // 7.4 Eliminar posts
+      await client.query(`
+        DELETE FROM Post
+        WHERE userid = $1
+      `, [userid]);
+
+
+      // 8) FINALMENTE: ELIMINAR AL USUARIO
+      const result = await client.query(`
+        DELETE FROM Users WHERE userid = $1 RETURNING userid
+      `, [userid]);
+
+      await client.query('COMMIT');
+
+      if (result.rowCount === 0) {
         return res.status(404).json({ error: 'Usuario no encontrado' });
       }
+
       res.json({ message: 'Usuario eliminado correctamente' });
+
     } catch (err) {
-      console.error(err);
+      await client.query('ROLLBACK');
+      console.error('Error eliminando usuario:', err);
       res.status(500).json({ error: 'Error eliminando usuario' });
+    } finally {
+      client.release();
     }
   },
 

@@ -170,7 +170,32 @@ export class UserProfilePage implements OnInit {
   }
 
   confirmDeleteUser() {
-    console.log('Simulando eliminación de usuario', this.user);
-    this.userPopoverOpen = false;
+    this.userService.deleteUser(this.user.id).subscribe({
+      next: async () => {
+        this.userPopoverOpen = false;
+
+        const alert = await this.alertController.create({
+          header: 'Usuario eliminado',
+          message: 'El usuario ha sido eliminado correctamente.',
+          buttons: ['OK']
+        });
+
+        await alert.present();
+
+        // Redirigir a lista de usuarios o home
+        this.router.navigate(['/home']);
+      },
+      error: async (err) => {
+        console.error('Error eliminando usuario:', err);
+
+        const alert = await this.alertController.create({
+          header: 'Error',
+          message: 'No se pudo eliminar el usuario.',
+          buttons: ['OK']
+        });
+
+        await alert.present();
+      }
+    });
   }
 }
