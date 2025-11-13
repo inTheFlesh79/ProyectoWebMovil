@@ -31,6 +31,10 @@ export class CommunityPostPage implements OnInit {
   postPopoverOpen = false;
   postPopoverEvent: any;
   selectedPost: any;
+  readonly TITLE_MAX = 120;
+  readonly CONTENT_MAX = 2000;
+  isEditModalOpen = false;
+  editedPost: any = {};
 
   // Popover de comentario
   commentPopoverOpen = false;
@@ -310,6 +314,9 @@ export class CommunityPostPage implements OnInit {
         // Remueve el comentario de la lista en el front
         this.comments = this.comments.filter(c => c.commentid !== comment.commentid);
         this.commentPopoverOpen = false;
+        setTimeout(() => {
+          window.location.reload();
+        }, 300);
       },
       error: (err) => {
         console.error('❌ Error eliminando comentario:', err);
@@ -318,4 +325,53 @@ export class CommunityPostPage implements OnInit {
     });
 
   }
+
+  // 🔹 Abrir modal de edición
+  openEditModal(post: any) {
+    this.selectedPost = post;
+    this.editedPost = { ...post }; // Clon del post a editar
+    this.isEditModalOpen = true;
+    this.postPopoverOpen = false; // Cierra el menú contextual
+  }
+
+  // 🔹 Cerrar modal de edición
+  closeEditModal() {
+    this.isEditModalOpen = false;
+    this.editedPost = {};
+  }
+
+  // 🔹 Guardar cambios del post (backend listo para conectar)
+  // 🔹 Guardar cambios del post
+  saveEdit() {
+    const token = this.authService.getToken();
+    if (!token) {
+      this.router.navigate(['/login']);
+      return;
+    }
+
+    const t = this.editedPost.title?.trim() || '';
+    const c = this.editedPost.content?.trim() || '';
+
+    // Validación de límites y vacío
+    if (!t || !c || t.length > this.TITLE_MAX || c.length > this.CONTENT_MAX) {
+      console.warn('Los campos no cumplen con los requisitos de longitud.');
+      // Aquí puedes agregar un ion-alert para avisar al usuario
+      return;
+    }
+    
+    // Lógica para enviar la solicitud PUT (la que ya tienes)
+    const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
+
+    this.http.patch(`${this.apiUrl}/${this.editedPost.postid}`, 
+      { title: t, content: c }, { headers }
+    ).subscribe({
+      next: () => {
+        this.isEditModalOpen = false;
+        window.location.reload();
+      },
+      error: (err) => console.error("Error al actualizar post:", err)
+    });
+
+  }
+
 }
