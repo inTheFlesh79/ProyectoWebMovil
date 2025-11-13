@@ -10,7 +10,7 @@ router.post('/', auth, postController.createPost);
 router.get('/', postController.getPosts);
 router.get('/:id', postController.getPostById);
 router.put('/:id', postController.updatePost);
-router.patch('/:id', postController.patchPost);
+router.patch('/:id', auth, postController.patchPost);
 router.delete('/:id', postController.deletePost);
 
 module.exports = router;

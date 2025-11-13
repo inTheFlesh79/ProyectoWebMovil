@@ -27,6 +27,12 @@ export class CommunityPage implements OnInit {
   selectedPost: any = null;
   currentUser: any = null;
 
+  readonly TITLE_MAX = 120;
+  readonly CONTENT_MAX = 2000;
+  // 🔹 Modal de edición
+  isEditModalOpen = false;
+  editedPost: any = {};
+
   private apiUrl = 'http://localhost:3000/api/posts';
 
   constructor(
@@ -152,13 +158,11 @@ export class CommunityPage implements OnInit {
   canModify(post: any): boolean {
     const currentUser = this.authService.getUser();
     if (!currentUser) return false;
-
     const isAdmin = currentUser.role === 1;
     const isOwner = currentUser.id === post.userid;
-
     return isAdmin || isOwner;
   }
-  
+
   // 🔹 Abre el popover contextual del post
   openPostPopover(event: Event, post: any) {
     this.selectedPost = post;
@@ -209,5 +213,53 @@ export class CommunityPage implements OnInit {
     });
   }
 
+  // 🔹 Abrir modal de edición
+  openEditModal(post: any) {
+    this.selectedPost = post;
+    this.editedPost = { ...post }; // Clon del post a editar
+    this.isEditModalOpen = true;
+    this.postPopoverOpen = false; // Cierra el menú contextual
+  }
 
+  // 🔹 Cerrar modal de edición
+  closeEditModal() {
+    this.isEditModalOpen = false;
+    this.editedPost = {};
+  }
+
+  // 🔹 Guardar cambios del post (backend listo para conectar)
+  // 🔹 Guardar cambios del post
+  saveEdit() {
+    const token = this.authService.getToken();
+    if (!token) {
+      this.router.navigate(['/login']);
+      return;
+    }
+
+    const t = this.editedPost.title?.trim() || '';
+    const c = this.editedPost.content?.trim() || '';
+
+    // Validación de límites y vacío
+    if (!t || !c || t.length > this.TITLE_MAX || c.length > this.CONTENT_MAX) {
+      console.warn('Los campos no cumplen con los requisitos de longitud.');
+      // Aquí puedes agregar un ion-alert para avisar al usuario
+      return;
+    }
+    
+    // Lógica para enviar la solicitud PUT (la que ya tienes)
+    const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
+
+    this.http.patch(`${this.apiUrl}/${this.editedPost.postid}`, 
+      { title: t, content: c }, { headers }
+    ).subscribe({
+      next: () => {
+        this.isEditModalOpen = false;
+        window.location.reload();
+      },
+      error: (err) => console.error("Error al actualizar post:", err)
+    });
+
+  }
+
+  
 }

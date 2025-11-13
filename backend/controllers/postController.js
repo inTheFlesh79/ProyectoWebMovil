@@ -52,25 +52,73 @@ const postController = {
 
   updatePost: async (req, res) => {
     try {
-      const updatedPost = await Post.update(req.params.id, req.body);
-      if (!updatedPost) return res.status(404).json({ error: 'Post no encontrado' });
-      res.json(updatedPost);
+      const postId = req.params.id;
+      const user = req.user; // { id, role }
+      const { title, content } = req.body;
+
+      if (!title || !content) {
+        return res.status(400).json({ error: "Título y contenido son obligatorios" });
+      }
+
+      // 1) obtener post original
+      const original = await Post.getById(postId);
+      if (!original) return res.status(404).json({ error: "Post no encontrado" });
+
+      const isOwner = original.userid === user.id;
+      const isAdmin = user.role === 1;
+
+      if (!isOwner && !isAdmin) {
+        return res.status(403).json({ error: "No tienes permiso para editar este post" });
+      }
+
+      // 2) llamar al modelo para actualizar solo title y content
+      const updated = await Post.patch(postId, { title, content });
+
+      res.json(updated);
+
     } catch (err) {
-      console.error(err);
-      res.status(500).json({ error: 'Error actualizando post' });
+      console.error("Error en updatePost:", err);
+      res.status(500).json({ error: "Error actualizando post" });
     }
   },
 
   patchPost: async (req, res) => {
     try {
-      const patchedPost = await Post.patch(req.params.id, req.body);
-      if (!patchedPost) return res.status(404).json({ error: 'Post no encontrado' });
-      res.json(patchedPost);
+      const postId = req.params.id;
+      const user = req.user;
+      const { title, content } = req.body;
+
+      // Validar que al menos venga algo
+      if (!title && !content) {
+        return res.status(400).json({ error: "No hay campos para actualizar" });
+      }
+
+      // 1) obtener post original
+      const original = await Post.getById(postId);
+      if (!original) return res.status(404).json({ error: "Post no encontrado" });
+
+      const isOwner = original.userid === user.id;
+      const isAdmin = user.role === 1;
+
+      if (!isOwner && !isAdmin) {
+        return res.status(403).json({ error: "No tienes permiso para editar este post" });
+      }
+
+      // 2) evitar que se actualicen campos prohibidos
+      const safeData = {};
+      if (title) safeData.title = title;
+      if (content) safeData.content = content;
+
+      const patched = await Post.patch(postId, safeData);
+
+      res.json(patched);
+
     } catch (err) {
-      console.error(err);
-      res.status(500).json({ error: 'Error actualizando parcialmente el post' });
+      console.error("Error en patchPost:", err);
+      res.status(500).json({ error: "Error actualizando parcialmente el post" });
     }
   },
+
 
   deletePost: async (req, res) => {
     try {

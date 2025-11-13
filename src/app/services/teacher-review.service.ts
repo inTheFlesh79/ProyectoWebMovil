@@ -36,4 +36,8 @@ export class TeacherReviewService {
     return this.http.delete(`${this.apiUrl}/teacherReviewRating/${teacherPageId}`, { headers });
   }
 
+  deleteReviewById(reviewid: number, token: string) {
+    const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
+    return this.http.delete(`${this.apiUrl}/teacherReviewRating/review/${reviewid}`, { headers });
+  }
 }

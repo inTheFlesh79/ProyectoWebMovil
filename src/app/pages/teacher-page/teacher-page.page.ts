@@ -4,6 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { TeacherService } from '../../services/teacher.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { TeacherReviewService } from 'src/app/services/teacher-review.service';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-teacher-page',
@@ -43,68 +44,132 @@ export class TeacherPage implements OnInit {
   }
 
   loadTeacherData(id: number) {
-    // 1️⃣ Cargar datos del profesor
+    // 1) Datos del profesor
     this.teacherService.getTeacherPageById(id).subscribe({
-      next: (data) => {
-        console.log('Profesor cargado:', data);
-        this.teacher = data;
-      },
+      next: (data) => { this.teacher = data; },
       error: (err) => console.error('Error al obtener profesor:', err)
     });
 
-    // 2️⃣ Cargar promedios de rating
+    // 2) Promedio general del profesor
     this.teacherService.getTeacherAverage(id).subscribe({
       next: (avg) => {
-        console.log('Promedios cargados:', avg);
         this.ratings = {
-          teaching: Number(avg.avg_quality) || 0,
-          student: Number(avg.avg_politeness) || 0,
-          difficulty: Number(avg.avg_difficulty) || 0
+          teaching: Number(avg?.avg_quality) || 0,
+          student:  Number(avg?.avg_politeness) || 0,
+          difficulty: Number(avg?.avg_difficulty) || 0
         };
       },
       error: (err) => console.error('Error al obtener promedio:', err)
     });
 
-    this.teacherService.getTeacherReviews(id).subscribe((reviewsData) => {
-      console.log('Reseñas cargadas:', reviewsData);
-      this.reviews = reviewsData;
+    // 3) Reviews + ratings de ESTE profesor → se cruzan por userid
+    forkJoin({
+      reviews: this.teacherService.getTeacherReviews(id),
+      ratings: this.teacherService.getRatingsByTeacher(id)
+    }).subscribe({
+      next: ({ reviews, ratings }) => {
+        // Mapa rápido por userid
+        const ratingsByUser: Record<number, { teachingpoliteness: number; teachingquality: number; teachingdifficulty: number; }> = {};
 
-      // 🔽 Obtener todas las calificaciones
-      this.teacherService.getAllTeacherRatings().subscribe((ratingsData) => {
-        console.log('Ratings cargados:', ratingsData);
-
-        // Asignar promedio de cada usuario a su reseña correspondiente
-        this.reviews.forEach((review) => {
-          const userRatings = ratingsData.filter(
-            (r: any) => Number(r.userid) === Number(review.userid)
-          );
-
-          if (userRatings.length > 0) {
-            const r = userRatings[0]; // cada usuario debería tener 1 rating por profesor
-            const avg = (r.teachingpoliteness + r.teachingquality + r.teachingdifficulty) / 3;
-            review.rating = avg.toFixed(1); // redondear a un decimal
-          } else {
-            review.rating = null;
-          }
+        (ratings || []).forEach((r: any) => {
+          const uid = Number(r.userid);
+          ratingsByUser[uid] = {
+            teachingpoliteness: Number(r.teachingpoliteness) || 0,
+            teachingquality:    Number(r.teachingquality)    || 0,
+            teachingdifficulty: Number(r.teachingdifficulty) || 0
+          };
         });
-      });
-    });
 
+        // Adjuntar promedio a cada review del mismo usuario
+        this.reviews = (reviews || []).map((rev: any) => {
+          const uid = Number(rev.userid);
+          const ur = ratingsByUser[uid];
+
+          if (ur) {
+            const sum = ur.teachingpoliteness + ur.teachingquality + ur.teachingdifficulty;
+            const avg = sum / 3;
+            return { ...rev, rating: Math.round(avg * 10) / 10 };
+          }
+          return { ...rev, rating: null };
+        });
+      },
+      error: (err) => {
+        console.error('Error cargando reviews/ratings del profesor:', err);
+        this.reviews = [];
+      }
+    });
   }
 
   goToReview() {
-    const user = this.authService.getUser(); // o el método que uses para obtener el usuario logueado
-    const teacherId = this.teacher?.teacherpageid; // ajusta según cómo tengas la data
+    const user = this.authService.getUser();
+    const teacherId = this.teacher?.teacherpageid;
 
     if (!teacherId) return;
 
     if (!user) {
-      // No está logueado → redirigir a login
       this.router.navigate(['/login']);
-    } else {
-      // Logueado → ir a pantalla de calificación
-      this.router.navigate(['/teacher-review', teacherId]);
+      return;
     }
+
+    // Verificar si ya tiene review
+    this.teacherReviewService.checkUserReview(teacherId, Number(user.userid ?? user.id)).subscribe({
+      next: (resp) => {
+        if (resp.exists) {
+          // Mostrar alerta con dos botones
+          this.showExistingReviewAlert(teacherId);
+        } else {
+          // No tiene review -> navegar directo
+          this.router.navigate(['/teacher-review', teacherId]);
+        }
+      },
+      error: (err) => {
+        console.error('Error verificando review existente:', err);
+        // fallback: dejar navegar
+        this.router.navigate(['/teacher-review', teacherId]);
+      }
+    });
+  }
+
+  // ALERTA con "Continuar" (izq) y "Eliminar y calificar" (der)
+  async showExistingReviewAlert(teacherId: number) {
+    const alert = document.createElement('ion-alert');
+    alert.header = 'Calificación existente';
+    alert.message = 'Ya has calificado a este profesor previamente. Debes eliminar la calificacion anterior antes de poder calificar de nuevo a este profesor.';
+
+    alert.buttons = [
+      {
+        text: 'Cancelar',        // izquierda
+        role: 'cancel'
+      },
+      {
+        text: 'Eliminar y calificar',  // derecha
+        handler: async () => {
+          await this.deleteAndGoToReview(teacherId);
+        }
+      }
+    ];
+
+    document.body.appendChild(alert);
+    await alert.present();
+  }
+
+  async deleteAndGoToReview(teacherId: number) {
+    const token = this.authService.getToken();
+    if (!token) {
+      this.router.navigate(['/login']);
+      return;
+    }
+
+    this.teacherReviewService.deleteUserFeedback(teacherId, token).subscribe({
+      next: () => {
+        // OK -> ir a calificar
+        this.router.navigate(['/teacher-review', teacherId]);
+      },
+      error: (err) => {
+        console.error('Error al eliminar calificación/reseña:', err);
+        // Si falla, al menos no bloquear al usuario; puedes mostrar toast si quieres.
+      }
+    });
   }
 
   onReviewVote(review: any, type: 'like' | 'dislike') {
@@ -231,10 +296,23 @@ export class TeacherPage implements OnInit {
   private confirmDeleteReview(review: any) {
     console.log(`Simulando eliminación de review ${review.reviewid}...`);
     this.reviewPopoverOpen = false;
-    // Aquí irá el delete HTTP más adelante
-    setTimeout(() => window.location.reload(), 300);
+    const reviewId = review.reviewid;
+    const token = this.authService.getToken();
+    if (!token) {
+    this.router.navigate(['/login']);
+    return;
+    }
+    this.teacherReviewService.deleteReviewById(reviewId, token).subscribe({
+      next: () => {
+        console.log(`Review ${reviewId} eliminada correctamente`);
+        this.reviewPopoverOpen = false;
+
+        // refrescar pantalla
+        setTimeout(() => window.location.reload(), 300);
+      },
+      error: (err) => {
+        console.error('Error eliminando la reseña:', err);
+      }
+    });
   }
-
 }
-
-

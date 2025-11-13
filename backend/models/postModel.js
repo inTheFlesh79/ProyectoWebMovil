@@ -77,8 +77,14 @@ const Post = {
 
   // Actualización parcial (PATCH)
   patch: async (id, postData) => {
-    const fields = Object.keys(postData);
-    const values = Object.values(postData);
+    const allowedFields = ['title', 'content'];
+    const fields = Object.keys(postData).filter(f => allowedFields.includes(f));
+
+    if (fields.length === 0) {
+      throw new Error("No hay campos válidos para actualizar");
+    }
+
+    const values = fields.map(f => postData[f]);
     const setClause = fields.map((f, i) => `${f} = $${i + 1}`).join(', ');
 
     const query = `
@@ -87,14 +93,16 @@ const Post = {
       WHERE postId = $${fields.length + 1}
       RETURNING *;
     `;
+
     try {
       const result = await pool.query(query, [...values, id]);
       return result.rows[0];
     } catch (err) {
-      console.error('Error haciendo patch al post:', err);
+      console.error("Error haciendo patch al post:", err);
       throw err;
     }
   },
+
 
   // Eliminar un post
   delete: async (id) => {
