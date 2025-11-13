@@ -3,19 +3,14 @@
     <ion-grid>
       <ion-row>
         <ion-col class="ion-text-center">
-          <ion-button fill="clear" color="light" [routerLink]="['/home']">
-            Inicio
-          </ion-button>
+          <ion-button fill="clear" color="light" [routerLink]="['/home']">Inicio</ion-button>
         </ion-col>
 
         <ion-col class="ion-text-center">
-          <ion-button fill="clear" color="light" [routerLink]="['/community']">
-            Comunidad
-          </ion-button>
+          <ion-button fill="clear" color="light" [routerLink]="['/community']">Comunidad</ion-button>
         </ion-col>
 
         <ion-col class="ion-text-center">
-          <!-- Muestra "Perfil" o "Iniciar Sesión" -->
           <ion-button fill="clear" color="light" (click)="onProfileButtonClick($event)">
             {{ isLoggedIn ? 'Perfil' : 'Iniciar Sesión' }}
           </ion-button>
@@ -25,10 +20,9 @@
   </ion-toolbar>
 </ion-header>
 
-<!-- Overlay desenfoque -->
-<div class="backdrop-blur" *ngIf="showPopover" (click)="showPopover=false"></div>
+<!-- 🔹 Menú perfil -->
+<div class="backdrop-blur" *ngIf="showPopover" (click)="showPopover = false"></div>
 
-<!-- 🔽 Menú desplegable -->
 <ion-popover [isOpen]="showPopover" (didDismiss)="showPopover = false" [event]="popoverEvent">
   <ng-template>
     <ion-content>
@@ -44,15 +38,13 @@
   </ng-template>
 </ion-popover>
 
+<!-- 🔹 CONTENIDO PRINCIPAL -->
 <ion-content color="tertiary">
   <ion-title class="page-title" color="primary">Somos ProfeRanking</ion-title>
 
   <div class="page-container">
     <div class="top-half">
-      <!-- Texto introductorio antes de la barra de búsqueda -->
-      <div class="search-intro">
-        ¿Qué profesor quieres consultar hoy?
-      </div>
+      <div class="search-intro">¿Qué profesor quieres consultar hoy?</div>
 
       <div class="search-container">
         <ion-searchbar
@@ -61,16 +53,25 @@
           placeholder="Buscar..."
           color="light"
         ></ion-searchbar>
+
         <ion-button color="primary" (click)="onSearch()">
           <ion-icon name="search-outline" slot="start"></ion-icon>
           <ion-label>Buscar</ion-label>
+        </ion-button>
+
+        <ion-button
+          *ngIf="canAddTeacher()"
+          color="primary"
+          (click)="openAddTeacherPopover()"
+        >
+          <ion-icon name="add-circle-outline" slot="start"></ion-icon>
+          <ion-label>Agregar Profesor</ion-label>
         </ion-button>
       </div>
     </div>
 
     <div class="bottom-half">
       <div class="about-grid">
-        <!-- Quiénes somos -->
         <ion-card class="about-card">
           <ion-card-header>
             <ion-card-title class="column-subtitle">Quiénes Somos</ion-card-title>
@@ -82,7 +83,6 @@
           </ion-card-content>
         </ion-card>
 
-        <!-- Nuestra Misión -->
         <ion-card class="about-card">
           <ion-card-header>
             <ion-card-title class="column-subtitle">Nuestra Misión</ion-card-title>
@@ -95,7 +95,6 @@
           </ion-card-content>
         </ion-card>
 
-        <!-- Integrate a la Comunidad -->
         <ion-card class="about-card">
           <ion-card-header>
             <ion-card-title class="column-subtitle">Íntegrate a la Comunidad</ion-card-title>
@@ -110,3 +109,38 @@
     </div>
   </div>
 </ion-content>
+
+<!-- 🔹 POPUP: Agregar Profesor -->
+<div class="backdrop-blur" *ngIf="addTeacherPopoverOpen" (click)="closeAddTeacherPopover()"></div>
+
+<div class="add-teacher-popover" *ngIf="addTeacherPopoverOpen">
+  <div class="popover-content">
+    <h2>Agregar Profesor</h2>
+
+    <ion-item lines="none" class="field-item">
+      <ion-label position="stacked" class="field-label">Nombre del profesor</ion-label>
+      <ion-input
+        [(ngModel)]="newTeacherName"
+        maxlength="120"
+        placeholder="Ej. Juan Pérez"
+      ></ion-input>
+      <div class="char-count">{{ newTeacherName?.length || 0 }}/120</div>
+    </ion-item>
+
+    <ion-item lines="none" class="field-item">
+      <ion-label position="stacked" class="field-label">Descripción</ion-label>
+      <ion-textarea
+        [(ngModel)]="newTeacherDescription"
+        maxlength="500"
+        placeholder="Escribe una breve descripción..."
+        class="description-box"
+      ></ion-textarea>
+      <div class="char-count">{{ newTeacherDescription?.length || 0 }}/500</div>
+    </ion-item>
+
+    <div class="popover-buttons">
+      <ion-button fill="clear" color="secondary" (click)="closeAddTeacherPopover()">Cancelar</ion-button>
+      <ion-button color="primary" (click)="addTeacher()">Agregar</ion-button>
+    </div>
+  </div>
+</div>

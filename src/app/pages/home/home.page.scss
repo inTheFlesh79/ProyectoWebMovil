@@ -1,11 +1,16 @@
+/* =========================
+   HOME PAGE STYLES - COMPLETO Y ACTUALIZADO
+   ========================= */
+
 .page-container {
   display: flex;
   flex-direction: column;
   height: 100%;
 }
 
+/* ===== TOP ===== */
 .top-half {
-  background-color: #e0e0e0;
+  background-color: var(--home-top-bg, #e9eaf7);
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -22,55 +27,71 @@
   color: var(--ion-color-dark);
 }
 
+/* ===== SEARCH + BUTTONS ===== */
 .search-container {
   display: flex;
   gap: 0.5rem;
   align-items: center;
+  justify-content: center;
   width: 80%;
-  max-width: 600px;
+  max-width: 700px;
+  margin: 0 auto;
 }
 
+.search-container ion-searchbar {
+  --height: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+}
 
+.search-container ion-button {
+  min-height: 44px;
+  height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 14px;
+  box-sizing: border-box;
+}
 
 .bottom-half {
   flex: 1;
   display: flex;
   flex-direction: column;
   padding: 1rem;
-  
 }
 
 .page-title {
   text-align: center;
-  margin-top: 2rem;;
+  margin-top: 2rem;
   margin-bottom: 2rem;
   font-size: 3.4rem;
   font-weight: bold;
 }
 
-/* GRID DE CARDS */
+/* ===== GRID ===== */
 .about-grid {
   display: flex;
-  flex-direction: row; /* horizontal desktop */
+  flex-direction: row;
   gap: 2rem;
   justify-content: center;
   flex-wrap: wrap;
 }
 
-/* Cada card */
 .about-card {
   flex: 1 1 30%;
   max-width: 350px;
   background-color: var(--ion-color-light);
   border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   padding: 1rem;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
 
-  &:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-  }
+.about-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
 }
 
 .column-subtitle {
@@ -85,83 +106,251 @@
   color: var(--ion-color-dark);
 }
 
+/* ===== BACKDROP ===== */
 .backdrop-blur {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  inset: 0;
   backdrop-filter: blur(12px);
-  background: rgba(0, 0, 0, 0.35);
+  background: rgba(0, 0, 0, 0.55);
   z-index: 9998;
 }
 
-/* Responsive para tablets */
-@media (max-width: 991px) {
-  .page-title {
-    font-size: 2.4rem;
+/* =========================
+   POPUP: Add teacher
+   ========================= */
+
+.add-teacher-popover {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 92%;
+  max-width: 520px;
+  z-index: 10000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.add-teacher-popover .popover-content {
+  width: 100%;
+  background: var(--ion-card-background, #ffffff);
+  color: var(--ion-text-color, #111);
+  border-radius: 12px;
+  padding: 1.6rem 1.4rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.28);
+  animation: fadeScaleIn 240ms ease-out;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.add-teacher-popover .popover-content h2 {
+  margin: 0 0 0.5rem 0;
+  text-align: center;
+  font-weight: 600;
+  font-size: 1.25rem;
+}
+
+/* === Campos === */
+/* =========================
+   POPUP: Add teacher
+   ========================= */
+
+.add-teacher-popover {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 92%;
+  max-width: 520px;
+  z-index: 10000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.add-teacher-popover .popover-content {
+  width: 100%;
+  background: var(--ion-card-background, #ffffff);
+  color: var(--ion-text-color, #111);
+  border-radius: 12px;
+  padding: 1.6rem 1.4rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.28);
+  animation: fadeScaleIn 240ms ease-out;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.add-teacher-popover .popover-content h2 {
+  margin: 0 0 0.5rem 0;
+  text-align: center;
+  font-weight: 600;
+  font-size: 1.25rem;
+}
+
+/* === Campos === */
+.field-item {
+  --padding-top: 0;
+  --inner-padding-end: 0;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+/* 🔹 Etiquetas dinámicas (modo claro/oscuro) */
+.field-label {
+  margin-bottom: 16px;
+  font-size: 1.05rem;
+  font-weight: 500;
+  color: var(--ion-color-dark); /* Por defecto en modo claro */
+  transition: color 0.2s ease;
+}
+
+:host-context(.dark) .field-label {
+  color: rgba(255, 255, 255, 0.85); /* Más clara en modo oscuro */
+}
+
+.add-teacher-popover .popover-content ion-input,
+.add-teacher-popover .popover-content ion-textarea {
+  width: 100%;
+  font-size: 1rem;
+}
+
+.add-teacher-popover .popover-content ion-input input,
+.add-teacher-popover .popover-content ion-textarea textarea {
+  width: 100%;
+  border-radius: 6px;
+  padding: 12px 14px;
+  font-size: 1rem;
+  outline: none;
+  border: 1px solid rgba(0,0,0,0.12);
+  background: #ffffff;
+  color: var(--ion-text-color, #111);
+  box-sizing: border-box;
+}
+
+/* Caja de descripción */
+.description-box textarea {
+  min-height: 160px;
+  max-height: 260px;
+  overflow-y: auto;
+  resize: vertical;
+  background: #fafafa;
+  border: 1px solid rgba(0,0,0,0.08);
+  padding: 12px 14px;
+}
+
+/* Contador */
+.char-count {
+  align-self: flex-end;
+  font-size: 0.8rem;
+  color: var(--ion-color-medium);
+  margin-top: 4px;
+  opacity: 0.85;
+}
+
+/* Botones */
+.popover-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.6rem;
+  margin-top: 0.6rem;
+}
+
+.popover-buttons ion-button[fill="clear"] {
+  --background: transparent;
+  color: var(--ion-color-secondary);
+}
+
+/* Animación */
+@keyframes fadeScaleIn {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.92);
   }
-  .column-subtitle {
-    font-size: 1.4rem;
-  }
-  .column-text {
-    font-size: 1.1rem;
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
   }
 }
 
-/* Responsive para mÃ³viles */
+/* 🔹 Inputs y textarea en modo oscuro */
+:host-context(.dark) {
+  .add-teacher-popover .popover-content {
+    background: #0f1114;
+    color: #f5f6f8;
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.6);
+  }
+
+  .add-teacher-popover .popover-content ion-input input,
+  .add-teacher-popover .popover-content ion-textarea textarea,
+  .description-box textarea {
+    background: #111217 !important;
+    color: #e6e6e6 !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  }
+
+  .description-box textarea {
+    background: #0c0d10 !important;
+  }
+
+  .char-count {
+    color: rgba(255, 255, 255, 0.6);
+  }
+}
+
+/* Responsive */
 @media (max-width: 576px) {
-  .page-title {
-    font-size: 1.4rem;
-    margin-bottom: 0.6rem;
-  }
-
-  .about-grid {
-    flex-direction: column; /* vertical */
-    align-items: center;
-    gap: 1.5rem;
-    padding: 0 1rem;
-  }
-
-  .bottom-half {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    padding: 1rem;
-    
-  }
-
-  .column-subtitle {
-    font-size: 1.3rem;
-    text-align: center;
-  }
-
-  .column-text {
-    font-size: 1rem;
-    text-align: center;
-  }
-
   .search-container {
     flex-direction: column;
     width: 90%;
-    margin: 0 auto;
-    gap: 0.5rem;
+  }
+
+  .add-teacher-popover .popover-content {
+    padding: 1rem;
+  }
+
+  .description-box textarea {
+    min-height: 130px;
+    max-height: 220px;
+  }
+}
+
+/* Dark mode */
+:host-context(.dark) {
+  .top-half {
+    background-color: #121428;
   }
 
   .about-card {
-    width: 100%;
-    max-width: 500px;
-    flex: none;
+    background-color: #0f1114;
+    box-shadow: none;
   }
 
-  ion-popover ion-item {
-    --min-height: 44px;
-    display: flex;
-    align-items: center;
+  .add-teacher-popover .popover-content {
+    background: #0f1114;
+    color: #f5f6f8;
+    box-shadow: 0 12px 34px rgba(0, 0, 0, 0.6);
   }
 
-  ion-popover ion-label {
-    margin: 0;
+  .add-teacher-popover .popover-content ion-input input,
+  .add-teacher-popover .popover-content ion-textarea textarea,
+  .description-box textarea {
+    background: #111217 !important;
+    color: #e6e6e6 !important;
+    border: 1px solid rgba(255,255,255,0.06) !important;
   }
 
+  .description-box textarea {
+    background: #0b0c0f !important;
+  }
+
+  .char-count {
+    color: rgba(255,255,255,0.6);
+  }
+
+  .backdrop-blur {
+    background: rgba(0,0,0,0.75);
+  }
 }

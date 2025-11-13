@@ -11,12 +11,20 @@ import { AuthService } from '../../services/auth.service';
 })
 export class HomePage {
   searchQuery: string = '';
-
   isLoggedIn: boolean = false;
   showPopover: boolean = false;
   popoverEvent: any;
-  
-  constructor(private searchService: SearchService, private authService: AuthService, private router: Router) {}
+
+  // 🔹 Campos del popover de “Agregar Profesor”
+  addTeacherPopoverOpen: boolean = false;
+  newTeacherName: string = '';
+  newTeacherDescription: string = '';
+
+  constructor(
+    private searchService: SearchService,
+    private authService: AuthService,
+    private router: Router
+  ) {}
 
   onSearch() {
     if (!this.searchQuery.trim()) return;
@@ -32,49 +40,66 @@ export class HomePage {
   }
 
   onEnterPress(event: KeyboardEvent) {
-    if (event.key === 'Enter') { this.onSearch(); }
+    if (event.key === 'Enter') {
+      this.onSearch();
+    }
+  }
+
+  // 🔹 Verifica si el usuario puede agregar profesores
+  canAddTeacher(): boolean {
+    const user = this.authService.getUser();
+    return user && user.role === 1;
+  }
+
+  // 🔹 Abrir popover “Agregar Profesor”
+  openAddTeacherPopover() {
+    this.addTeacherPopoverOpen = true;
+  }
+
+  // 🔹 Cerrar popover
+  closeAddTeacherPopover() {
+    this.addTeacherPopoverOpen = false;
+    this.newTeacherName = '';
+    this.newTeacherDescription = '';
+  }
+
+  // 🔹 Placeholder sin lógica backend
+  addTeacher() {
+    console.log('Nuevo profesor:', {
+      nombre: this.newTeacherName,
+      descripcion: this.newTeacherDescription
+    });
+    this.closeAddTeacherPopover();
   }
 
   goToProfile() {
     const user = this.authService.getUser();
-
-    if (user && user.id) {
-      // ✅ Usuario logueado → ir a su perfil
-      this.router.navigate(['/user-profile', user.id]);
-    } else {
-      // 🚪 No logueado → ir a login
-      this.router.navigate(['/login']);
-    }
+    if (user && user.id) this.router.navigate(['/user-profile', user.id]);
+    else this.router.navigate(['/login']);
   }
 
   ionViewWillEnter() {
     this.isLoggedIn = this.authService.isLoggedIn();
   }
 
-  // 🔹 Al hacer clic en "Perfil" / "Iniciar Sesión"
   onProfileButtonClick(event: Event) {
-    if (!this.isLoggedIn) {
-      this.router.navigate(['/login']);
-    } else {
+    if (!this.isLoggedIn) this.router.navigate(['/login']);
+    else {
       this.popoverEvent = event;
       this.showPopover = true;
     }
   }
 
-  // 🔹 Ir al perfil
   goToProfileFromMenu() {
     const user = this.authService.getUser();
-    if (user && user.id) {
-      this.router.navigate(['/user-profile', user.id]);
-    }
-    this.showPopover = false; // cerrar menú
+    if (user && user.id) this.router.navigate(['/user-profile', user.id]);
+    this.showPopover = false;
   }
 
-  // 🔹 Cerrar sesión
   logout() {
     this.authService.clear();
     this.isLoggedIn = false;
-    this.showPopover = false; // cerrar menú
+    this.showPopover = false;
     this.router.navigate(['/login']);
   }
 }
