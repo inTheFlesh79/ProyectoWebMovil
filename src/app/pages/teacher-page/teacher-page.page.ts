@@ -27,6 +27,8 @@ export class TeacherPage implements OnInit {
   reviewPopoverEvent: any;
   reviewPopoverOpen: boolean = false;
 
+  teacherPopoverOpen: boolean = false;
+  teacherPopoverEvent: any;
 
   constructor(
     private route: ActivatedRoute,
@@ -315,4 +317,62 @@ export class TeacherPage implements OnInit {
       }
     });
   }
+
+  // 🔹 Abre el popover del profesor
+  openTeacherMenu(event: Event) {
+    this.teacherPopoverEvent = event;
+    this.teacherPopoverOpen = true;
+  }
+
+  // 🔹 Acción al seleccionar "Eliminar profesor"
+  async deleteTeacher() {
+    this.teacherPopoverOpen = false;
+
+    const alert = document.createElement('ion-alert');
+    alert.header = 'Eliminar profesor';
+    alert.message = '¿Seguro que deseas eliminar a este profesor? Esta acción no se puede deshacer.';
+    alert.buttons = [
+      { text: 'Cancelar', role: 'cancel' },
+      {
+        text: 'Eliminar',
+        role: 'destructive',
+        handler: () => this.confirmDeleteTeacher()
+      }
+    ];
+
+    document.body.appendChild(alert);
+    await alert.present();
+  }
+
+  // 🔹 Método que el backend debe completar
+  confirmDeleteTeacher() {
+    const teacherId = this.teacher?.teacherpageid;
+    const token = this.authService.getToken();
+
+    if (!teacherId || !token) {
+      console.error("No ID o token");
+      return;
+    }
+
+    this.teacherService.deleteTeacherById(teacherId, token).subscribe({
+      next: () => {
+        console.log("Profesor eliminado correctamente");
+
+        // Opcional: toast de éxito
+
+        // Redirigir al home después de borrar
+        this.router.navigate(['/home']);
+      },
+      error: (err) => {
+        console.error("Error eliminando el profesor:", err);
+      }
+    });
+  }
+
+
+  isAdmin(): boolean {
+    const user = this.authService.getUser();
+    return !!user && user.role === 1;
+  }
+
 }

@@ -64,11 +64,23 @@
           </div>
         </div>
 
-        <!-- Botón Calificar a la derecha -->
-        <ion-button color="secondary" (click)="goToReview()">
-          <ion-icon name="heart-outline" slot="start"></ion-icon>
-          Calificar
-        </ion-button>
+        <!-- Botón Calificar + menú 3 puntos -->
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <ion-button color="secondary" (click)="goToReview()">
+            <ion-icon name="heart-outline" slot="start"></ion-icon>
+            Calificar
+          </ion-button>
+
+          <!-- Botón menú profesor (3 puntos) -->
+          <ion-button 
+            *ngIf="isAdmin()" 
+            fill="clear" 
+            color="secondary" 
+            (click)="openTeacherMenu($event)"
+          >
+            <ion-icon name="ellipsis-horizontal"></ion-icon>
+          </ion-button>
+        </div>
       </div>
 
       <!-- Descripción o contenido del profesor -->
@@ -193,3 +205,17 @@
   </ng-template>
 </ion-popover>
 
+<!-- Popover menú del profesor -->
+<ion-popover
+  [isOpen]="teacherPopoverOpen"
+  [event]="teacherPopoverEvent"
+  (didDismiss)="teacherPopoverOpen = false"
+>
+  <ng-template>
+    <ion-list>
+      <ion-item button (click)="deleteTeacher()">
+        <ion-label color="danger">Eliminar profesor</ion-label>
+      </ion-item>
+    </ion-list>
+  </ng-template>
+</ion-popover>

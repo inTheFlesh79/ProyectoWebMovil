@@ -1,4 +1,5 @@
 const TeacherPage = require('../models/teacherPageModel');
+const pool = require('../config/db');
 
 const teacherPageController = {
   createTeacherPage: async (req, res) => {
@@ -83,16 +84,71 @@ const teacherPageController = {
   },
 
   deleteTeacherPage: async (req, res) => {
+    const client = await pool.connect();
+
     try {
-      const id = req.params.id;
-      const deleted = await TeacherPage.remove(id);
-      if (!deleted) return res.status(404).json({ error: 'TeacherPage no encontrado' });
-      return res.json({ message: 'TeacherPage eliminado', deleted });
+      const user = req.user;
+
+      // Solo admins
+      if (!user || user.role !== 1) {
+        return res.status(403).json({ error: 'No tienes permiso para eliminar profesores' });
+      }
+
+      const teacherId = req.params.id;
+
+      await client.query('BEGIN');
+
+      // 1) ELIMINAR VOTOS DE REVIEWS
+      await client.query(
+        `DELETE FROM ReviewVotes 
+        WHERE reviewid IN (
+          SELECT reviewid FROM Review WHERE teacherPageId = $1
+        )`,
+        [teacherId]
+      );
+
+      // 2) ELIMINAR REVIEWS
+      await client.query(
+        `DELETE FROM Review WHERE teacherPageId = $1`,
+        [teacherId]
+      );
+
+      // 3) ELIMINAR RATINGS
+      await client.query(
+        `DELETE FROM TeacherRating WHERE teacherPageId = $1`,
+        [teacherId]
+      );
+
+      // 4) ELIMINAR rel. institución-profesor
+      await client.query(
+        `DELETE FROM eduTea WHERE teacherPageId = $1`,
+        [teacherId]
+      );
+
+      // 5) ELIMINAR PROFESOR
+      const result = await client.query(
+        `DELETE FROM TeacherPage WHERE teacherPageId = $1 RETURNING *`,
+        [teacherId]
+      );
+
+      await client.query('COMMIT');
+
+      if (result.rowCount === 0) {
+        return res.status(404).json({ error: 'Profesor no encontrado' });
+      }
+
+      return res.json({ message: 'Profesor eliminado correctamente' });
+
     } catch (err) {
+      await client.query('ROLLBACK');
       console.error('deleteTeacherPage error:', err);
-      return res.status(500).json({ error: 'Error eliminando teacher page' });
+      return res.status(500).json({ error: 'Error eliminando profesor' });
+    } finally {
+      client.release();
     }
   }
+
+
 };
 
 module.exports = teacherPageController;

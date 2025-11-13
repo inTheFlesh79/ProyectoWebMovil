@@ -44,4 +44,10 @@ export class TeacherService {
       content
     }, { headers });
   }
+
+  deleteTeacherById(id: number, token: string) {
+    const headers = { Authorization: `Bearer ${token}` };
+    return this.http.delete(`${this.apiUrl}/teacherPage/${id}`, { headers });
+  }
+
 }

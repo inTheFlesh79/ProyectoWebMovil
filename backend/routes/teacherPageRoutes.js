@@ -10,6 +10,6 @@ router.get('/', teacherPageController.getTeacherPages);           // GET  /api/t
 router.get('/:id', teacherPageController.getTeacherPageById);    // GET  /api/teacher-pages/:id
 router.put('/:id', teacherPageController.replaceTeacherPage);    // PUT  /api/teacher-pages/:id
 router.patch('/:id', teacherPageController.updateTeacherPage);   // PATCH /api/teacher-pages/:id
-router.delete('/:id', teacherPageController.deleteTeacherPage);  // DELETE /api/teacher-pages/:id
+router.delete('/:id', auth, teacherPageController.deleteTeacherPage);  // DELETE /api/teacher-pages/:id
 
 module.exports = router;
