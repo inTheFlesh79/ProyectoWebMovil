@@ -20,9 +20,10 @@ Tener instalados:
     ├── middleware
     ├── config
 │   └── package.json
-│    
-├── src/
-└── package.json
+│
+└── frontend/        # Ionic Angular
+    ├── src/
+    └── package.json
 ```
 ## 🚀 Instrucciones para correr el proyecto
 ### ▶️ 1. Iniciar el Backend (Node.js + Express)
@@ -40,11 +41,12 @@ Esto levanta el servidor en http://localhost:3000.
 Es importante tener el archivo ".env", que contendría:
   ```bash
 JWT_SECRET=claveUsuario
-JWT_EXPIRES_IN=10m
+JWT_EXPIRES_IN=24h
 ```
 
 # ▶️ 2. Iniciar el Frontend (Ionic)
 ```bash
+cd frontend
 npm install
 ionic serve
 ```
