@@ -17,7 +17,7 @@ export class HomePage {
   showPopover: boolean = false;
   popoverEvent: any;
 
-  // 🔹 Campos del popover de “Agregar Profesor”
+  // Campos del popover de “Agregar Profesor”
   addTeacherPopoverOpen: boolean = false;
   newTeacherName: string = '';
   newTeacherDescription: string = '';
@@ -48,25 +48,25 @@ export class HomePage {
     }
   }
 
-  // 🔹 Verifica si el usuario puede agregar profesores
+  // Verifica si el usuario puede agregar profesores
   canAddTeacher(): boolean {
     const user = this.authService.getUser();
     return user && user.role === 1;
   }
 
-  // 🔹 Abrir popover “Agregar Profesor”
+  // Abrir popover “Agregar Profesor”
   openAddTeacherPopover() {
     this.addTeacherPopoverOpen = true;
   }
 
-  // 🔹 Cerrar popover
+  // Cerrar popover
   closeAddTeacherPopover() {
     this.addTeacherPopoverOpen = false;
     this.newTeacherName = '';
     this.newTeacherDescription = '';
   }
 
-  // 🔹 Placeholder sin lógica backend
+  // Placeholder sin lógica backend
   addTeacher() {
     const name = this.newTeacherName?.trim();
     const content = this.newTeacherDescription?.trim();

@@ -63,7 +63,7 @@ export class TeacherReviewPage implements OnInit {
     this.isLoggedIn = this.authService.isLoggedIn ? this.authService.isLoggedIn() : !!this.authService.getUser();
   }
 
-  /** Restricción: solo valores 1..7 */
+  // Restricción solo valores 1 a 7
   onRatingInput(event: any, field: string) {
     const raw = (event.target as HTMLInputElement).value || '';
     const sanitized = raw.replace(/[^1-7]/g, '').slice(0, 1);
@@ -88,12 +88,12 @@ export class TeacherReviewPage implements OnInit {
     );
   }
 
-  /** PUBLICAR rating + review (evita duplicados manejando respuestas del backend) */
+  /** PUBLICAR rating + review */
   async onPublish() {
     this.teachingTouched = this.studentRespectTouched = this.difficultyTouched = true;
     if (!this.isFormValid()) return;
 
-    if (this.isSubmitting) return; // evita envíos dobles
+    if (this.isSubmitting) return; // evitar envío doble
     this.isSubmitting = true;
 
     const ratingData = {
@@ -108,33 +108,32 @@ export class TeacherReviewPage implements OnInit {
       content: this.review,
       userid: this.userId,
       teacherPageId: this.teacherPageId,
-      username: this.username, // enviamos nombre para que el backend lo guarde y el frontend lo muestre
+      username: this.username, // enviar nombre
       date: new Date().toISOString().slice(0, 10),
       likes: 0,
       dislikes: 0
     };
 
     try {
-      // 1) Crear rating (backend debe validar duplicados por userid+teacherPageId)
+      // Crear rating
       await this.teacherReviewService.createRating(ratingData).toPromise();
 
-      // 2) Crear review (backend también valida duplicados)
+      // Crear review
       await this.teacherReviewService.createReview(reviewData).toPromise();
 
-      console.log('✅ Review y rating publicados correctamente');
+      console.log('Review y rating publicados correctamente');
 
-      // 3) Navegar a la página del profesor y recargar para que aparezca la nueva reseña
+      // Navegar a la página del profesor y recargar para que aparezca la nueva reseña
       this.router.navigate(['/teacher-page', this.teacherPageId]).then(() => {
         window.location.reload();
       });
 
     } catch (err: any) {
       // manejo básico de errores
-      console.error('❌ Error publicando reseña:', err);
+      console.error('Error publicando reseña:', err);
 
-      // Si el backend devuelve 400 con mensaje de duplicado, muéstralo en consola o toast
+      // Si el backend devuelve 400 con mensaje de duplicado, mostrar en consola
       if (err?.status === 400) {
-        // puedes reemplazar console.warn por un toast/alert más amable
         console.warn('No se puede crear: ya existe una review/rating para este usuario y profesor.');
       }
     } finally {
@@ -146,16 +145,14 @@ export class TeacherReviewPage implements OnInit {
     this.location.back();
   }
 
-  /* --- Manejo del botón Perfil / Popover / Logout --- */
-
   onProfileButtonClick(event: Event) {
-    // Si NO está logueado → ir a login
+    // Si NO está logueado ir a login
     if (!this.isLoggedIn) {
       this.router.navigate(['/login']);
       return;
     }
 
-    // Si está logueado → abrir popover/menu contextual
+    // Si está logueado abrir popover/menu contextual
     this.popoverEvent = event;
     this.showPopover = true;
   }
@@ -171,15 +168,14 @@ export class TeacherReviewPage implements OnInit {
   }
 
   logout() {
-    // limpia sesión (dependiendo de tu AuthService)
+    // limpia sesión
     if (this.authService.clear) {
       this.authService.clear();
     } else {
-      // fallback: borrar localStorage manualmente si tu servicio no tiene clear()
+      // borrar localStorage manualmente
       localStorage.removeItem('token');
       localStorage.removeItem('user');
     }
-
     this.isLoggedIn = false;
     this.showPopover = false;
     // redirigir a login

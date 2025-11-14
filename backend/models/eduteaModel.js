@@ -35,7 +35,7 @@ const EduTea = {
     return rows[0];
   },
 
-  // Reemplaza la relación: borra la existente e inserta la nueva dentro de una transacción
+  // borrar la relacion existente e inserta la nueva dentro de una transacción
   replace: async (eduId, teacherPageId, { newEduId, newTeacherPageId }) => {
     const client = await pool.connect();
     try {
@@ -51,10 +51,10 @@ const EduTea = {
         return null;
       }
 
-      // Delete old
+      // Borrar antiguo
       await client.query('DELETE FROM eduTea WHERE eduId = $1 AND teacherPageId = $2', [eduId, teacherPageId]);
 
-      // Insert new (si coincide con los mismos valores, se insertará de nuevo)
+      // Insertar nuevo
       const insertRes = await client.query(
         'INSERT INTO eduTea (eduId, teacherPageId) VALUES ($1, $2) RETURNING *',
         [newEduId, newTeacherPageId]

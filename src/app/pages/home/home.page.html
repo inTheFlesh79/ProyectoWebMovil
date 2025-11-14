@@ -20,7 +20,7 @@
   </ion-toolbar>
 </ion-header>
 
-<!-- 🔹 Menú perfil -->
+<!-- Menú perfil -->
 <div class="backdrop-blur" *ngIf="showPopover" (click)="showPopover = false"></div>
 
 <ion-popover [isOpen]="showPopover" (didDismiss)="showPopover = false" [event]="popoverEvent">
@@ -38,7 +38,7 @@
   </ng-template>
 </ion-popover>
 
-<!-- 🔹 CONTENIDO PRINCIPAL -->
+<!-- CONTENIDO PRINCIPAL -->
 <ion-content color="tertiary">
   <ion-title class="page-title" color="primary">Somos ProfeRanking</ion-title>
 
@@ -110,7 +110,7 @@
   </div>
 </ion-content>
 
-<!-- 🔹 POPUP: Agregar Profesor -->
+<!-- POPUP: Agregar Profesor -->
 <div class="backdrop-blur" *ngIf="addTeacherPopoverOpen" (click)="closeAddTeacherPopover()"></div>
 
 <div class="add-teacher-popover" *ngIf="addTeacherPopoverOpen">
@@ -124,7 +124,7 @@
         maxlength="120"
         placeholder="Ej. Juan Pérez"
       ></ion-input>
-      <div class="char-count">{{ newTeacherName?.length || 0 }}/120</div>
+      <div class="char-count">{{ newTeacherName.length || 0 }}/120</div>
     </ion-item>
 
     <ion-item lines="none" class="field-item">
@@ -135,7 +135,7 @@
         placeholder="Escribe una breve descripción..."
         class="description-box"
       ></ion-textarea>
-      <div class="char-count">{{ newTeacherDescription?.length || 0 }}/500</div>
+      <div class="char-count">{{ newTeacherDescription.length || 0 }}/500</div>
     </ion-item>
 
     <div class="popover-buttons">

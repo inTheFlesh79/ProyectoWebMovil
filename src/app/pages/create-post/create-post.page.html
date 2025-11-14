@@ -25,7 +25,7 @@
   </ion-toolbar>
 </ion-header>
 
-<!-- 🔽 Menú desplegable -->
+<!-- Menú desplegable -->
 <ion-popover [isOpen]="showPopover" (didDismiss)="showPopover = false" [event]="popoverEvent">
   <ng-template>
     <ion-content>
@@ -42,10 +42,8 @@
 </ion-popover>
 
 
-<!-- NOTE: removed ion-padding class here (we control spacing via SCSS) -->
 <ion-content>
-  <!-- Overlay centrado y responsive.
-       Wrapper height = viewport - header height -> prevents page scrollbar -->
+  <!-- Overlay centrado y responsive -->
   <div class="create-post-overlay-wrapper">
     <div class="create-post-overlay" role="dialog" aria-labelledby="createPostTitle" aria-modal="true">
       <div class="overlay-header">

@@ -63,7 +63,7 @@ export class PostService {
     );
   }
 
-  // 🗑️ Eliminar un post
+  // Eliminar un post
   deletePost(postId: number, token: string): Observable<any> {
     const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
     return this.http.delete<any>(`${this.apiUrl}/${postId}`, { headers });

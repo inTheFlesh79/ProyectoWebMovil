@@ -53,14 +53,14 @@ const postController = {
   updatePost: async (req, res) => {
     try {
       const postId = req.params.id;
-      const user = req.user; // { id, role }
+      const user = req.user;
       const { title, content } = req.body;
 
       if (!title || !content) {
         return res.status(400).json({ error: "Título y contenido son obligatorios" });
       }
 
-      // 1) obtener post original
+      // obtener post original
       const original = await Post.getById(postId);
       if (!original) return res.status(404).json({ error: "Post no encontrado" });
 
@@ -71,7 +71,7 @@ const postController = {
         return res.status(403).json({ error: "No tienes permiso para editar este post" });
       }
 
-      // 2) llamar al modelo para actualizar solo title y content
+      // llamar al modelo para actualizar solo title y content
       const updated = await Post.patch(postId, { title, content });
 
       res.json(updated);
@@ -82,6 +82,7 @@ const postController = {
     }
   },
 
+  // PATCH
   patchPost: async (req, res) => {
     try {
       const postId = req.params.id;
@@ -93,7 +94,7 @@ const postController = {
         return res.status(400).json({ error: "No hay campos para actualizar" });
       }
 
-      // 1) obtener post original
+      // obtener post original
       const original = await Post.getById(postId);
       if (!original) return res.status(404).json({ error: "Post no encontrado" });
 
@@ -104,7 +105,7 @@ const postController = {
         return res.status(403).json({ error: "No tienes permiso para editar este post" });
       }
 
-      // 2) evitar que se actualicen campos prohibidos
+      // evitar que se actualicen campos prohibidos
       const safeData = {};
       if (title) safeData.title = title;
       if (content) safeData.content = content;
@@ -119,7 +120,7 @@ const postController = {
     }
   },
 
-
+  // DELETE
   deletePost: async (req, res) => {
     try {
       const deleted = await Post.delete(req.params.id);

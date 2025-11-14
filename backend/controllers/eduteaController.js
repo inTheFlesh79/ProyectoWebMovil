@@ -3,7 +3,6 @@ const EduTea = require('../models/eduteaModel');
 const eduteaController = {
   createLink: async (req, res) => {
     try {
-      // espera { eduId, teacherPageId }
       const link = await EduTea.create(req.body);
       return res.status(201).json(link);
     } catch (err) {
@@ -56,11 +55,9 @@ const eduteaController = {
     }
   },
 
-  // Reemplaza la relación (ej: cambiar teacher o edu) -> implementado como delete + insert en transacción
   replaceLink: async (req, res) => {
     try {
       const { eduId, teacherPageId } = req.params;
-      // body should contain newEduId and newTeacherPageId (or same to keep)
       const { newEduId, newTeacherPageId } = req.body;
       const replaced = await EduTea.replace(eduId, teacherPageId, { newEduId, newTeacherPageId });
       if (!replaced) return res.status(404).json({ error: 'Relación original no encontrada' });
@@ -71,7 +68,7 @@ const eduteaController = {
     }
   },
 
-  // PATCH aquí se comporta igual que replace, pero acepta partial body
+  // PATCH 
   updateLink: async (req, res) => {
     try {
       const { eduId, teacherPageId } = req.params;
@@ -85,6 +82,7 @@ const eduteaController = {
     }
   },
 
+  // DELETE
   deleteLink: async (req, res) => {
     try {
       const { eduId, teacherPageId } = req.params;

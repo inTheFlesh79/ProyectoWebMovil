@@ -19,7 +19,7 @@ export class AppComponent {
     this.resetInactivityTimer();
   }
 
-  // 🖱️ Detecta movimiento del mouse o pulsaciones de teclado
+  // Detectar movimiento del mouse o pulsaciones de teclado
   @HostListener('document:mousemove')
   @HostListener('document:keydown')
   resetInactivityTimer() {

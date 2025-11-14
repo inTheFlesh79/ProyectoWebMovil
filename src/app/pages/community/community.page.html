@@ -27,7 +27,7 @@
 <!-- Overlay desenfoque -->
 <div class="backdrop-blur" *ngIf="showPopover" (click)="showPopover=false"></div>
 
-<!-- 🔽 Menú del header -->
+<!-- Menú del header -->
 <ion-popover [isOpen]="showPopover" (didDismiss)="showPopover = false" [event]="popoverEvent">
   <ng-template>
     <ion-content>
@@ -45,7 +45,7 @@
 
 
 <ion-content class="ion-padding" color="tertiary">
-  <!-- 🔍 Buscar + Crear -->
+  <!-- Buscar + Crear -->
   <div class="search-button-container">
     <ion-searchbar
       placeholder="Buscar publicación..."
@@ -60,7 +60,7 @@
     </ion-button>
   </div>
 
-  <!-- 🧾 Lista de publicaciones -->
+  <!-- Lista de publicaciones -->
   <ion-card *ngIf="filteredPosts.length > 0" class="post-list-card">
     <ion-list>
       <ion-item *ngFor="let post of filteredPosts" lines="none">
@@ -90,7 +90,7 @@
           </div>
         </ion-label>
 
-        <!-- 👤 Autor + menú contextual -->
+        <!-- Autor + menú contextual -->
         <div class="author">
           <ion-label class="username clickable" (click)="goToUserProfile(post.userid)">
             {{ post.username }}
@@ -104,7 +104,7 @@
             </ng-template>
           </ion-avatar>
 
-          <!-- ⋮ Tres puntos solo si puede modificar -->
+          <!-- Tres puntos solo si puede modificar -->
           <ion-button fill="clear" size="small" 
                       *ngIf="canModify(post)"
                       (click)="openPostPopover($event, post)">
@@ -115,7 +115,7 @@
     </ion-list>
   </ion-card>
 
-  <!-- 🚫 Sin publicaciones -->
+  <!-- Sin publicaciones -->
   <ion-card *ngIf="filteredPosts.length === 0" class="responsive-square-card">
     <ion-card-content class="ion-text-center ion-align-items-center"
                       style="display: flex; justify-content: center; height: 100%;">

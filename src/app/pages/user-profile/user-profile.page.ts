@@ -24,7 +24,7 @@ export class UserProfilePage implements OnInit {
   showPopover: boolean = false;
   popoverEvent: any;
 
-  // Popover menú usuario (3 puntos)
+  // Popover menú usuario
   userPopoverOpen: boolean = false;
   userPopoverEvent: any;
 
@@ -45,7 +45,7 @@ export class UserProfilePage implements OnInit {
     if (userId) this.loadUserProfile(userId);
 
     this.loggedUser = this.authService.getUser();
-    this.canModify = this.loggedUser?.role === 1; // Solo admins
+    this.canModify = this.loggedUser?.role === 1; // Solo admin
   }
 
   loadUserProfile(id: number) {
@@ -131,17 +131,17 @@ export class UserProfilePage implements OnInit {
     this.router.navigate(['/login']);
   }
 
-  // 🔹 Menú de 3 puntos
+  // Menú de 3 puntos
   openUserPopover(event: Event) {
     this.userPopoverEvent = event;
     this.userPopoverOpen = true;
   }
 
-  // 🔹 Confirmación visual con restricciones
+  // Confirmación visual con restricciones
   async deleteUser() {
     if (!this.canModify) return;
 
-    // Si el admin intenta borrarse a sí mismo o a otro admin
+    // prohibir que un admin se elimine a si mismo y otro admin
     if (this.loggedUser.id === this.user.id || this.user.role === 1) {
       const alert = await this.alertController.create({
         header: 'Acción no permitida',

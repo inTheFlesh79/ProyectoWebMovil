@@ -39,10 +39,10 @@ export class RegisterPage implements OnInit {
   cargarRegiones() {
     this.locationService.getRegiones().subscribe({
       next: (data) => {
-        console.log('✅ Regiones cargadas:', data);
+        console.log('Regiones cargadas:', data);
         this.regiones = data;
       },
-      error: (err) => console.error('❌ Error al cargar regiones:', err)
+      error: (err) => console.error('Error al cargar regiones:', err)
     });
   }
 
@@ -92,7 +92,7 @@ export class RegisterPage implements OnInit {
       this.authService.setToken(response.token);
       this.navCtrl.navigateRoot('/community');
     } catch (err: any) {
-      console.error('❌ Error completo al registrar:', err);
+      console.error('Error completo al registrar:', err);
       this.errorMessage = err.error?.error || 'Error al registrar usuario.';
     } finally {
       this.loading = false;

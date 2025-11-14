@@ -1,7 +1,3 @@
-/* =========================
-   HOME PAGE STYLES - COMPLETO Y ACTUALIZADO
-   ========================= */
-
 .page-container {
   display: flex;
   flex-direction: column;
@@ -115,10 +111,6 @@
   z-index: 9998;
 }
 
-/* =========================
-   POPUP: Add teacher
-   ========================= */
-
 .add-teacher-popover {
   position: fixed;
   top: 50%;
@@ -151,11 +143,6 @@
   font-weight: 600;
   font-size: 1.25rem;
 }
-
-/* === Campos === */
-/* =========================
-   POPUP: Add teacher
-   ========================= */
 
 .add-teacher-popover {
   position: fixed;
@@ -198,7 +185,7 @@
   align-items: flex-start;
 }
 
-/* 🔹 Etiquetas dinámicas (modo claro/oscuro) */
+/* Etiquetas dinámicas (modo claro/oscuro) */
 .field-label {
   margin-bottom: 16px;
   font-size: 1.05rem;
@@ -219,7 +206,6 @@
   }
  
 }
-
 
 .add-teacher-popover .popover-content ion-input,
 .add-teacher-popover .popover-content ion-textarea {
@@ -285,7 +271,7 @@
   }
 }
 
-/* 🔹 Inputs y textarea en modo oscuro */
+/* Inputs y textarea en modo oscuro */
 :host-context(.dark) {
   .add-teacher-popover .popover-content {
     background: #0f1114;

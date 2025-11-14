@@ -45,7 +45,7 @@ export class LoginPage {
       this.authService.setToken(response.token);
       console.log('Usuario autenticado:', response.user);
 
-      // Redirige a otra página, por ejemplo la comunidad
+      // Redirige a página de comunidad
       this.navCtrl.navigateRoot('/community');
     } catch (err: any) {
       console.error(err);

@@ -62,9 +62,7 @@ export class CommunityPostPage implements OnInit {
     }
   }
 
-  // ==============================
-  // 📦 Cargar datos
-  // ==============================
+  // Cargar datos
   loadPost(id: number) {
     this.postService.getPostById(id).subscribe({
       next: (data) => {
@@ -92,9 +90,7 @@ export class CommunityPostPage implements OnInit {
     });
   }
 
-  // ==============================
-  // 💬 Comentarios
-  // ==============================
+  // Comentarios
   sendComment() {
     const token = this.authService.getToken();
     if (!token) {
@@ -126,9 +122,7 @@ export class CommunityPostPage implements OnInit {
     this.showComments = !this.showComments;
   }
 
-  // ==============================
-  // 👍 / 👎 Votaciones
-  // ==============================
+  // Votaciones
   onVote(post: any, type: 'like' | 'dislike') {
     const token = this.authService.getToken();
     if (!token) {
@@ -171,9 +165,7 @@ export class CommunityPostPage implements OnInit {
     });
   }
 
-  // ==============================
   // Header popover
-  // ==============================
   ionViewWillEnter() {
     this.isLoggedIn = this.authService.isLoggedIn();
   }
@@ -202,9 +194,7 @@ export class CommunityPostPage implements OnInit {
     this.router.navigate(['/login']);
   }
 
-  // ==============================
   // Popover de post
-  // ==============================
   openPostPopover(event: Event, post: any) {
     event.stopPropagation?.();
     this.selectedPost = post;
@@ -248,7 +238,7 @@ export class CommunityPostPage implements OnInit {
 
     this.http.delete(`${this.apiUrl}/${post.postid}`, { headers }).subscribe({
       next: () => {
-        console.log(`🗑️ Post ${post.postid} eliminado con éxito.`);
+        console.log(`Post ${post.postid} eliminado con éxito.`);
         this.postPopoverOpen = false;
         setTimeout(() => {
           this.router.navigate(['/community']).then(() => window.location.reload());
@@ -261,9 +251,7 @@ export class CommunityPostPage implements OnInit {
     });
   }
 
-  // ==============================
   // Popover de comentarios
-  // ==============================
   openCommentPopover(event: Event, comment: any) {
     event.stopPropagation?.();
     this.selectedComment = comment;
@@ -307,10 +295,9 @@ export class CommunityPostPage implements OnInit {
 
     const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
 
-    // 🔥 Llamada real al backend
     this.http.delete(`${this.commentUrl}/${comment.commentid}`, { headers }).subscribe({
       next: () => {
-        console.log(`🗑️ Comentario ${comment.commentid} eliminado correctamente.`);
+        console.log(`Comentario ${comment.commentid} eliminado correctamente.`);
         // Remueve el comentario de la lista en el front
         this.comments = this.comments.filter(c => c.commentid !== comment.commentid);
         this.commentPopoverOpen = false;
@@ -319,14 +306,14 @@ export class CommunityPostPage implements OnInit {
         }, 300);
       },
       error: (err) => {
-        console.error('❌ Error eliminando comentario:', err);
+        console.error('Error eliminando comentario:', err);
         this.commentPopoverOpen = false;
       }
     });
 
   }
 
-  // 🔹 Abrir modal de edición
+  // Abrir modal de edición
   openEditModal(post: any) {
     this.selectedPost = post;
     this.editedPost = { ...post }; // Clon del post a editar
@@ -334,14 +321,13 @@ export class CommunityPostPage implements OnInit {
     this.postPopoverOpen = false; // Cierra el menú contextual
   }
 
-  // 🔹 Cerrar modal de edición
+  // Cerrar modal de edición
   closeEditModal() {
     this.isEditModalOpen = false;
     this.editedPost = {};
   }
 
-  // 🔹 Guardar cambios del post (backend listo para conectar)
-  // 🔹 Guardar cambios del post
+  // Guardar cambios del post
   saveEdit() {
     const token = this.authService.getToken();
     if (!token) {
@@ -355,11 +341,10 @@ export class CommunityPostPage implements OnInit {
     // Validación de límites y vacío
     if (!t || !c || t.length > this.TITLE_MAX || c.length > this.CONTENT_MAX) {
       console.warn('Los campos no cumplen con los requisitos de longitud.');
-      // Aquí puedes agregar un ion-alert para avisar al usuario
       return;
     }
     
-    // Lógica para enviar la solicitud PUT (la que ya tienes)
+    // enviar la solicitud PUT
     const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
 
     this.http.patch(`${this.apiUrl}/${this.editedPost.postid}`, 

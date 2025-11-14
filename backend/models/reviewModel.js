@@ -48,7 +48,7 @@ const Review = {
     }
   },
 
-  // Actualizar reseña completa (PUT)
+  // Actualizar reseña completa
   update: async (reviewId, data) => {
     const query = `
       UPDATE Review
@@ -75,7 +75,7 @@ const Review = {
     }
   },
 
-  // Actualización parcial (PATCH)
+  // PATCH
   patch: async (reviewId, fields) => {
     const keys = Object.keys(fields);
     const values = Object.values(fields);
@@ -94,10 +94,9 @@ const Review = {
     }
   },
 
-  // Eliminar reseña
+  // DELETE
   delete: async (reviewId) => {
     try {
-      // 1️⃣ Asegurar que la FK tenga ON DELETE CASCADE
       await pool.query(`
         DO $$
         BEGIN
@@ -120,7 +119,7 @@ const Review = {
         END $$;
       `);
 
-      // 2️⃣ Eliminar la review (los votos asociados se eliminarán automáticamente)
+      // Eliminar la review
       const result = await pool.query(
         'DELETE FROM Review WHERE reviewId = $1 RETURNING *',
         [reviewId]
@@ -132,7 +131,6 @@ const Review = {
       throw err;
     }
   },
-
 
   getByTeacherPage: async (teacherPageId) => {
     const query = `

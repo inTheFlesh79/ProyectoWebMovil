@@ -49,7 +49,7 @@ const Comment = {
     }
   },
 
-  // Reemplazar todo el registro (PUT)
+  // Reemplazar todo el registro
   replace: async (id, data) => {
     const query = `
       UPDATE Comment SET
@@ -81,7 +81,7 @@ const Comment = {
     }
   },
 
-  // Actualización parcial (PATCH)
+  // PATCH
   update: async (id, data) => {
     const query = `
       UPDATE Comment SET
@@ -113,18 +113,18 @@ const Comment = {
     }
   },
 
-  // Eliminar comentario
+  // DELETE
   remove: async (id) => {
     const client = await pool.connect();
     try {
       await client.query('BEGIN');
 
-      // 1️⃣ Eliminar votos asociados al comentario
+      // Eliminar votos asociados al comentario
       await client.query(`
         DELETE FROM CommentVotes WHERE commentid = $1;
       `, [id]);
 
-      // 2️⃣ Eliminar el comentario
+      // Eliminar el comentario
       const { rowCount } = await client.query(`
         DELETE FROM Comment WHERE commentid = $1;
       `, [id]);

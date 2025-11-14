@@ -16,7 +16,7 @@ export class LocationService {
   getRegiones() {
     return this.http.get<any[]>(`${this.API_URL}/regiones`).pipe(
       catchError(err => {
-        console.error('❌ Error cargando regiones:', err);
+        console.error('Error cargando regiones:', err);
         return of([]);
       })
     );
@@ -26,7 +26,7 @@ export class LocationService {
   getComunasPorRegion(regionCodigo: string) {
     return this.http.get<any[]>(`${this.API_URL}/regiones/${regionCodigo}/comunas`).pipe(
       catchError(err => {
-        console.error('❌ Error cargando comunas:', err);
+        console.error('Error cargando comunas:', err);
         return of([]);
       })
     );

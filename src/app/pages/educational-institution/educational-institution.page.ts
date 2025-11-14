@@ -63,10 +63,10 @@ export class EducationalInstitutionPage implements OnInit {
     const user = this.authService.getUser();
 
     if (user && user.id) {
-      // ✅ Usuario logueado → ir a su perfil
+      // Usuario logueado → ir a su perfil
       this.router.navigate(['/user-profile', user.id]);
     } else {
-      // 🚪 No logueado → ir a login
+      // No logueado → ir a login
       this.router.navigate(['/login']);
     }
   }
@@ -75,7 +75,7 @@ export class EducationalInstitutionPage implements OnInit {
     this.isLoggedIn = this.authService.isLoggedIn();
   }
 
-  // 🔹 Al hacer clic en "Perfil" / "Iniciar Sesión"
+  // Al hacer clic en "Perfil" / "Iniciar Sesión"
   onProfileButtonClick(event: Event) {
     if (!this.isLoggedIn) {
       this.router.navigate(['/login']);
@@ -85,7 +85,7 @@ export class EducationalInstitutionPage implements OnInit {
     }
   }
 
-  // 🔹 Ir al perfil
+  // Ir al perfil
   goToProfileFromMenu() {
     const user = this.authService.getUser();
     if (user && user.id) {
@@ -94,7 +94,7 @@ export class EducationalInstitutionPage implements OnInit {
     this.showPopover = false; // cerrar menú
   }
 
-  // 🔹 Cerrar sesión
+  // Cerrar sesión
   logout() {
     this.authService.clear();
     this.isLoggedIn = false;

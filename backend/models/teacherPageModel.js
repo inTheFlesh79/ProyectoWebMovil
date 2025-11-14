@@ -28,7 +28,7 @@ const TeacherPage = {
     return rows[0];
   },
 
-  // Reemplazo total (PUT)
+  // Reemplazo total
   replace: async (id, data) => {
     const query = `
       UPDATE TeacherPage SET
@@ -48,7 +48,7 @@ const TeacherPage = {
     return rows[0];
   },
 
-  // PATCH (parcial)
+  // PATCH
   update: async (id, data) => {
     const query = `
       UPDATE TeacherPage SET
@@ -68,6 +68,7 @@ const TeacherPage = {
     return rows[0];
   },
 
+  // DELETE
   remove: async (id) => {
     const { rows } = await pool.query('DELETE FROM TeacherPage WHERE teacherPageId = $1 RETURNING *', [id]);
     return rows[0];

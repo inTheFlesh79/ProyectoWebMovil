@@ -18,7 +18,6 @@ import { TokenInterceptor } from './interceptors/token-interceptor';
   ],
   providers: [
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
-    // 👇 este bloque es lo importante
     {
       provide: HTTP_INTERCEPTORS,
       useClass: TokenInterceptor,

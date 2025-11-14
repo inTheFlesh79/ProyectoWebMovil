@@ -1,4 +1,4 @@
-/* 📏 Ajustes generales */
+/* Ajustes generales */
 .responsive-square-card {
   width: 100%;
   max-width: 1250px;
@@ -14,7 +14,7 @@
   height: 100%;
 }
 
-/* 🔍 Barra de búsqueda + botón Crear */
+/* Barra de búsqueda + botón Crear */
 .search-button-container {
   display: flex;
   gap: 10px;
@@ -36,7 +36,7 @@
   min-width: 100px;
 }
 
-/* 📋 Publicaciones */
+/* Publicaciones */
 .post-list-card {
   width: 100%;
   max-width: 1250px;
@@ -65,7 +65,7 @@ ion-item {
   margin-left: 4px;
 }
 
-/* 👤 Autor */
+/* Autor */
 .author {
   display: flex;
   align-items: center;
@@ -97,7 +97,7 @@ ion-item {
   text-decoration: underline;
 }
 
-/* ⋮ Botón de menú contextual */
+/* Botón de menú contextual */
 .author ion-button {
   --padding-start: 0;
   --padding-end: 0;
@@ -110,14 +110,14 @@ ion-item {
   z-index: 2;
 } 
 
-/* 🧾 Ajuste de texto del post */
+/* Ajuste de texto del post */
 ion-label {
   display: block;
   overflow-wrap: break-word;
   word-break: break-word;
 }
 
-/* 🎛️ Popover */
+/* Popover */
 ion-popover ion-item {
   --min-height: 44px;
   display: flex;
@@ -128,7 +128,7 @@ ion-popover ion-label {
   margin: 0;
 }
 
-/* 🧭 Header */
+/* Header */
 ion-header ion-toolbar {
   --background: var(--ion-color-primary);
   color: #fff;
@@ -139,7 +139,7 @@ ion-header ion-button {
   font-weight: 500;
 }
 
-/* 📱 Responsivo */
+/* Responsivo */
 @media (max-width: 768px) {
   .search-button-container {
     flex-direction: column;

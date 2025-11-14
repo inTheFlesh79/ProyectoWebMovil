@@ -46,13 +46,13 @@ export class TeacherPage implements OnInit {
   }
 
   loadTeacherData(id: number) {
-    // 1) Datos del profesor
+    // Datos del profesor
     this.teacherService.getTeacherPageById(id).subscribe({
       next: (data) => { this.teacher = data; },
       error: (err) => console.error('Error al obtener profesor:', err)
     });
 
-    // 2) Promedio general del profesor
+    // Promedio general del profesor
     this.teacherService.getTeacherAverage(id).subscribe({
       next: (avg) => {
         this.ratings = {
@@ -64,7 +64,7 @@ export class TeacherPage implements OnInit {
       error: (err) => console.error('Error al obtener promedio:', err)
     });
 
-    // 3) Reviews + ratings de ESTE profesor → se cruzan por userid
+    // Reviews + ratings de profesor
     forkJoin({
       reviews: this.teacherService.getTeacherReviews(id),
       ratings: this.teacherService.getRatingsByTeacher(id)
@@ -120,19 +120,18 @@ export class TeacherPage implements OnInit {
           // Mostrar alerta con dos botones
           this.showExistingReviewAlert(teacherId);
         } else {
-          // No tiene review -> navegar directo
+          // No tiene review, navegar directo
           this.router.navigate(['/teacher-review', teacherId]);
         }
       },
       error: (err) => {
         console.error('Error verificando review existente:', err);
-        // fallback: dejar navegar
         this.router.navigate(['/teacher-review', teacherId]);
       }
     });
   }
 
-  // ALERTA con "Continuar" (izq) y "Eliminar y calificar" (der)
+  // ALERTA con "Continuar" y "Eliminar y calificar"
   async showExistingReviewAlert(teacherId: number) {
     const alert = document.createElement('ion-alert');
     alert.header = 'Calificación existente';
@@ -140,11 +139,11 @@ export class TeacherPage implements OnInit {
 
     alert.buttons = [
       {
-        text: 'Cancelar',        // izquierda
+        text: 'Cancelar',
         role: 'cancel'
       },
       {
-        text: 'Eliminar y calificar',  // derecha
+        text: 'Eliminar y calificar',
         handler: async () => {
           await this.deleteAndGoToReview(teacherId);
         }
@@ -164,7 +163,7 @@ export class TeacherPage implements OnInit {
 
     this.teacherReviewService.deleteUserFeedback(teacherId, token).subscribe({
       next: () => {
-        // OK -> ir a calificar
+        // ir a calificar
         this.router.navigate(['/teacher-review', teacherId]);
       },
       error: (err) => {
@@ -219,10 +218,10 @@ export class TeacherPage implements OnInit {
     const user = this.authService.getUser();
 
     if (user && user.id) {
-      // ✅ Usuario logueado → ir a su perfil
+      // Usuario logueado → ir a su perfil
       this.router.navigate(['/user-profile', user.id]);
     } else {
-      // 🚪 No logueado → ir a login
+      // No logueado → ir a login
       this.router.navigate(['/login']);
     }
   }
@@ -231,7 +230,7 @@ export class TeacherPage implements OnInit {
     this.isLoggedIn = this.authService.isLoggedIn();
   }
 
-  // 🔹 Al hacer clic en "Perfil" / "Iniciar Sesión"
+  // Al hacer clic en "Perfil" / "Iniciar Sesión"
   onProfileButtonClick(event: Event) {
     if (!this.isLoggedIn) {
       this.router.navigate(['/login']);
@@ -241,7 +240,7 @@ export class TeacherPage implements OnInit {
     }
   }
 
-  // 🔹 Ir al perfil
+  // Ir al perfil
   goToProfileFromMenu() {
     const user = this.authService.getUser();
     if (user && user.id) {
@@ -250,7 +249,7 @@ export class TeacherPage implements OnInit {
     this.showPopover = false; // cerrar menú
   }
 
-  // 🔹 Cerrar sesión
+  // Cerrar sesión
   logout() {
     this.authService.clear();
     this.isLoggedIn = false;
@@ -258,7 +257,7 @@ export class TeacherPage implements OnInit {
     this.router.navigate(['/login']);
   }
 
-  // 🔹 Verifica si el usuario puede modificar una review
+  // Verifica si el usuario puede modificar una review
   canModify(review: any): boolean {
     const currentUser = this.authService.getUser();
     if (!currentUser) return false;
@@ -269,14 +268,14 @@ export class TeacherPage implements OnInit {
     return isAdmin || isOwner;
   }
 
-  // 🔹 Abre el popover contextual del review
+  // Abre el popover contextual del review
   openReviewPopover(event: Event, review: any) {
     this.selectedReview = review;
     this.reviewPopoverEvent = event;
     this.reviewPopoverOpen = true;
   }
 
-  // 🔹 Eliminar review (con confirmación moderna)
+  // Eliminar review (con confirmación moderna)
   async deleteReview(review: any) {
     const alert = document.createElement('ion-alert');
     alert.header = 'Eliminar reseña';
@@ -294,7 +293,7 @@ export class TeacherPage implements OnInit {
     await alert.present();
   }
 
-  // 🔹 Confirmar eliminación (placeholder sin HTTP)
+  // Confirmar eliminación (placeholder sin HTTP)
   private confirmDeleteReview(review: any) {
     console.log(`Simulando eliminación de review ${review.reviewid}...`);
     this.reviewPopoverOpen = false;
@@ -318,13 +317,13 @@ export class TeacherPage implements OnInit {
     });
   }
 
-  // 🔹 Abre el popover del profesor
+  // Abre el popover del profesor
   openTeacherMenu(event: Event) {
     this.teacherPopoverEvent = event;
     this.teacherPopoverOpen = true;
   }
 
-  // 🔹 Acción al seleccionar "Eliminar profesor"
+  // Acción al seleccionar "Eliminar profesor"
   async deleteTeacher() {
     this.teacherPopoverOpen = false;
 
@@ -344,7 +343,7 @@ export class TeacherPage implements OnInit {
     await alert.present();
   }
 
-  // 🔹 Método que el backend debe completar
+  // Método que el backend debe completar
   confirmDeleteTeacher() {
     const teacherId = this.teacher?.teacherpageid;
     const token = this.authService.getToken();
@@ -357,9 +356,6 @@ export class TeacherPage implements OnInit {
     this.teacherService.deleteTeacherById(teacherId, token).subscribe({
       next: () => {
         console.log("Profesor eliminado correctamente");
-
-        // Opcional: toast de éxito
-
         // Redirigir al home después de borrar
         this.router.navigate(['/home']);
       },
@@ -369,10 +365,8 @@ export class TeacherPage implements OnInit {
     });
   }
 
-
   isAdmin(): boolean {
     const user = this.authService.getUser();
     return !!user && user.role === 1;
   }
-
 }

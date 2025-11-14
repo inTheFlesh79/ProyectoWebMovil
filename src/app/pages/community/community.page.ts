@@ -29,7 +29,7 @@ export class CommunityPage implements OnInit {
 
   readonly TITLE_MAX = 120;
   readonly CONTENT_MAX = 2000;
-  // 🔹 Modal de edición
+  // Modal de edición
   isEditModalOpen = false;
   editedPost: any = {};
 
@@ -154,7 +154,7 @@ export class CommunityPage implements OnInit {
     }
   }
 
-  // 🔹 Verifica si el usuario puede modificar un post
+  // Verifica si el usuario puede modificar un post
   canModify(post: any): boolean {
     const currentUser = this.authService.getUser();
     if (!currentUser) return false;
@@ -163,14 +163,14 @@ export class CommunityPage implements OnInit {
     return isAdmin || isOwner;
   }
 
-  // 🔹 Abre el popover contextual del post
+  // Abre el popover contextual del post
   openPostPopover(event: Event, post: any) {
     this.selectedPost = post;
     this.postPopoverEvent = event;
     this.postPopoverOpen = true;
   }
 
-  // 🔹 Eliminar publicación (con confirmación moderna)
+  // Eliminar publicación
   async deletePost(post: any) {
     const alert = await this.alertCtrl.create({
       header: 'Eliminar publicación',
@@ -188,7 +188,7 @@ export class CommunityPage implements OnInit {
     await alert.present();
   }
 
-  // 🔹 Confirmar eliminación (realiza la petición HTTP DELETE)
+  // Confirmar eliminación (realiza la petición HTTP DELETE)
   private confirmDelete(post: any) {
     const token = this.authService.getToken();
     if (!token) {
@@ -213,7 +213,7 @@ export class CommunityPage implements OnInit {
     });
   }
 
-  // 🔹 Abrir modal de edición
+  // Abrir modal de edición
   openEditModal(post: any) {
     this.selectedPost = post;
     this.editedPost = { ...post }; // Clon del post a editar
@@ -221,14 +221,13 @@ export class CommunityPage implements OnInit {
     this.postPopoverOpen = false; // Cierra el menú contextual
   }
 
-  // 🔹 Cerrar modal de edición
+  // Cerrar modal de edición
   closeEditModal() {
     this.isEditModalOpen = false;
     this.editedPost = {};
   }
 
-  // 🔹 Guardar cambios del post (backend listo para conectar)
-  // 🔹 Guardar cambios del post
+  // Guardar cambios del post
   saveEdit() {
     const token = this.authService.getToken();
     if (!token) {
@@ -242,11 +241,10 @@ export class CommunityPage implements OnInit {
     // Validación de límites y vacío
     if (!t || !c || t.length > this.TITLE_MAX || c.length > this.CONTENT_MAX) {
       console.warn('Los campos no cumplen con los requisitos de longitud.');
-      // Aquí puedes agregar un ion-alert para avisar al usuario
       return;
     }
     
-    // Lógica para enviar la solicitud PUT (la que ya tienes)
+    // enviar la solicitud PUT
     const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
 
     this.http.patch(`${this.apiUrl}/${this.editedPost.postid}`, 

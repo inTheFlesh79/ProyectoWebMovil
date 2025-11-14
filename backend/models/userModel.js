@@ -12,13 +12,13 @@ const User = {
     const values = [
       userData.password,
       userData.username,
-      userData.role,          // número entero
+      userData.role,
       userData.correo,
       userData.rut,
       userData.region,
       userData.district,
       userData.isMember,
-      userData.profilePicture // opcional: base64 o null
+      userData.profilePicture
     ];
 
     try {
@@ -63,7 +63,7 @@ const User = {
     }
   },
 
-  // Actualizar usuario completo (PUT)
+  // Actualizar usuario completo
   update: async (userid, data) => {
   try {
     const query = `
@@ -94,7 +94,7 @@ const User = {
 },
 
 
-  // Actualizar parcialmente (PATCH)
+  // PATCH
   patch: async (userid, data) => {
   try {
     const keys = Object.keys(data);
@@ -110,7 +110,7 @@ const User = {
 },
 
 
-  // Eliminar usuario
+  // DELETE
   delete: async (userid) => {
     try {
       const result = await pool.query('DELETE FROM Users WHERE userid=$1 RETURNING userid', [userid]);
@@ -122,39 +122,39 @@ const User = {
   },
 
   // Comentarios realizados por el usuario
-getUserComments: async (userid) => {
-  try {
-    const query = `
-      SELECT c.commentid, c.content, c.date, c.likes, c.dislikes, c.postid
-      FROM comment c
-      WHERE c.userid = $1
-      ORDER BY c.date DESC;
-    `;
-    const { rows } = await pool.query(query, [userid]);
-    return rows;
-  } catch (err) {
-    console.error('Error obteniendo comentarios del usuario:', err);
-    throw err;
-  }
-},
+  getUserComments: async (userid) => {
+    try {
+      const query = `
+        SELECT c.commentid, c.content, c.date, c.likes, c.dislikes, c.postid
+        FROM comment c
+        WHERE c.userid = $1
+        ORDER BY c.date DESC;
+      `;
+      const { rows } = await pool.query(query, [userid]);
+      return rows;
+    } catch (err) {
+      console.error('Error obteniendo comentarios del usuario:', err);
+      throw err;
+    }
+  },
 
-// Opiniones (reviews) realizadas por el usuario
-getUserReviews: async (userid) => {
-  try {
-    const query = `
-      SELECT r.reviewid, r.content, r.date, r.likes, r.dislikes, t.name AS teachername
-      FROM review r
-      JOIN teacherpage t ON r.teacherpageid = t.teacherpageid
-      WHERE r.userid = $1
-      ORDER BY r.date DESC;
-    `;
-    const { rows } = await pool.query(query, [userid]);
-    return rows;
-  } catch (err) {
-    console.error('Error obteniendo opiniones del usuario:', err);
-    throw err;
-  }
-},
+  // Reviews realizadas por el usuario
+  getUserReviews: async (userid) => {
+    try {
+      const query = `
+        SELECT r.reviewid, r.content, r.date, r.likes, r.dislikes, t.name AS teachername
+        FROM review r
+        JOIN teacherpage t ON r.teacherpageid = t.teacherpageid
+        WHERE r.userid = $1
+        ORDER BY r.date DESC;
+      `;
+      const { rows } = await pool.query(query, [userid]);
+      return rows;
+    } catch (err) {
+      console.error('Error obteniendo opiniones del usuario:', err);
+      throw err;
+    }
+  },
 
 };
 

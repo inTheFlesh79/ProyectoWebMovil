@@ -13,7 +13,7 @@ const userController = {
     }
   },
 
-  // READ (todos)
+  // GET
   getUsers: async (req, res) => {
     try {
       const users = await User.getAll();
@@ -24,7 +24,7 @@ const userController = {
     }
   },
 
-  // READ (uno por ID)
+  // GET por id
   getUserById: async (req, res) => {
     try {
       const user = await User.getById(req.params.id);
@@ -38,7 +38,7 @@ const userController = {
     }
   },
 
-  // UPDATE (PUT)
+  // UPDATE
   updateUser: async (req, res) => {
     try {
       const updated = await User.update(req.params.id, req.body);
@@ -52,7 +52,7 @@ const userController = {
     }
   },
 
-  // UPDATE parcial (PATCH)
+  // PATCH
   patchUser: async (req, res) => {
     try {
       const patched = await User.patch(req.params.id, req.body);
@@ -74,44 +74,39 @@ const userController = {
     try {
       await client.query('BEGIN');
 
-      // 1) ELIMINAR VOTOS HECHOS POR EL USUARIO
+      // ELIMINAR VOTOS HECHOS POR EL USUARIO
       await client.query(`DELETE FROM Votes WHERE userid = $1`, [userid]);
       await client.query(`DELETE FROM CommentVotes WHERE userid = $1`, [userid]);
       await client.query(`DELETE FROM ReviewVotes WHERE userid = $1`, [userid]);
 
-      // 2) ELIMINAR VOTOS HECHOS A SUS COMMENTS
+      // ELIMINAR VOTOS HECHOS A SUS COMMENTS
       await client.query(`
         DELETE FROM CommentVotes
         WHERE commentid IN (SELECT commentid FROM Comment WHERE userid = $1)
       `, [userid]);
 
-      // 3) ELIMINAR VOTOS HECHOS A SUS REVIEWS
+      // ELIMINAR VOTOS HECHOS A SUS REVIEWS
       await client.query(`
         DELETE FROM ReviewVotes
         WHERE reviewid IN (SELECT reviewid FROM Review WHERE userid = $1)
       `, [userid]);
 
-      // 4) ELIMINAR TODAS LAS REVIEWS DEL USUARIO
+      // ELIMINAR TODAS LAS REVIEWS DEL USUARIO
       await client.query(`DELETE FROM Review WHERE userid = $1`, [userid]);
 
-      // 5) ELIMINAR TODAS LAS CALIFICACIONES TeacherRating DEL USUARIO
+      // ELIMINAR TODAS LAS CALIFICACIONES TeacherRating DEL USUARIO
       await client.query(`DELETE FROM TeacherRating WHERE userid = $1`, [userid]);
 
-      // 6) ELIMINAR COMMENTS HECHOS POR EL USUARIO
+      // ELIMINAR COMMENTS HECHOS POR EL USUARIO
       await client.query(`DELETE FROM Comment WHERE userid = $1`, [userid]);
 
-
-      // -------------------------------
-      // 7) ELIMINAR POSTS DEL USUARIO
-      // -------------------------------
-
-      // 7.1 Eliminar votes hacia posts creados por el usuario
+      // Eliminar votes hacia posts creados por el usuario
       await client.query(`
         DELETE FROM Votes
         WHERE postid IN (SELECT postid FROM Post WHERE userid = $1)
       `, [userid]);
 
-      // 7.2 Eliminar commentVotes en comments dentro de posts del usuario
+      // Eliminar commentVotes en comments dentro de posts del usuario
       await client.query(`
         DELETE FROM CommentVotes
         WHERE commentid IN (
@@ -120,20 +115,20 @@ const userController = {
         )
       `, [userid]);
 
-      // 7.3 Eliminar comments dentro de posts del usuario
+      // Eliminar comments dentro de posts del usuario
       await client.query(`
         DELETE FROM Comment
         WHERE postid IN (SELECT postid FROM Post WHERE userid = $1)
       `, [userid]);
 
-      // 7.4 Eliminar posts
+      // Eliminar posts
       await client.query(`
         DELETE FROM Post
         WHERE userid = $1
       `, [userid]);
 
 
-      // 8) FINALMENTE: ELIMINAR AL USUARIO
+      // ELIMINAR AL USUARIO
       const result = await client.query(`
         DELETE FROM Users WHERE userid = $1 RETURNING userid
       `, [userid]);

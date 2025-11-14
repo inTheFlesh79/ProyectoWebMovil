@@ -42,6 +42,7 @@ const reviewController = {
     }
   },
 
+  // PATCH
   patchReview: async (req, res) => {
     try {
       const patched = await Review.patch(req.params.id, req.body);
@@ -52,6 +53,7 @@ const reviewController = {
     }
   },
 
+  // DELETE
   deleteReview: async (req, res) => {
     try {
       const result = await Review.delete(req.params.id);

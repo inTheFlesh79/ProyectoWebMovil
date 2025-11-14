@@ -26,22 +26,22 @@ router.delete('/review/:reviewId', auth, async (req, res) => {
 
     const review = rows[0];
 
-    // 🔥 Normalizamos valores
+    // Normalizamos valores
     const ownerId = Number(review.userid);
 
-    // 🔐 Permitido si: dueño o admin
+    // dueño o admin
     if (currentUserId !== ownerId && currentRole !== 1) {
       await client.query("ROLLBACK");
       return res.status(403).json({ error: 'No autorizado' });
     }
 
-    // 1. Borrar votos
+    // Borrar votos
     await client.query('DELETE FROM ReviewVotes WHERE reviewid = $1', [reviewId]);
 
-    // 2. Borrar review
+    // Borrar review
     await client.query('DELETE FROM Review WHERE reviewid = $1', [reviewId]);
 
-    // 3. Borrar rating del mismo usuario en ese teacher
+    // Borrar rating del mismo usuario en ese teacher
     await client.query(
       'DELETE FROM TeacherRating WHERE teacherpageid = $1 AND userid = $2',
       [review.teacherpageid, ownerId]
@@ -67,7 +67,7 @@ router.delete('/:teacherPageId', auth, async (req, res) => {
   try {
     await client.query('BEGIN');
 
-    // 1) obtener reviewid(s) del usuario para ese teacher (normalmente 1)
+    // obtener reviewid del usuario para ese teacher
     const { rows: revRows } = await client.query(
       'SELECT reviewid FROM Review WHERE teacherPageId = $1 AND userid = $2',
       [teacherPageId, userId]
@@ -76,20 +76,20 @@ router.delete('/:teacherPageId', auth, async (req, res) => {
     if (revRows.length) {
       const reviewIds = revRows.map(r => r.reviewid);
 
-      // 2) borrar votos asociados a esas reviews
+      // borrar votos asociados a esas reviews
       await client.query(
         'DELETE FROM ReviewVotes WHERE reviewid = ANY($1::bigint[])',
         [reviewIds]
       );
 
-      // 3) borrar reviews
+      // borrar reviews
       await client.query(
         'DELETE FROM Review WHERE teacherPageId = $1 AND userid = $2',
         [teacherPageId, userId]
       );
     }
 
-    // 4) borrar rating del usuario para ese teacher
+    // borrar rating del usuario para ese teacher
     await client.query(
       'DELETE FROM TeacherRating WHERE teacherPageId = $1 AND userid = $2',
       [teacherPageId, userId]

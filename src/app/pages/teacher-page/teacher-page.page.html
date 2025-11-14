@@ -29,7 +29,7 @@
 <div class="backdrop-blur" *ngIf="showPopover" (click)="showPopover=false"></div>
 
 
-<!-- 🔽 Menú desplegable -->
+<!-- Menú desplegable -->
 <ion-popover [isOpen]="showPopover" (didDismiss)="showPopover = false" [event]="popoverEvent">
   <ng-template>
     <ion-content>
@@ -168,7 +168,7 @@
           <span>{{ review.dislikes }}</span>
         </ion-button>
 
-        <!-- 🔹 Botón de menú (3 puntos horizontales) -->
+        <!-- Botón de menú (3 puntos horizontales) -->
         <ion-button
           *ngIf="canModify(review)"
           fill="clear"
@@ -190,7 +190,7 @@
   </ion-content>
 </ng-template>
 
-<!-- 🔹 Popover contextual -->
+<!-- Popover contextual -->
 <ion-popover
   [isOpen]="reviewPopoverOpen"
   [event]="reviewPopoverEvent"

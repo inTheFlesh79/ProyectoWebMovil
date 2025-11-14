@@ -5,7 +5,6 @@ const dpaApi = axios.create({
   timeout: 5000
 });
 
-// Cache opcional
 let regionesCache = null;
 let regionesCacheAt = 0;
 

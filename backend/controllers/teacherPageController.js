@@ -6,14 +6,14 @@ const teacherPageController = {
     try {
       const user = req.user; // viene del JWT
 
-      // Solo admins (role = 1) pueden crear profesores
+      // solo admins (role = 1) pueden crear profesores
       if (!user || user.role !== 1) {
         return res.status(403).json({ error: 'No tienes permiso para agregar profesores' });
       }
 
       const { name, content } = req.body;
 
-      // Validaciones básicas
+      // Validar
       if (!name || !content) {
         return res.status(400).json({ error: 'Nombre y descripción son obligatorios' });
       }
@@ -22,7 +22,7 @@ const teacherPageController = {
         return res.status(400).json({ error: 'Exceso de caracteres en los campos' });
       }
 
-      // Crear teacherPage sin imagen
+      // Crear teacherPage
       const page = await TeacherPage.create({
         name,
         content,
@@ -83,6 +83,7 @@ const teacherPageController = {
     }
   },
 
+  // DELETE
   deleteTeacherPage: async (req, res) => {
     const client = await pool.connect();
 
@@ -98,7 +99,7 @@ const teacherPageController = {
 
       await client.query('BEGIN');
 
-      // 1) ELIMINAR VOTOS DE REVIEWS
+      // ELIMINAR VOTOS DE REVIEWS
       await client.query(
         `DELETE FROM ReviewVotes 
         WHERE reviewid IN (
@@ -107,25 +108,25 @@ const teacherPageController = {
         [teacherId]
       );
 
-      // 2) ELIMINAR REVIEWS
+      // ELIMINAR REVIEWS
       await client.query(
         `DELETE FROM Review WHERE teacherPageId = $1`,
         [teacherId]
       );
 
-      // 3) ELIMINAR RATINGS
+      // ELIMINAR RATINGS
       await client.query(
         `DELETE FROM TeacherRating WHERE teacherPageId = $1`,
         [teacherId]
       );
 
-      // 4) ELIMINAR rel. institución-profesor
+      // ELIMINAR rel. institución-profesor
       await client.query(
         `DELETE FROM eduTea WHERE teacherPageId = $1`,
         [teacherId]
       );
 
-      // 5) ELIMINAR PROFESOR
+      // ELIMINAR PROFESOR
       const result = await client.query(
         `DELETE FROM TeacherPage WHERE teacherPageId = $1 RETURNING *`,
         [teacherId]

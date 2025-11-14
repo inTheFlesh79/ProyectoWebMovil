@@ -33,7 +33,7 @@ Se debe utilizar como DBMS el sistema **pgAdmin** para su correcta ejecución.
   ```bash
 cd backend
 npm install
-npm install express pg cors dotenv jsonwebtoken bcrypt express-validator
+npm install express pg cors dotenv jsonwebtoken bcrypt express-validator axios
 node app.js
 ```
 Esto levanta el servidor en http://localhost:3000.

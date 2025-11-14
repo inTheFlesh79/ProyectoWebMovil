@@ -48,7 +48,7 @@ const Post = {
     return rows;
   },
 
-  // Actualizar todo el post (PUT)
+  // Actualizar todo el post
   update: async (id, postData) => {
     const query = `
       UPDATE Post
@@ -75,7 +75,7 @@ const Post = {
     }
   },
 
-  // Actualización parcial (PATCH)
+  // PATCH
   patch: async (id, postData) => {
     const allowedFields = ['title', 'content'];
     const fields = Object.keys(postData).filter(f => allowedFields.includes(f));
@@ -104,13 +104,13 @@ const Post = {
   },
 
 
-  // Eliminar un post
+  // DELETE
   delete: async (id) => {
     const client = await pool.connect();
     try {
       await client.query('BEGIN');
 
-      // 1️⃣ Eliminar votos de los comentarios asociados a este post
+      // Eliminar votos de los comentarios asociados a este post
       await client.query(`
         DELETE FROM CommentVotes
         WHERE commentid IN (
@@ -118,17 +118,17 @@ const Post = {
         );
       `, [id]);
 
-      // 2️⃣ Eliminar comentarios asociados al post
+      // Eliminar comentarios asociados al post
       await client.query(`
         DELETE FROM Comment WHERE postid = $1;
       `, [id]);
 
-      // 3️⃣ Eliminar votos del post
+      // Eliminar votos del post
       await client.query(`
         DELETE FROM Votes WHERE postid = $1;
       `, [id]);
 
-      // 4️⃣ Finalmente, eliminar el post
+      // Eliminar el post
       const result = await client.query(`
         DELETE FROM Post WHERE postid = $1 RETURNING postid;
       `, [id]);
