@@ -26,22 +26,14 @@ Tener instalados:
     └── package.json
 ```
 ## 🚀 Instrucciones para correr el proyecto
-### ▶️ 1. Iniciar el Backend (Node.js + Express)
-
-La base de datos corresponde al archivo **postgresDB.sql**, la cual corresponde a una base de datos desarrollada en **postgreSQL**. De todas formas, se adjunta dentro de la carpeta "/ProyectoWebMovil/otros/Scripts DB/" los archivos .sql de **creación de tablas** y de **inserción de datos**.
-Se debe utilizar como DBMS el sistema **pgAdmin** para su correcta ejecución.
-
+### ▶️ 1. Iniciar el Backend (Node.js + Express + Supabase)
   ```bash
 cd backend
 npm install express pg cors dotenv jsonwebtoken bcrypt express-validator axios
 node app.js
 ```
 Esto levanta el servidor en http://localhost:3000.
-Es importante tener el archivo ".env", que contendría:
-  ```bash
-JWT_SECRET=claveUsuario
-JWT_EXPIRES_IN=24h
-```
+Es importante tener el archivo ".env"
 
 # ▶️ 2. Iniciar el Frontend (Ionic)
 ```bash
