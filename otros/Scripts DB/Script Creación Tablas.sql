@@ -10,7 +10,6 @@ DROP TABLE IF EXISTS TeacherPage;
 DROP TABLE IF EXISTS EducationalInstitution;
 DROP TABLE IF EXISTS Users;
 
-
 CREATE TABLE Users (
   userid BIGSERIAL PRIMARY KEY,
   password VARCHAR(255) NOT NULL,
