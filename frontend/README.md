@@ -177,7 +177,7 @@ Se consideraron algunas medidas de accesibilidad, sin embargo, se contempla la i
 ---
 
 ## Prototipo de diseño 
-[Diseño de Mockups](https://github.com/inTheFlesh79/ProyectoWebMovil/tree/main/otros/mockups)
+[Diseño de Mockups](https://github.com/inTheFlesh79/ProyectoWebMovil/tree/EF/otros/mockups)
 
 ---
 ## Liberías usadas con Angular
