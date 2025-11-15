@@ -84,10 +84,9 @@ El proyecto tiene un enfoque dirigido principalmente a estudiantes de enseñanza
   - Descripción del profesor
   - Clasificación promedio del profesor
   - Sección de comentarios del profesor
-  - IDs de instituciones educacionales donde participa
 
 ### Perfil de Usuario
-- **RF-PUSR-01**: El perfil debe tener un historial de publicaciones
+- **RF-PUSR-01**: El perfil debe tener un historial de comentarios
 - **RF-PUSR-02**: El perfil debe tener un historial de opiniones en páginas de profesores.
 - **RF-PUSR-03**: El perfil debe tener visible los siguientes atributos:
  - Nombre de usuario
@@ -124,7 +123,7 @@ El proyecto tiene un enfoque dirigido principalmente a estudiantes de enseñanza
   - El sistema mantendrá la integridad de los datos mediante copias de seguridad de todas las actualizaciones a la base de datos cada 2 semanas.
 
 - **RNF-05: Almacenamiento**
-  - La unidad de almacenamiento destinada a la administración de registros del sistema debe tener una capacidad de 50 gigabytes de datos.
+  - La unidad de almacenamiento destinada a la administración de registros del sistema debe tener una capacidad de 500 Megabytes de datos.
 
 - **RNF-06: Compatibilidad**
   - Compatible con los navegadores:
