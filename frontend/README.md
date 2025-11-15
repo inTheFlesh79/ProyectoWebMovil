@@ -42,7 +42,6 @@ El proyecto tiene un enfoque dirigido principalmente a estudiantes de enseñanza
   - Nombre de usuario
   - Titulo
   - Cuerpo
-  - Etiquetas
 - **RF-USER-02**: El usuario puede modificar sus publicaciones.
 - **RF-USER-03**: El usuario puede eliminar sus publicaciones.
 - **RF-USER-04**: El usuario puede comentar publicaciones.
