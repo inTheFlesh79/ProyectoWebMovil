@@ -68,11 +68,9 @@ El proyecto tiene un enfoque dirigido principalmente a estudiantes de enseñanza
   - Nombre del usuario dueño de la publicación
   - Título
   - Cuerpo
-  - Etiquetas
   - Fecha de Publicación
   - Valoración de la publicación
 - **RF-PUB-03**: La publicación tendrá botones de like y dislike
-- **RF-PUB-04**: La publicación debe tener una sección de comentarios.
 
 ### Página de profesor
 - **RF-PROF-01**: La página debe tener una sección de evaluaciones.
